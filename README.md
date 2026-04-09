@@ -5,4 +5,4 @@ Create a keyframe by pressing V. It's properties will show up on the MonkeFrames
 
 Press Play to go through your keyframes. 
 
-![Concept Art](https://github.com/sirkingbinx/MonkeFrames/blob/master/Resources/MonkeFrames_Concept.png)
+![Concept Art](/Resources/MonkeFrames_Concept.png)
