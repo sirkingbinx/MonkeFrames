@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+    <Target Name="CopyToPlugins" AfterTargets="Build" Condition="'$(CI)'!='TRUE'">
+        <!-- Project DLL -->
+        <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(PluginsPath)\$(MSBuildProjectName)\$(MSBuildProjectName).dll"/>
+        <Message Text="$(MSBuildProjectName).dll -> $(MSBuildProjectName)\$(MSBuildProjectName).dll" Importance="high"/>
+        <!-- Project PDB (program database), useful for debugging -->
+        <Copy SourceFiles="bin\debug\$(TargetFramework)\$(MSBuildProjectName).pdb" DestinationFiles="$(PluginsPath)\$(MSBuildProjectName)\$(MSBuildProjectName).pdb" />
+		<Message Text="$(MSBuildProjectName).pdb -> $(MSBuildProjectName)\$(MSBuildProjectName).pdb (pdb = Program Database, it is useful for debugging your apps)" Importance="high"/>
+    </Target>
+</Project>
