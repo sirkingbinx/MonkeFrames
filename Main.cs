@@ -1,5 +1,7 @@
-using System;
 using BepInEx;
+using GorillaLocomotion;
+using MonkeFrames.Components;
+using UnityEngine;
 
 namespace MonkeFrames;
 
@@ -16,13 +18,11 @@ public class Main : BaseUnityPlugin
 
     private void OnPlayerSpawned()
     {
-        try
-        {
-            Logger.LogInfo($"[{Constants.Name}] I have loaded!");
-        }
-        catch (Exception e)
-        {
-            Logger.LogError($"[{Constants.Name}] Player start failed:{e.Message + e.StackTrace}");
-        }
+        // Add all our components to the TPC
+        GameObject tpc = GameObject.Find("Shoulder Camera");
+
+        tpc.AddComponent<CameraManager>();
+        tpc.AddComponent<KeyframeManager>();
+        tpc.AddComponent<UIManager>();
     }
 }

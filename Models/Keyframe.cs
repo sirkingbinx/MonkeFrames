@@ -12,10 +12,9 @@ public struct Keyframe
     public float FieldOfView;
 
     public Transition Transition;
-    public TransitionPoint TransitionPoint;
 
-    // The keyframe's duration converted into a Quaternion.
-    public Quaternion QuatRotation => Quaternion.Euler(Rotation);
+    // The keyframe's rotation converted into a Quaternion.
+    public readonly Quaternion QuatRotation => Quaternion.Euler(Rotation);
 
     // Playback information
     public float Playback_RelationalStart;

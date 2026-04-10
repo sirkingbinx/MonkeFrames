@@ -5,7 +5,7 @@ namespace MonkeFrames.Patches;
 
 public static class HarmonyPatches
 {
-    private static Harmony? _harmonyInstance;
+    private static Harmony _harmonyInstance;
     
     /// <summary>
     ///     The current instance of Harmony that is patching the assembly.

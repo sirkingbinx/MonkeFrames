@@ -10,10 +10,37 @@ public struct Transition
 
     // Reverse the transition effect
     public bool Reversed;
+
+    public Transition()
+    {
+        Effect = TransitionEffect.Unset;
+        Duration = -1f;
+        Reversed = false;
+    }
+
+    public static Transition Linear
+    {
+        get
+        {
+            if (field.Effect == TransitionEffect.Unset)
+            {
+                field = new Transition();
+
+                field.Effect = TransitionEffect.Linear;
+                field.Duration = 5f;
+                field.Reversed = false;
+            }
+
+            return field;
+        }
+    }
+
 }
 
 public enum TransitionEffect
 {
+    Unset = -1,
+
     // Basic direct-line transition.
     Linear = 0,
 
