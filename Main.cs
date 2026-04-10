@@ -13,11 +13,7 @@ public class Main : BaseUnityPlugin
     private void Start()
     {
         Instance = this;
-        GorillaTagger.OnPlayerSpawned(OnPlayerSpawned);
-    }
 
-    private void OnPlayerSpawned()
-    {
         // Add all our components to the TPC
         GameObject tpc = GameObject.Find("Shoulder Camera");
 

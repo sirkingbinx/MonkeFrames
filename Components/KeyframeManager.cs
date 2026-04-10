@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using Fusion.Protocol;
 using MonkeFrames.Models;
 using UnityEngine;
 
@@ -17,25 +17,6 @@ public class KeyframeManager : MonoBehaviour
     public void Start()
     {
         Instance = this;
-    }
-
-    public void UpdateKeyframeData()
-    {
-        UIManager.Instance.CurrentTask = "Refreshing keyframe references";
-
-        TotalDuration = 0;
-
-        for (int i = 0; i < Keyframes.Count; i++)
-        {
-            var keyframe = Keyframes[i];
-            keyframe.KeyframeID = $"K{i + 1}";
-            keyframe.KeyframeIndex = i;
-
-            keyframe.Playback_RelationalStart = TotalDuration;
-            keyframe.Playback_RelationalEnd = TotalDuration + keyframe.Transition.Duration;
-
-            TotalDuration += keyframe.Transition.Duration;
-        }
     }
 
     public bool TryGetKeyframe(float timestamp, out Keyframe keyframe)
@@ -70,6 +51,8 @@ public class KeyframeManager : MonoBehaviour
             Rotation = CameraManager.Instance.Rotation.eulerAngles,
             FieldOfView = CameraManager.Instance.FieldOfView,
 
+            KeyframeGUID = Guid.NewGuid().ToString(),
+
             Transition = Transition.Linear
         };
 
@@ -81,8 +64,6 @@ public class KeyframeManager : MonoBehaviour
         {
             Keyframes.Add(k);
         }
-
-        UpdateKeyframeData();
 
         return k;
     }
