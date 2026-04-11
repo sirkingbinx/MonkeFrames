@@ -100,20 +100,20 @@ public class UIManager : MonoBehaviour
             float positionX = CreateNumInputLabel(x + 70, y, 'X', ref k.Position.x);
             float positionY = CreateNumInputLabel(x + 245, y, 'Y', ref k.Position.y);
             float positionZ = CreateNumInputLabel(x + 420, y, 'Z', ref k.Position.z);
-            k.Position.Set(positionX, positionY, positionZ);
+            k.Position = new Vector3(positionX, positionY, positionZ);
 
             // Rotation
             GUI.Label(new Rect(x + 10, y + 30, 200, 20), "Rotation: ");
             float rotationX = CreateNumInputLabel(x + 70, y + 30, 'X', ref k.Rotation.x);
             float rotationY = CreateNumInputLabel(x + 245, y + 30, 'Y', ref k.Rotation.y);
             float rotationZ = CreateNumInputLabel(x + 420, y + 30, 'Z', ref k.Rotation.z);
-            k.Rotation.Set(rotationX, rotationY, rotationZ);
+            k.Rotation = new Vector3(rotationX, rotationY, rotationZ);
         } else
         {
             GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
             centeredStyle.alignment = TextAnchor.MiddleCenter;
 
-            GUI.Label(new Rect(x + (WindowSize.x / 2) - 200, y + 10, 200, 20), "Select a keyframe to tweak it.", centeredStyle);
+            GUI.Label(new Rect(x, y + 10, WindowSize.x, 20), "Select a keyframe to tweak it.", centeredStyle);
         }
     }
 
