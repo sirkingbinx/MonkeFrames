@@ -1,4 +1,3 @@
-using Photon.Voice;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,19 +19,19 @@ public class CameraManager : MonoBehaviour
 
     private void Start()
     {
-        Camera = gameObject.GetComponent<Camera>();
-
         Position = gameObject.transform.position;
         Rotation = gameObject.transform.rotation;
 
         SetCinemachineState(false);
 
         Instance = this;
+
+        Debug.Log("[MonkeFrames::CameraManager] All camera-based stuff should be set up");
     }
 
     private void Update()
     {
-        float speed = Keyboard.current.shiftKey.isPressed ? 0.05f : 0.25f;
+        float speed = Keyboard.current.shiftKey.isPressed ? 0.25f : 0.05f;
 
         // Check keybinds
         if (Keyboard.current.wKey.isPressed)
@@ -53,19 +52,20 @@ public class CameraManager : MonoBehaviour
         if (Keyboard.current.qKey.isPressed)
             Position -= transform.up * speed;
 
-        // Cursor.lockState = Mouse.current.rightButton.isPressed ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.lockState = Mouse.current.rightButton.isPressed ? CursorLockMode.Locked : CursorLockMode.None;
 
         if (Mouse.current.rightButton.isPressed)
         {
-            transform.Rotate(new Vector3(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), 0) * Time.deltaTime * speed);
+            mousePos += Mouse.current.delta.ReadValue() / 5f;
+            Rotation = Quaternion.Euler(-mousePos.y * 0.5f, mousePos.x * 0.5f, 0f);
         }
 
         // Update values
-        Camera.fieldOfView = FieldOfView;
-
         gameObject.transform.position = Position;
         gameObject.transform.rotation = Rotation;
     }
+
+    Vector2 mousePos = new Vector2(0, 0);
 
     public void SetCinemachineState(bool enabled)
     {
@@ -73,5 +73,7 @@ public class CameraManager : MonoBehaviour
         {
             cinemachine.enabled = false;
         }
+
+        Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
     }
 }

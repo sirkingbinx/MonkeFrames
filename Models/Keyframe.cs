@@ -38,4 +38,9 @@ public struct Keyframe
 
         return this.KeyframeGUID == other.KeyframeGUID;
     }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 }

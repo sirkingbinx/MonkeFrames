@@ -17,6 +17,7 @@ public class KeyframeManager : MonoBehaviour
     public void Start()
     {
         Instance = this;
+        Debug.Log("[MonkeFrames::KeyframeManager] Keyframe manager is running");
     }
 
     public bool TryGetKeyframe(float timestamp, out Keyframe keyframe)
@@ -43,8 +44,6 @@ public class KeyframeManager : MonoBehaviour
 
     public Keyframe CreateKeyframe(int replaceKeyframeIdx = -1)
     {
-        UIManager.Instance.CurrentTask = "Creating keyframe";
-
         Keyframe k = new()
         {
             Position = CameraManager.Instance.Position,
@@ -55,6 +54,9 @@ public class KeyframeManager : MonoBehaviour
 
             Transition = Transition.Linear
         };
+
+        k.Position = new Vector3(MathF.Round(k.Position.x, 2), MathF.Round(k.Position.y, 2), MathF.Round(k.Position.z, 2));
+        k.Rotation = new Vector3(MathF.Round(k.Rotation.x, 2), MathF.Round(k.Rotation.y, 2), MathF.Round(k.Rotation.z, 2));
 
         if (replaceKeyframeIdx != -1)
         {

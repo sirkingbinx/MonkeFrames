@@ -1,9 +1,8 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using MonkeFrames.Utilities;
-using Photon.Voice;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static GorillaTelemetry;
 using Keyframe = MonkeFrames.Models.Keyframe;
 
 namespace MonkeFrames.Components;
@@ -28,6 +27,7 @@ public class UIManager : MonoBehaviour
     public void Start()
     {
         Instance = this;
+        Debug.Log("[MonkeFrames::UIManager] UI manager is running");
     }
 
     public void LateUpdate()
@@ -37,6 +37,13 @@ public class UIManager : MonoBehaviour
 
         if (Keyboard.current.xKey.wasPressedThisFrame && SelectedKeyframeIndex != -1)
             KeyframeManager.Instance.CreateKeyframe(SelectedKeyframeIndex);
+
+        if (SelectedKeyframeIndex != -1 && Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            Keyframe k = KeyframeManager.Instance.Keyframes[SelectedKeyframeIndex];
+            CameraManager.Instance.Position = k.Position;
+            CameraManager.Instance.Rotation = k.QuatRotation;
+        }
     }
 
     public void OnGUI()
@@ -120,11 +127,12 @@ public class UIManager : MonoBehaviour
     // Width: 180
     private float CreateNumInputLabel(float x, float y, char axis, ref float field)
     {
+        field = MathF.Round(field, 2);
         GUI.Label(new Rect(x, y, 20, 20), $"{axis}: ");
         string input = GUI.TextField(new Rect(x + 20, y, 150, 20), $"{field}").Trim();
 
-        if (float.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
-            return value;
+        if (float.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out float value))
+            return MathF.Round(value, 2);
 
         return field;
     }
