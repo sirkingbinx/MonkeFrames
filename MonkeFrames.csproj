@@ -12,6 +12,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Resources/MFiconTitlebar.png">
+        <LogicalName>icon</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
         <Reference Include="AA.Mothership" >
           <HintPath>$(GameAssemblyPath)\AA.Mothership.dll</HintPath>
         </Reference>

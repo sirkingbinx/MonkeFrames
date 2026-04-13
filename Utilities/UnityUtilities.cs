@@ -8,5 +8,18 @@ namespace MonkeFrames.Utilities
         {
             return $"({vec.x}, {vec.y}, {vec.z})";
         }
+
+        public static Texture2D CreateTexture(byte[] img)
+        {
+            Texture2D tex = new Texture2D(2, 2);
+            bool isLoaded = tex.LoadImage(img);
+
+            if (tex.LoadImage(img))
+            {
+                return tex;
+            }
+
+            throw new Exception("Image failed to load");
+        }
     }
 }

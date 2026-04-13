@@ -24,9 +24,22 @@ public class UIManager : MonoBehaviour
 
     public int SelectedKeyframeIndex = -1;
 
+    public Vector2 titlebarIcon;
+
     public void Start()
     {
         Instance = this;
+
+        Debug.Log("[MonkeFrames::UIManager] Loading titlebar icon");
+        
+        using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("icon");
+        using MemoryStream ms = new MemoryStream();
+        
+        stream.CopyTo(ms);
+        byte[] iconData = ms.ToArray();
+
+        titlebarIcon = UnityUtilities.CreateTexture(iconData);
+
         Debug.Log("[MonkeFrames::UIManager] UI manager is running");
     }
 
@@ -71,14 +84,17 @@ public class UIManager : MonoBehaviour
         float y = 20f;
     
         GUI.Box(new Rect(x, y, WindowSize.x, WindowSize.y), "");
+
+        // Titlebar
+        GUI.DrawTexture(new Rect(x + 20, y + 5, 30, 30), titlebarIcon);
         GUI.Label(
-            new Rect(x + 20, y + 5, WindowSize.x, 20),
-            $"Keyframe Editor (MonkeFrames {Constants.Version})"
+            new Rect(x + 55, y + 7, WindowSize.x - 65, 20),
+            $"Keyframe Editor"
         );
 
-        GUILayout.BeginArea(new Rect(x + 10, y + 30, WindowSize.x - 20, 300));
+        // Start keyframes list
+        GUILayout.BeginArea(new Rect(x + 10, y + 40, WindowSize.x - 20, 300));
 
-        // keyframes list
         keyframesScrollPosition = GUILayout.BeginScrollView(keyframesScrollPosition, GUILayout.Width(WindowSize.x - 20), GUILayout.Height(300));
 
         for (int i = 0; i < KeyframeManager.Instance.Keyframes.Count; i++)
@@ -96,7 +112,7 @@ public class UIManager : MonoBehaviour
         GUILayout.EndArea();
 
         // modify y to add all the stuff from the keyframe list and title
-        y = 360f;
+        y = 375f;
 
         if (SelectedKeyframeIndex != -1)
         {
@@ -120,18 +136,18 @@ public class UIManager : MonoBehaviour
             GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
             centeredStyle.alignment = TextAnchor.MiddleCenter;
 
-            GUI.Label(new Rect(x, y + 10, WindowSize.x, 20), "Select a keyframe to tweak it.", centeredStyle);
+            GUI.Label(new Rect(x, y + 10, WindowSize.x, 20), "Select a keyframe to modify it.", centeredStyle);
         }
     }
 
     // Width: 180
     private float CreateNumInputLabel(float x, float y, char axis, ref float field)
     {
-        field = MathF.Round(field, 2);
         GUI.Label(new Rect(x, y, 20, 20), $"{axis}: ");
-        string input = GUI.TextField(new Rect(x + 20, y, 150, 20), $"{field}").Trim();
+        string input = float.ToString();
+        input = GUI.TextField(new Rect(x + 20, y, 150, 20), input).Trim();
 
-        if (float.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out float value))
+        if (float.TryParse(input, out float value))
             return MathF.Round(value, 2);
 
         return field;
