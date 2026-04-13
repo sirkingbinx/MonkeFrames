@@ -1,14 +1,18 @@
-using BepInEx;
+using MelonLoader;
 using GorillaLocomotion;
 using MonkeFrames.Components;
 using UnityEngine;
+using MonkeFrames;
+
+[assembly: MelonInfo(typeof(PluginMelonLoader), MonkeFrames.Constants.Name, MonkeFrames.Constants.Version, MonkeFrames.Constants.Author)]
+[assembly: MelonGame("Another Axiom", "Gorilla Tag")]
+[assembly: HarmonyDontPatchAll]
 
 namespace MonkeFrames;
 
-[BepInPlugin(Constants.Guid, Constants.Name, Constants.Version)]
-public class Main : BaseUnityPlugin
+public class PluginMelonLoader : MelonMod
 {
-    private void Start()
+    private void OnLateInitializeMelon()
     {
         Debug.Log("[MonkeFrames::Initialize] Initializing MonkeFrames...");
 
