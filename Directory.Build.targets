@@ -15,7 +15,7 @@
         <Copy SourceFiles="bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName).pdb" DestinationFiles="Build\\$(MSBuildProjectName).pdb" />
 		<Message Text="[Build] $(MSBuildProjectName).pdb -> Build\$(MSBuildProjectName).pdb" Importance="high"/>
 
-        <Copy SourceFiles="bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName).pdb" DestinationFiles="$(GamePath)\BepInEx\plugins\$(MSBuildProjectName).pdb" />
+        <Copy SourceFiles="bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName).pdb" DestinationFiles="$(GamePath)\BepInEx\plugins\$(MSBuildProjectName)\$(MSBuildProjectName).pdb" />
 		<Message Text="[BepInEx] $(MSBuildProjectName).pdb -> BepInEx\plugins\$(MSBuildProjectName)\$(MSBuildProjectName).pdb" Importance="high"/>
     
         <Copy SourceFiles="bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName).pdb" DestinationFiles="$(GamePath)\Mods\$(MSBuildProjectName).pdb" />

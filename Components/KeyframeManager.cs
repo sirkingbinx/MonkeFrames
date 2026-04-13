@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using MonkeFrames.Compiler.Models;
 using MonkeFrames.Models;
 using UnityEngine;
 
@@ -12,11 +13,16 @@ public class KeyframeManager : MonoBehaviour
     public static KeyframeManager Instance;
 
     public List<Keyframe> Keyframes = [];
+    public Project CurrentProject;
     public float TotalDuration;
 
     public void Start()
     {
         Instance = this;
+        Debug.Log("[MonkeFrames::KeyframeManager] creating new project \"new project\"");
+
+        CurrentProject = new Project("new project");
+
         Debug.Log("[MonkeFrames::KeyframeManager] Keyframe manager is running");
     }
 

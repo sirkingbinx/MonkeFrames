@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using MonkeFrames.Compiler.Serializable;
+using MonkeFrames.Models;
 
 namespace MonkeFrames.Compiler.Models;
 
@@ -20,6 +21,18 @@ public struct Project
         project.Keyframes = savedKeyframes.ToArray();
 
         return project;
+    }
+
+    public void UpdateState(IEnumerable<Keyframe> keyframes)
+    {
+        List<SavableKeyframe> newKeyframes = [];
+
+        foreach (Keyframe k in keyframes)
+        {
+            newKeyframes.Add(SavableKeyframe.CreateFromKeyframe(k));
+        }
+
+        Keyframes = newKeyframes.ToArray();
     }
 
     public Project(string name) {

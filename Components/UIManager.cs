@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Globalization;
+using System.IO;
+using System.Reflection;
 using MonkeFrames.Utilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,7 +25,7 @@ public class UIManager : MonoBehaviour
 
     public int SelectedKeyframeIndex = -1;
 
-    public Vector2 titlebarIcon;
+    public Texture2D titlebarIcon;
 
     public void Start()
     {
@@ -86,10 +87,10 @@ public class UIManager : MonoBehaviour
         GUI.Box(new Rect(x, y, WindowSize.x, WindowSize.y), "");
 
         // Titlebar
-        GUI.DrawTexture(new Rect(x + 20, y + 5, 30, 30), titlebarIcon);
+        GUI.DrawTexture(new Rect(x + 10, y + 5, 40, 40), titlebarIcon);
         GUI.Label(
-            new Rect(x + 55, y + 7, WindowSize.x - 65, 20),
-            $"Keyframe Editor"
+            new Rect(x + 55, y + 15, WindowSize.x - 65, 29),
+            "Keyframe Editor"
         );
 
         // Start keyframes list
@@ -120,17 +121,15 @@ public class UIManager : MonoBehaviour
 
             // Position
             GUI.Label(new Rect(x + 10, y, 200, 20), "Position: ");
-            float positionX = CreateNumInputLabel(x + 70, y, 'X', ref k.Position.x);
-            float positionY = CreateNumInputLabel(x + 245, y, 'Y', ref k.Position.y);
-            float positionZ = CreateNumInputLabel(x + 420, y, 'Z', ref k.Position.z);
-            k.Position = new Vector3(positionX, positionY, positionZ);
+            CreateNumInputLabel(x + 70, y, 'X', ref k.Position.x);
+            CreateNumInputLabel(x + 245, y, 'Y', ref k.Position.y);
+            CreateNumInputLabel(x + 420, y, 'Z', ref k.Position.z);
 
             // Rotation
             GUI.Label(new Rect(x + 10, y + 30, 200, 20), "Rotation: ");
-            float rotationX = CreateNumInputLabel(x + 70, y + 30, 'X', ref k.Rotation.x);
-            float rotationY = CreateNumInputLabel(x + 245, y + 30, 'Y', ref k.Rotation.y);
-            float rotationZ = CreateNumInputLabel(x + 420, y + 30, 'Z', ref k.Rotation.z);
-            k.Rotation = new Vector3(rotationX, rotationY, rotationZ);
+            CreateNumInputLabel(x + 70, y + 30, 'X', ref k.Rotation.x);
+            CreateNumInputLabel(x + 245, y + 30, 'Y', ref k.Rotation.y);
+            CreateNumInputLabel(x + 420, y + 30, 'Z', ref k.Rotation.z);
         } else
         {
             GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
@@ -138,18 +137,29 @@ public class UIManager : MonoBehaviour
 
             GUI.Label(new Rect(x, y + 10, WindowSize.x, 20), "Select a keyframe to modify it.", centeredStyle);
         }
+
+        GUI.Label(new Rect(x + 10, WindowSize.y - 25, WindowSize.x, 20), $"in project: {KeyframeManager.Instance.CurrentProject.ProjectName} - keyframes: {KeyframeManager.Instance.Keyframes.Count}");
+        GUI.Label(new Rect(x + 10, WindowSize.y - 5, WindowSize.x, 20), $"MonkeFrames ({Constants.Version} ({Constants.Loader})");
     }
 
     // Width: 180
-    private float CreateNumInputLabel(float x, float y, char axis, ref float field)
+    private void CreateNumInputLabel(float x, float y, char axis, ref float field)
     {
         GUI.Label(new Rect(x, y, 20, 20), $"{axis}: ");
-        string input = float.ToString();
+        string input = field.ToString();
+        string fieldUuid = Guid.NewGuid().ToString();
+        GUI.SetNextControlName(fieldUuid);
         input = GUI.TextField(new Rect(x + 20, y, 150, 20), input).Trim();
 
-        if (float.TryParse(input, out float value))
-            return MathF.Round(value, 2);
-
-        return field;
+        if (GUI.GetNameOfFocusedControl() == fieldUuid)
+        {
+            Event e = Event.current;
+            if (e.type == EventType.KeyDown && (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter))
+            {
+                float.TryParse(input, out float value);
+                GUI.FocusControl(null);
+                field = value;
+            }
+        }
     }
 }

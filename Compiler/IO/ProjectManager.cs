@@ -3,12 +3,14 @@ using System.Globalization;
 using System.IO;
 using Newtonsoft.Json;
 using MonkeFrames.Compiler.Models;
+using UnityEngine;
+using System.Collections.Generic;
 
 namespace MonkeFrames.Compiler.IO;
 
 public static class ProjectManager
 {
-    public static const ProjectExtension = "mframes";
+    public const string ProjectExtension = "mframes";
     
     public static void AssureProjectPathExists() {
         string path = ProjectNameToPath();
@@ -30,7 +32,7 @@ public static class ProjectManager
 
     public static string FixProjectName(string projectName) {
         TextInfo textInfo = CultureInfo.InvariantCulture.TextInfo;
-        string titleCase = textInfo.ToTitleCase(input.ToLower().Trim());
+        string titleCase = textInfo.ToTitleCase(projectName.ToLower().Trim());
         return titleCase.Replace(" ", "");
     }
 
@@ -45,7 +47,7 @@ public static class ProjectManager
         string projectPath = ProjectNameToPath(projectName);
         string projectData = File.ReadAllText(projectPath);
 
-        Project project = JsonConvert.DeserializeObject(projectData);
+        Project project = (Project)JsonConvert.DeserializeObject(projectData);
         List<string> warnings = [];
 
         if (project.ProjectVersion != Constants.Version) {

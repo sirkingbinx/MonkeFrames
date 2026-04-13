@@ -1,22 +1,22 @@
-using GorillaLocomotion;
-using HarmonyLib;
+using HarmonyC = HarmonyLib.Harmony;
 
 namespace MonkeFrames.Patches;
 
 public static class HarmonyPatches
 {
-    private static Harmony _harmonyInstance;
-    
+    private static HarmonyC _harmonyInstance;
+
+
     /// <summary>
     ///     The current instance of Harmony that is patching the assembly.
     ///     If there is no Harmony instance, it will create one and return it.
     ///     You do not need to touch this section
     /// </summary>
-    private static Harmony HarmonyInstance
+    private static HarmonyC HarmonyInstance
     {
         get
         {
-            _harmonyInstance ??= new Harmony(Constants.Guid);
+            _harmonyInstance ??= new HarmonyC(Constants.Guid);
             return _harmonyInstance;
         }
     }

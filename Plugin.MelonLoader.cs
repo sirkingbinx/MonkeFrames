@@ -1,5 +1,4 @@
 using MelonLoader;
-using GorillaLocomotion;
 using MonkeFrames.Components;
 using UnityEngine;
 using MonkeFrames;
@@ -12,9 +11,11 @@ namespace MonkeFrames;
 
 public class PluginMelonLoader : MelonMod
 {
-    private void OnLateInitializeMelon()
+    public override void OnLateInitializeMelon()
     {
         Debug.Log("[MonkeFrames::Initialize] Initializing MonkeFrames...");
+
+        Constants.Loader = "MelonLoader";
 
         GameObject tpc = GameObject.Find("Shoulder Camera");
 

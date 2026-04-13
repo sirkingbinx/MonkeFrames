@@ -1,5 +1,4 @@
 using BepInEx;
-using GorillaLocomotion;
 using MonkeFrames.Components;
 using UnityEngine;
 
@@ -11,6 +10,8 @@ public class PluginBepInEx : BaseUnityPlugin
     private void Start()
     {
         Debug.Log("[MonkeFrames::Initialize] Initializing MonkeFrames...");
+
+        Constants.Loader = "BepInEx";
 
         GameObject tpc = GameObject.Find("Shoulder Camera");
 

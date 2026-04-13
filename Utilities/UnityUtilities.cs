@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace MonkeFrames.Utilities
 {
@@ -14,11 +15,9 @@ namespace MonkeFrames.Utilities
             Texture2D tex = new Texture2D(2, 2);
             bool isLoaded = tex.LoadImage(img);
 
-            if (tex.LoadImage(img))
-            {
-                return tex;
-            }
-
+            tex.LoadImage(img);
+            return tex;
+            
             throw new Exception("Image failed to load");
         }
     }
