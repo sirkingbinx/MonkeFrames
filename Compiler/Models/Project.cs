@@ -5,17 +5,25 @@ namespace MonkeFrames.Compiler.Models;
 
 public struct Project
 {
-    public string MonkeFramesVersion;
+    public string ProjectName;
+    public string ProjectVersion;
     public SavableKeyframe[] Keyframes;
 
-    public static Project CreateFromKeyframes(List<Keyframe> keyframes) {
-        List<SavableKeyframe> nkf = [];
+    public static Project CreateFromKeyframes(string name, List<Keyframe> keyframes) {
+        Project project = new Project(name);
+        List<SavableKeyframe> savedKeyframes = [];
 
         foreach (Keyframe k in keyframes) {
-            nkf.Add(SavableKeyframe.CreateFromKeyframe(k));
+            savedKeyframes.Add(SavableKeyframe.CreateFromKeyframe(k));
         }
 
-        Keyframes = nkf.ToArray();
-        MonkeFramesVersion = Constants.Version;
+        project.Keyframes = savedKeyframes.ToArray();
+
+        return project;
+    }
+
+    public Project(string name) {
+        ProjectName = name;
+        ProjectVersion = Constants.Version;
     }
 }

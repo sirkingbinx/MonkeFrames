@@ -1,2 +1,2 @@
 # `/Build`
-This is where build dependencies and output collects. Once you build the mod, assemblies will be output here.
+Build-related assets are put in this folder. This includes mod loader-specific dependencies (`/Build/Dependencies`), finished builds of MonkeFrames (`/Build`), and any other build files.
