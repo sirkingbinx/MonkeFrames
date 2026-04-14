@@ -1,15 +1,15 @@
 using System.Linq;
 using System.Reflection;
 using MelonLoader;
-using MonkeFrames;
-using MonkeFrames.Components;
+using MonkeFrames.Core;
+using MonkeFrames.Core.Components;
 using UnityEngine;
 
 [assembly: MelonInfo(typeof(PluginMelonLoader), MonkeFrames.Constants.Name, MonkeFrames.Constants.Version + ".0", MonkeFrames.Constants.Author)]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
 [assembly: HarmonyDontPatchAll]
 
-namespace MonkeFrames;
+namespace MonkeFrames.Core;
 
 public class PluginMelonLoader : MelonMod
 {

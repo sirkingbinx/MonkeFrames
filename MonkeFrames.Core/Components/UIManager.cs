@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using MonkeFrames.Utilities;
+using MonkeFrames.Core.Utilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Keyframe = MonkeFrames.Models.Keyframe;
+using Keyframe = MonkeFrames.Core.Models.Keyframe;
 
-namespace MonkeFrames.Components;
+namespace MonkeFrames.Core.Components;
 
 public class UIManager : MonoBehaviour
 {
@@ -141,6 +141,8 @@ public class UIManager : MonoBehaviour
                 // FOV
                 GUI.Label(new Rect(x + 10, y + 55, 200, 20), "FOV: ");
                 CreateNumInputLabel(x + 50, y + 55, 'v', ref k.FieldOfView);
+
+                GUI.Label(new Rect(x + 10, WindowSize.y - 45, WindowSize.x, 20), $"guid: {k.GUID}");
             } else
             {
                 GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
@@ -149,7 +151,7 @@ public class UIManager : MonoBehaviour
                 GUI.Label(new Rect(x, y + 10, WindowSize.x, 20), "Select a keyframe to view it's properties.", centeredStyle);
             }
 
-            GUI.Label(new Rect(x + 10, WindowSize.y - 25, WindowSize.x, 20), $"in project: {KeyframeManager.Instance.CurrentProject.ProjectName} - keyframes: {KeyframeManager.Instance.Keyframes.Count}");
+            GUI.Label(new Rect(x + 10, WindowSize.y - 25, WindowSize.x, 20), $"in project: {KeyframeManager.Instance.CurrentProject.Name} - keyframes: {KeyframeManager.Instance.Keyframes.Count}");
             GUI.Label(new Rect(x + 10, WindowSize.y - 5, WindowSize.x, 20), $"MonkeFrames {Constants.Version} ({Constants.Loader})");
         }
     }

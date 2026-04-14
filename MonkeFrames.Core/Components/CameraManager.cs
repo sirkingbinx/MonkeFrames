@@ -1,9 +1,9 @@
-using MonkeFrames.Utilities;
+using MonkeFrames.Core.Utilities;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace MonkeFrames.Components;
+namespace MonkeFrames.Core.Components;
 
 public class CameraManager : MonoBehaviour
 {
@@ -14,9 +14,6 @@ public class CameraManager : MonoBehaviour
     public Vector3 Position;
     public Quaternion Rotation;
     public float FieldOfView = 70f;
-
-    public bool Playing = false;
-    public float Timestamp = 0;
 
     private void Start()
     {
@@ -89,7 +86,6 @@ public class CameraManager : MonoBehaviour
     }
 
     Vector2 mousePos = new Vector2(0, 0);
-
     public bool CinemachineState = true;
 
     public void SetCinemachineState(bool enabled)

@@ -1,4 +1,4 @@
-namespace MonkeFrames.Models;
+namespace MonkeFrames.Core.Models;
 
 public struct Transition
 {

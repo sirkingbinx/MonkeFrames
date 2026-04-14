@@ -1,25 +1,19 @@
 using System;
-using MonkeFrames.Components;
 using UnityEngine;
 
-namespace MonkeFrames.Models;
+namespace MonkeFrames.Compiler.Models;
 
 public struct Keyframe
 {
-    public string KeyframeGUID;
-
     public Vector3 Position;
     public Vector3 Rotation;
     public float FieldOfView;
-
-    public Transition Transition;
+    public Transition Transition = Transition.Linear;
+    
+    public string GUID = Guid.NewGuid().ToString();
 
     // The keyframe's rotation converted into a Quaternion.
     public readonly Quaternion QuatRotation => Quaternion.Euler(Rotation);
-
-    // Playback information
-    public float Playback_RelationalStart;
-    public float Playback_RelationalEnd;
 
     public static bool operator ==(Keyframe? left, Keyframe? right)
     {
@@ -45,8 +39,5 @@ public struct Keyframe
         return base.GetHashCode();
     }
 
-    public Keyframe()
-    {
-        KeyframeGUID = Guid.NewGuid().ToString();
-    }
+    public Keyframe() { }
 }

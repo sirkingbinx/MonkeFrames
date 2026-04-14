@@ -1,4 +1,4 @@
-namespace MonkeFrames.Utilities;
+namespace MonkeFrames.Core.Utilities;
 
 public static class NumberUtilities
 {

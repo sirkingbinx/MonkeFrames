@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonkeFrames", "MonkeFrames.csproj", "{00C4AF64-9837-47C3-841E-D0D1167430FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonkeFrames.Core", "MonkeFrames.Core/MonkeFrames.Core.csproj", "{00C4AF64-9837-47C3-841E-D0D1167430FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonkeFrames.Compiler", "MonkeFrames.Compiler/MonkeFrames.Compiler.csproj", "{00C4AF64-9837-47C3-841E-D0D1167430FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

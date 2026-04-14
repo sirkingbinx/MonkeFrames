@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+    <PropertyGroup>
+        <GamePath>C:\Program Files\Meta Horizon\Software\Software\another-axiom-gorilla-tag</GamePath>
+        <GameAssemblyPath>$(GamePath)\Gorilla Tag_Data\Managed</GameAssemblyPath>
+        <DependenciesPath>..\Build\Dependencies</DependenciesPath>
+    </PropertyGroup>
+</Project>
