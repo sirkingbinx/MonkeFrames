@@ -1,3 +1,4 @@
+using System;
 using MonkeFrames.Components;
 using UnityEngine;
 
@@ -42,5 +43,10 @@ public struct Keyframe
     public override int GetHashCode()
     {
         return base.GetHashCode();
+    }
+
+    public Keyframe()
+    {
+        KeyframeGUID = Guid.NewGuid().ToString();
     }
 }

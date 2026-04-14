@@ -50,16 +50,14 @@ public class KeyframeManager : MonoBehaviour
 
     public Keyframe CreateKeyframe(int replaceKeyframeIdx = -1)
     {
-        Keyframe k = new()
-        {
-            Position = CameraManager.Instance.Position,
-            Rotation = CameraManager.Instance.Rotation.eulerAngles,
-            FieldOfView = CameraManager.Instance.FieldOfView,
+        Keyframe k = new Keyframe();
 
-            KeyframeGUID = Guid.NewGuid().ToString(),
+        k.Position = CameraManager.Instance.Position;
+        k.Rotation = CameraManager.Instance.Rotation.eulerAngles;
+        k.FieldOfView = CameraManager.Instance.FieldOfView;
 
-            Transition = Transition.Linear
-        };
+        k.Transition = Transition.Linear;
+        
 
         k.Position = new Vector3(MathF.Round(k.Position.x, 2), MathF.Round(k.Position.y, 2), MathF.Round(k.Position.z, 2));
         k.Rotation = new Vector3(MathF.Round(k.Rotation.x, 2), MathF.Round(k.Rotation.y, 2), MathF.Round(k.Rotation.z, 2));

@@ -3,7 +3,8 @@
         <TargetFramework>netstandard2.1</TargetFramework>
 		<PlatformTarget>x64</PlatformTarget>
         <LangVersion>latest</LangVersion>
-    </PropertyGroup>
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" >

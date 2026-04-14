@@ -1,4 +1,7 @@
 using MonkeFrames.Models;
+using UnityEngine;
+
+using Keyframe = MonkeFrames.Models.Keyframe;
 
 namespace MonkeFrames.Compiler.Serializable;
 
@@ -18,5 +21,17 @@ public struct SavableKeyframe
         nk.Transition = k.Transition;
 
         return nk;
+    }
+
+    public Keyframe ToKeyframe()
+    {
+        Keyframe k = new Keyframe();
+
+        k.Position = new Vector3(Position.X, Position.Y, Position.Z);
+        k.Rotation = new Vector3(Rotation.X, Rotation.Y, Rotation.Z);
+        k.FieldOfView = FieldOfView;
+        k.Transition = Transition;
+
+        return k;
     }
 }

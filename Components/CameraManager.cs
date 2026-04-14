@@ -1,3 +1,4 @@
+using MonkeFrames.Utilities;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -29,9 +30,30 @@ public class CameraManager : MonoBehaviour
         Debug.Log("[MonkeFrames::CameraManager] All camera-based stuff should be set up");
     }
 
-    private void Update()
+    public void SetModEnabled(bool enabled)
     {
-        float speed = Keyboard.current.shiftKey.isPressed ? 0.25f : 0.05f;
+        SetCinemachineState(!enabled);
+        UIManager.Instance.ShowingUI = enabled;
+    }
+
+    private void FixedUpdate()
+    {
+        if (CinemachineState)
+            return; // Don't mess with camera while not managing the freecam
+
+        if (Camera == null)
+            Camera = gameObject.GetComponent<Camera>();
+
+        // Update values
+        gameObject.transform.position = Position;
+        gameObject.transform.rotation = Rotation;
+
+        float speed = 0.05f;
+
+        if (Keyboard.current.shiftKey.isPressed)
+            speed = 0.25f;
+        if (Keyboard.current.ctrlKey.isPressed)
+            speed = 0.005f;
 
         // Check keybinds
         if (Keyboard.current.wKey.isPressed)
@@ -52,6 +74,9 @@ public class CameraManager : MonoBehaviour
         if (Keyboard.current.qKey.isPressed)
             Position -= transform.up * speed;
 
+        FieldOfView += Mouse.current.scroll.ReadValue().y * 5; // Increment by 5
+        FieldOfView = NumberUtilities.Bounds(FieldOfView, 15, 150);
+
         Cursor.lockState = Mouse.current.rightButton.isPressed ? CursorLockMode.Locked : CursorLockMode.None;
 
         if (Mouse.current.rightButton.isPressed)
@@ -60,20 +85,21 @@ public class CameraManager : MonoBehaviour
             Rotation = Quaternion.Euler(-mousePos.y * 0.5f, mousePos.x * 0.5f, 0f);
         }
 
-        // Update values
-        gameObject.transform.position = Position;
-        gameObject.transform.rotation = Rotation;
+        Camera?.fieldOfView = FieldOfView;
     }
 
     Vector2 mousePos = new Vector2(0, 0);
+
+    public bool CinemachineState = true;
 
     public void SetCinemachineState(bool enabled)
     {
         if (gameObject.TryGetComponent<CinemachineBrain>(out var cinemachine))
         {
-            cinemachine.enabled = false;
+            cinemachine.enabled = enabled;
         }
 
+        CinemachineState = enabled;
         Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
     }
 }

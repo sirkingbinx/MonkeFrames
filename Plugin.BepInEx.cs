@@ -1,10 +1,12 @@
+using System.Linq;
+using System.Reflection;
 using BepInEx;
 using MonkeFrames.Components;
 using UnityEngine;
 
 namespace MonkeFrames;
 
-[BepInPlugin(Constants.Guid, Constants.Name, Constants.Version)]
+[BepInPlugin(Constants.Guid, Constants.Name, Constants.Version + ".0")]
 public class PluginBepInEx : BaseUnityPlugin
 {
     private void Start()

@@ -1,9 +1,11 @@
+using System.Linq;
+using System.Reflection;
 using MelonLoader;
+using MonkeFrames;
 using MonkeFrames.Components;
 using UnityEngine;
-using MonkeFrames;
 
-[assembly: MelonInfo(typeof(PluginMelonLoader), MonkeFrames.Constants.Name, MonkeFrames.Constants.Version, MonkeFrames.Constants.Author)]
+[assembly: MelonInfo(typeof(PluginMelonLoader), MonkeFrames.Constants.Name, MonkeFrames.Constants.Version + ".0", MonkeFrames.Constants.Author)]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
 [assembly: HarmonyDontPatchAll]
 
