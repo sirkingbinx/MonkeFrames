@@ -1,9 +1,13 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Reflection;
+using Meta.XR.ImmersiveDebugger.UserInterface.Generic;
 using MonkeFrames.Editor.Utilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using static GorillaTelemetry;
+using Debug = UnityEngine.Debug;
 using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 
 namespace MonkeFrames.Editor.Components;
@@ -41,7 +45,17 @@ public class UIManager : MonoBehaviour
 
         titlebarIcon = UnityUtilities.CreateTexture(iconData);
 
+        primaryButton = new GUIContent("MonkeFrames", titlebarIcon);
+
         Debug.Log("[MonkeFrames::UIManager] UI manager is running");
+    }
+
+    void GoToSelectedKeyframe()
+    {
+        Keyframe k = KeyframeManager.Instance.Keyframes[SelectedKeyframeIndex];
+        CameraManager.Instance.Position = k.Position;
+        CameraManager.Instance.Rotation = k.QuatRotation;
+        CameraManager.Instance.FieldOfView = k.FieldOfView;
     }
 
     public void LateUpdate()
@@ -58,81 +72,156 @@ public class UIManager : MonoBehaviour
 
             if (SelectedKeyframeIndex != -1 && Keyboard.current.fKey.wasPressedThisFrame)
             {
-                Keyframe k = KeyframeManager.Instance.Keyframes[SelectedKeyframeIndex];
-                CameraManager.Instance.Position = k.Position;
-                CameraManager.Instance.Rotation = k.QuatRotation;
-                CameraManager.Instance.FieldOfView = k.FieldOfView;
+                GoToSelectedKeyframe();
             }
         }
     }
 
-    bool f1down, f2down, f3down = false;
-
-    bool Menu(KeyControl key, string text, int x)
+    bool Menu(KeyControl key, string text, int x, GUIContent c = null)
     {
-        if (CameraManager.Instance.CinemachineState)
-            return false;
-
         if (key.wasPressedThisFrame && CameraManager.Instance.CinemachineState)
         {
             CameraManager.Instance.SetModEnabled(true);
             return true;
         }
 
-        return key.wasPressedThisFrame || GUI.Button(new Rect(x + 10, 10, 150, 20), text);
+        if (CameraManager.Instance.CinemachineState)
+            return false;
+
+        bool button;
+
+        if (c == null)
+            button = GUI.Button(new Rect(x, 0, 100, 20), text);
+        else
+            button = GUI.Button(new Rect(x, 0, 150, 20), c);
+
+        return key.wasPressedThisFrame || button;
     }
+
+    GUIContent primaryButton;
+    CurrentMenu menu;
+    GUIStyle left;
+
+    void MenuTo(CurrentMenu newMenu) => menu = (menu == newMenu ? CurrentMenu.Closed : newMenu);
 
     public void OnGUI()
     {
-        if (Menu(Keyboard.current.f1Key, "MonkeFrames", 0))
-            f1down = !f1down;
-
-        if (Menu(Keyboard.current.f2Key, "View", 150))
-            f2down = !f2down;
-
-        if (Menu(Keyboard.current.f3Key, "Project", 300))
-            f3down = !f3down;
-
-        if (f1down && CameraManager.Instance.CinemachineState)
-            CameraManager.Instance.SetModEnabled(false);
-        
-        if (f2down)
+        if (left == null)
         {
-            if (GUI.Button(new Rect(160, 30, 150, 20), "Keyframe Editor"))
-            {
-                ShowingEditorUI = !ShowingEditorUI;
-                goto closeMenu;
-            }
-
-            if (GUI.Button(new Rect(160, 50, 150, 20), "Room Joiner"))
-            {
-                ShowingJoinerUI = !ShowingJoinerUI;
-                goto closeMenu;
-            }
-
-        closeMenu:
-            f2down = false;
+            left = new GUIStyle(GUI.skin.button);
+            left.alignment = TextAnchor.MiddleLeft;
+            left.padding.left = 10;
         }
 
-        if (f3down)
+        if (Menu(Keyboard.current.f1Key, "MonkeFrames", 0, primaryButton))
+            MenuTo(CurrentMenu.F1);
+
+        if (Menu(Keyboard.current.f2Key, "View", 150))
+            MenuTo(CurrentMenu.F2);
+
+        if (Menu(Keyboard.current.f3Key, "Go", 250))
+            MenuTo(CurrentMenu.F3);
+
+        if (Menu(Keyboard.current.f4Key, "Project", 350))
+            MenuTo(CurrentMenu.F4);
+
+        if (Menu(Keyboard.current.f5Key, "Keyframe", 450))
+            MenuTo(CurrentMenu.F5);
+
+        if (menu == CurrentMenu.F1)
         {
-            if (GUI.Button(new Rect(310, 30, 150, 20), "project thingy"))
+            if (GUI.Button(new Rect(0, 20, 300, 20), "Disable (F1 to enable)", left))
             {
-                goto closeMenu;
+                CameraManager.Instance.SetModEnabled(false);
+                menu = CurrentMenu.Closed;
             }
 
-            if (GUI.Button(new Rect(310, 50, 150, 20), "project thingy"))
+            if (GUI.Button(new Rect(0, 40, 300, 20), "Source (GitHub)", left))
             {
-                goto closeMenu;
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "https://github.com/sirkingbinx/MonkeFrames",
+                    UseShellExecute = true
+                });
+                menu = CurrentMenu.Closed;
             }
 
-            if (GUI.Button(new Rect(310, 70, 150, 20), "project thingy"))
+            GUI.Button(new Rect(0, 60, 300, 20), $"MonkeFrames v{Constants.Version} - {Constants.Loader}");
+        }
+
+        if (menu == CurrentMenu.F2)
+        {
+            const float start = 150f;
+
+            if (GUI.Button(new Rect(start, 20, 300, 20), "Keyframe Editor", left))
             {
-                goto closeMenu;
+                ShowingEditorUI = !ShowingEditorUI;
+                menu = CurrentMenu.Closed;
             }
 
-        closeMenu:
-            f3down = false;
+            if (GUI.Button(new Rect(start, 40, 300, 20), "Room Joiner", left))
+            {
+                ShowingJoinerUI = !ShowingJoinerUI;
+                menu = CurrentMenu.Closed;
+            }
+        }
+
+        if (menu == CurrentMenu.F3)
+        {
+            const float start = 250f;
+
+            if (GUI.Button(new Rect(start, 20, 300, 20), "To Selected Keyframe", left) && SelectedKeyframeIndex != -1)
+            {
+                GoToSelectedKeyframe();
+                menu = CurrentMenu.Closed;
+            }
+
+            if (GUI.Button(new Rect(start, 40, 300, 20), "To Monke", left))
+            {
+                CameraManager.Instance.Position = GorillaTagger.Instance.headCollider.transform.position;
+                CameraManager.Instance.Rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+                menu = CurrentMenu.Closed;
+            }
+        }
+
+        if (menu == CurrentMenu.F4)
+        {
+            const float start = 350f;
+
+            KeyframeManager.Instance.CurrentProject.Name = GUI.TextField(new Rect(start, 20, 300, 20), KeyframeManager.Instance.CurrentProject.Name);
+
+            if (GUI.Button(new Rect(start, 40, 300, 20), $"FPS: {KeyframeManager.Instance.CurrentProject.FPS}", left))
+            {
+                KeyframeManager.Instance.CurrentProject.FPS = (KeyframeManager.Instance.CurrentProject.FPS == 30 ? 60 : 30);
+            }
+        }
+
+        if (menu == CurrentMenu.F5)
+        {
+            const float start = 450f;
+            if (GUI.Button(new Rect(start, 20, 300, 20), "Create New", left))
+            {
+                KeyframeManager.Instance.CreateKeyframe();
+                menu = CurrentMenu.Closed;
+            }
+
+            if (GUI.Button(new Rect(start, 40, 300, 20), "Create New towards Monke", left))
+            {
+                KeyframeManager.Instance.CreateKeyframe(lookAtPlayer: true);
+                menu = CurrentMenu.Closed;
+            }
+
+            if (GUI.Button(new Rect(start, 60, 300, 20), "Replace Selection with New", left) && SelectedKeyframeIndex != -1)
+            {
+                KeyframeManager.Instance.CreateKeyframe(replaceKeyframeIdx: SelectedKeyframeIndex);
+                menu = CurrentMenu.Closed;
+            }
+
+            if (GUI.Button(new Rect(start, 80, 300, 20), "Delete Selection", left) && SelectedKeyframeIndex != -1)
+            {
+                KeyframeManager.Instance.DeleteKeyframe(SelectedKeyframeIndex);
+                menu = CurrentMenu.Closed;
+            }
         }
 
         if (!ShowingUI)
@@ -140,8 +229,6 @@ public class UIManager : MonoBehaviour
 
         // Thingy
         ScreenDimensions = new Vector2(Screen.width, Screen.height);
-
-
 
         if (ShowingEditorUI) {
             float x = ScreenDimensions.x - WindowSize.x - 20;
@@ -217,5 +304,15 @@ public class UIManager : MonoBehaviour
     {
         GUI.Label(new Rect(x, y, 20, 20), $"{axis}: ");
         GUI.TextField(new Rect(x + 20, y, 150, 20), field.ToString());
+    }
+
+    private enum CurrentMenu
+    {
+        Closed = -1,
+        F1 = 0,
+        F2,
+        F3,
+        F4,
+        F5
     }
 }

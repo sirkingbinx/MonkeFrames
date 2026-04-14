@@ -46,5 +46,7 @@ public class Project
         Name = projectName;
         Version = Constants.Version;
         Exporter = projectExporter;
+        FPS = 30;
+        Keyframes = new List<Keyframe>();
     }
 }

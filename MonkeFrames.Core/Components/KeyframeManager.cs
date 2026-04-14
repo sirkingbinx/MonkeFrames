@@ -34,7 +34,7 @@ public class KeyframeManager : MonoBehaviour
         k.FieldOfView = CameraManager.Instance.FieldOfView;
 
         if (lookAtPlayer)
-            k.Rotation = Quaternion.LookRotation(GTPlayer.Instance.bodyCollider.transform.position - k.Position).eulerAngles;
+            k.Rotation = Quaternion.LookRotation(GorillaTagger.Instance.headCollider.transform.position - k.Position).eulerAngles;
 
         k.Position = new Vector3(MathF.Round(k.Position.x, 2), MathF.Round(k.Position.y, 2), MathF.Round(k.Position.z, 2));
         k.Rotation = new Vector3(MathF.Round(k.Rotation.x, 2), MathF.Round(k.Rotation.y, 2), MathF.Round(k.Rotation.z, 2));
@@ -52,5 +52,11 @@ public class KeyframeManager : MonoBehaviour
         CurrentProject.Keyframes = Keyframes;
 
         return k;
+    }
+
+    public void DeleteKeyframe(int index)
+    {
+        try { Keyframes.RemoveAt(index); } catch { };
+        UIManager.Instance.SelectedKeyframeIndex = -1;
     }
 }
