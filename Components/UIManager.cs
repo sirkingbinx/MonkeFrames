@@ -68,20 +68,17 @@ public class UIManager : MonoBehaviour
         // Input
         if (Keyboard.current.f1Key.wasPressedThisFrame)
         {
-            CameraManager.Instance.SetModEnabled(false);
+            CameraManager.Instance.SetModEnabled(CameraManager.Instance.CinemachineState);
         }
 
         if (Keyboard.current.f2Key.wasPressedThisFrame)
         {
-            CameraManager.Instance.SetModEnabled(true);
-            ShowingUI = true;
-            ShowingEditorUI = true;
+            // List of UI screens
         }
 
         if (Keyboard.current.f3Key.wasPressedThisFrame)
         {
-            ShowingUI = true;
-            ShowingJoinerUI = true;
+            // Project settings
         }
 
         if (!ShowingUI)
