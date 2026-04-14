@@ -19,14 +19,14 @@ Create a keyframe by pressing V. It's properties will show up on the MonkeFrames
 | `B`           | ❌             | Creates a keyframe at the spectator camera's position, looking at the player's position.    |
 | `X`           | ✔️             | Replaces the selected keyframe with a new keyframe at the current location.                 |
 | `F`           | ✔️             | Teleports to the selected keyframe.                                                         |
+| `T`           | ❌              | Teleports to the player's current position.                                                 |
 
 ### UI
 | Keybind       | Needs Selection | Action                                                                                      |
 | ------------- | --------------- | ------------------------------------------------------------------------------------------- |
-| `F1`          | ❌             | Hides the UI and disables the mod, reenabling the third person view.                        |
-| `F2`          | ❌             | Opens the Keyframe Editor.                                                                  |
-| `F3`          | ❌             | Opens the Code Joiner.                                                                      |
-| `T`           | ❌             | Teleports to the player's current position.                                                 |
+| `F1`          | ❌              | Enable/disable the mod, hide all UIs (if off)                                               |
+| `F2`          | ❌              | Opens a list of UI panels, press one to toggle it's visibility                              |
+| `F3`          | ❌              | Project controls like loading and saving                                                    |
 
 ## Credits
 - [sirkingbinx (bingus)](https://github.com/sirkingbinx): Developer, documentation, concept art
