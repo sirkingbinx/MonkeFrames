@@ -28,6 +28,9 @@ Create a keyframe by pressing V. It's properties will show up on the MonkeFrames
 | `F2`          | ❌              | Opens a list of UI panels, press one to toggle it's visibility                              |
 | `F3`          | ❌              | Project controls like loading and saving                                                    |
 
+## For Developers
+You can embed the keyframe functionality of MonkeFrames into your own projects. See [MonkeFrames.Compiler](/MonkeFrames.Compiler).
+
 ## Credits
 - [sirkingbinx (bingus)](https://github.com/sirkingbinx): Developer, documentation, concept art
 - [uhJames](https://www.youtube.com/@uhJamesvr): Design, logos, art, commissioner
