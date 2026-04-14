@@ -1,9 +1,9 @@
-using MonkeFrames.Core.Utilities;
+using MonkeFrames.Editor.Utilities;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace MonkeFrames.Core.Components;
+namespace MonkeFrames.Editor.Components;
 
 public class CameraManager : MonoBehaviour
 {

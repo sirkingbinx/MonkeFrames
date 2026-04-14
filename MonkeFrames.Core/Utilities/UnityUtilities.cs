@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace MonkeFrames.Core.Utilities
+namespace MonkeFrames.Editor.Utilities
 {
     public static class UnityUtilities
     {

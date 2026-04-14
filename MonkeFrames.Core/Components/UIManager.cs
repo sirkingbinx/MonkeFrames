@@ -1,12 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
-using MonkeFrames.Core.Utilities;
+using MonkeFrames.Editor.Utilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Keyframe = MonkeFrames.Core.Models.Keyframe;
+using UnityEngine.InputSystem.Controls;
+using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 
-namespace MonkeFrames.Core.Components;
+namespace MonkeFrames.Editor.Components;
 
 public class UIManager : MonoBehaviour
 {
@@ -50,8 +50,11 @@ public class UIManager : MonoBehaviour
             if (Keyboard.current.vKey.wasPressedThisFrame)
                 KeyframeManager.Instance.CreateKeyframe();
 
+            if (Keyboard.current.tKey.wasPressedThisFrame)
+                KeyframeManager.Instance.CreateKeyframe(lookAtPlayer: true);
+
             if (Keyboard.current.xKey.wasPressedThisFrame && SelectedKeyframeIndex != -1)
-                KeyframeManager.Instance.CreateKeyframe(SelectedKeyframeIndex);
+                KeyframeManager.Instance.CreateKeyframe(replaceKeyframeIdx: SelectedKeyframeIndex);
 
             if (SelectedKeyframeIndex != -1 && Keyboard.current.fKey.wasPressedThisFrame)
             {
@@ -63,22 +66,73 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    bool f1down, f2down, f3down = false;
+
+    bool Menu(KeyControl key, string text, int x)
+    {
+        if (CameraManager.Instance.CinemachineState)
+            return false;
+
+        if (key.wasPressedThisFrame && CameraManager.Instance.CinemachineState)
+        {
+            CameraManager.Instance.SetModEnabled(true);
+            return true;
+        }
+
+        return key.wasPressedThisFrame || GUI.Button(new Rect(x + 10, 10, 150, 20), text);
+    }
+
     public void OnGUI()
     {
-        // Input
-        if (Keyboard.current.f1Key.wasPressedThisFrame)
+        if (Menu(Keyboard.current.f1Key, "MonkeFrames", 0))
+            f1down = !f1down;
+
+        if (Menu(Keyboard.current.f2Key, "View", 150))
+            f2down = !f2down;
+
+        if (Menu(Keyboard.current.f3Key, "Project", 300))
+            f3down = !f3down;
+
+        if (f1down && CameraManager.Instance.CinemachineState)
+            CameraManager.Instance.SetModEnabled(false);
+        
+        if (f2down)
         {
-            CameraManager.Instance.SetModEnabled(CameraManager.Instance.CinemachineState);
+            if (GUI.Button(new Rect(160, 30, 150, 20), "Keyframe Editor"))
+            {
+                ShowingEditorUI = !ShowingEditorUI;
+                goto closeMenu;
+            }
+
+            if (GUI.Button(new Rect(160, 50, 150, 20), "Room Joiner"))
+            {
+                ShowingJoinerUI = !ShowingJoinerUI;
+                goto closeMenu;
+            }
+
+        closeMenu:
+            f2down = false;
         }
 
-        if (Keyboard.current.f2Key.wasPressedThisFrame)
+        if (f3down)
         {
-            // List of UI screens
-        }
+            if (GUI.Button(new Rect(310, 30, 150, 20), "project thingy"))
+            {
+                goto closeMenu;
+            }
 
-        if (Keyboard.current.f3Key.wasPressedThisFrame)
-        {
-            // Project settings
+            if (GUI.Button(new Rect(310, 50, 150, 20), "project thingy"))
+            {
+                goto closeMenu;
+            }
+
+            if (GUI.Button(new Rect(310, 70, 150, 20), "project thingy"))
+            {
+                goto closeMenu;
+            }
+
+        closeMenu:
+            f3down = false;
         }
 
         if (!ShowingUI)
@@ -86,6 +140,8 @@ public class UIManager : MonoBehaviour
 
         // Thingy
         ScreenDimensions = new Vector2(Screen.width, Screen.height);
+
+
 
         if (ShowingEditorUI) {
             float x = ScreenDimensions.x - WindowSize.x - 20;

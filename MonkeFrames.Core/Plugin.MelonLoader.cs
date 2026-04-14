@@ -1,15 +1,13 @@
-using System.Linq;
-using System.Reflection;
 using MelonLoader;
-using MonkeFrames.Core;
-using MonkeFrames.Core.Components;
+using MonkeFrames.Editor;
+using MonkeFrames.Editor.Components;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(PluginMelonLoader), MonkeFrames.Constants.Name, MonkeFrames.Constants.Version + ".0", MonkeFrames.Constants.Author)]
+[assembly: MelonInfo(typeof(PluginMelonLoader), MonkeFrames.Editor.Constants.Name, MonkeFrames.Editor.Constants.Version + ".0", MonkeFrames.Editor.Constants.Author)]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
 [assembly: HarmonyDontPatchAll]
 
-namespace MonkeFrames.Core;
+namespace MonkeFrames.Editor;
 
 public class PluginMelonLoader : MelonMod
 {

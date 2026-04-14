@@ -27,10 +27,5 @@ public struct Exporter
     /// <summary>
     /// Default exporter which is automatically selected by the MonkeFrames compiler.
     /// </summary>
-    public static Exporter Default {
-        get {
-            field ??= new Exporter("monkeframes.compiler", "compiler auto-generated exporter");
-            return field;
-        }
-    }
+    public static Exporter Default => new Exporter("monkeframes.compiler", "compiler auto-generated exporter");
 }

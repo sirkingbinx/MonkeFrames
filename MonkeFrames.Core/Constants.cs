@@ -1,6 +1,6 @@
 using MonkeFrames.Compiler.Models;
 
-namespace MonkeFrames.Core;
+namespace MonkeFrames.Editor;
 
 public static class Constants
 {

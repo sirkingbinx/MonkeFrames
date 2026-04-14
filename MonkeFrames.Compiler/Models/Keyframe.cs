@@ -18,7 +18,7 @@ public struct Keyframe
     public static bool operator ==(Keyframe? left, Keyframe? right)
     {
         if (left is null) return right is null;
-        return left.Value.KeyframeGUID == right.Value.KeyframeGUID;
+        return left.Value.GUID == right.Value.GUID;
     }
 
     public static bool operator !=(Keyframe? left, Keyframe? right) => !(left == right);
@@ -31,7 +31,7 @@ public struct Keyframe
         if (ReferenceEquals(this, other))
             return true;
 
-        return this.KeyframeGUID == other.KeyframeGUID;
+        return this.GUID == other.GUID;
     }
 
     public override int GetHashCode()

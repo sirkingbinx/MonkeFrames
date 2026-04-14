@@ -41,7 +41,7 @@ public class Project
     /// <summary>
     /// Create a new project.
     /// </summary>
-    public Project(string projectName, Exporter projectExporter = Exporter.Default)
+    public Project(string projectName, Exporter projectExporter)
     {
         Name = projectName;
         Version = Constants.Version;
