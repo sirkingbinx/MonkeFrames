@@ -8,14 +8,10 @@ public struct Transition
     // The amount of time it should take for the transition to apply
     public float Duration;
 
-    // Reverse the transition effect
-    public bool Reversed;
-
     public Transition()
     {
         Effect = TransitionEffect.Unset;
         Duration = -1f;
-        Reversed = false;
     }
 
     public static Transition Linear
@@ -28,7 +24,6 @@ public struct Transition
 
                 field.Effect = TransitionEffect.Linear;
                 field.Duration = 5f;
-                field.Reversed = false;
             }
 
             return field;

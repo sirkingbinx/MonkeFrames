@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -37,6 +38,35 @@ public class Project
                 throw new ArgumentException("FPS must be either 30 or 60.", nameof(value));
         }
     }
+
+    /// <summary>
+    /// A list of built keyframes for the project for use with cameras.
+    /// </summary>
+    [JsonIgnore]
+    public List<Keyframe> CompiledKeyframes {
+        get {
+            if (field == null)
+                throw new ArgumentNullException("The project is not built. Please use .Compile().");
+
+            return field;
+        }
+        internal set => field = value;
+    }
+
+    /// <summary>
+    /// Build the project. Shorthand for Compiler.Build(p)
+    /// </summary>
+    public void Build() => Compiler.Build(this);
+
+    /// <summary>
+    /// Convert the project into savable JSON data. Shorthand for Compiler.ConvertToJSON(p)
+    /// </summary>
+    public string ToJson() => Compiler.ConvertToJSON(this);
+
+    /// <summary>
+    /// Loads a project from JSON data. Shorthand for Compiler.ConvertFromJSON(p)
+    /// </summary>
+    public static Project FromJson(string json) => Compiler.ConvertFromJSON(json);
 
     /// <summary>
     /// Create a new project.

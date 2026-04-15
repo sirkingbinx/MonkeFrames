@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using UnityEngine;
 
@@ -5,12 +6,16 @@ namespace MonkeFrames.Compiler.Models;
 
 public struct Keyframe
 {
-    public Vector3 Position;
-    public Vector3 Rotation;
-    public float FieldOfView;
+    public Vector3 Position = new Vector3(0, 0, 0);
+    public Vector3 Rotation = new Vector3(0, 0, 0);
+    public float FieldOfView = 60;
     public Transition Transition = Transition.Linear;
     
+    [JsonIgnore]
     public string GUID = Guid.NewGuid().ToString();
+
+    [JsonIgnore]
+    public bool Compiled = false;
 
     // The keyframe's rotation converted into a Quaternion.
     public readonly Quaternion QuatRotation => Quaternion.Euler(Rotation);
