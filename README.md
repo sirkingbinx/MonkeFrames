@@ -1,4 +1,4 @@
-<h1 id="readme"><img src="/MonkeFrames.Core/Resources/MFtitleWhite.png" height=200></h1>
+<h1 id="readme"><img src="/MonkeFrames.Editor/Resources/MFtitleWhite.png" height=200></h1>
 
 MonkeFrames is a keyframe-based camera animator loosely based on the Orion Drift spectator view that allows you to plan out camera movements with transitions for each property.
 
@@ -28,4 +28,4 @@ You can embed the keyframe functionality of MonkeFrames into your own projects. 
 - [uhJames](https://www.youtube.com/@uhJamesvr): Design, logos, art, commissioner
 
 ## Extras
-![Concept Art](/MonkeFrames.Core/Resources/MonkeFrames_Concept.png)
+![Concept Art](/MonkeFrames.Editor/Resources/MonkeFrames_Concept.png)
