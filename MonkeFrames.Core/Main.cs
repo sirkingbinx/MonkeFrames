@@ -14,7 +14,7 @@ namespace MonkeFrames.Editor
         {
             Debug.Log("[MonkeFrames::Initialize] Initializing MonkeFrames...");
 
-            GameObject tpc = GameObject.Find("Shoulder Camera");
+            GameObject tpc = GameObject.Find("Shoulder Camera") ?? GorillaTagger.Instance.thirdPersonCamera;
 
             tpc.AddComponent<CameraManager>();
             tpc.AddComponent<KeyframeManager>();
