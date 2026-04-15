@@ -51,6 +51,8 @@ public class KeyframeManager : MonoBehaviour
 
         CurrentProject.Keyframes = Keyframes;
 
+        CurrentStatus = $"Created keyframe {Keyframes.IndexOf(k)} at Position:{UnityUtilities.Vector3ToString(k.Position)} - Rotation:{UnityUtilities.Vector3ToString(k.Rotation)} - FOV:{k.FieldOfView}";
+
         return k;
     }
 

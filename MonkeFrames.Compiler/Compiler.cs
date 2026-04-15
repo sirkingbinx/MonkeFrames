@@ -11,8 +11,21 @@ namespace MonkeFrames.Compiler;
 
 public static class Compiler
 {
-    public static List<Keyframe> Build(Project project)
+    public static List<Keyframe> Build(Project project, Action<string> onStatusUpdate = null)
     {
+        Stopwatch timer = Stopwatch.StartNew(); // Project build time
+
+        Action<string> status = (text) =>
+        {
+            if (onStatusUpdate == null)
+                return;
+
+            try {
+                onStatusUpdate($"Compiling project {project.Name}: {text}");
+            } catch { }
+        };
+
+        status($"Setting up")
         float projectDuration = 0f;
 
         foreach (Keyframe keyframe in project.Keyframes) {
@@ -40,6 +53,8 @@ public static class Compiler
 
             for (int i = filledKeyframes; i < framesToFill; i++)
             {
+                status($"Generating frame {i}")
+
                 Func<float, float, int, int> getNowAction;
 
                 if (keyframe.Transition.Effect == TransitionEffect.Cut)
@@ -72,7 +87,12 @@ public static class Compiler
             filledKeyframes += framesToFill;
         }
 
+        status("Saving changes")
         project.CompiledKeyframes = new List<Keyframe>(compiledKeyframes);
+
+        timer.Stop();
+
+        status($"Compiled project {project.Name} in {ts.TotalMinutes}m {ts.Seconds:D2}s")
         return project.CompiledKeyframes;
     }
 

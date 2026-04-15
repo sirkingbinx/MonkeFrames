@@ -23,11 +23,17 @@ public static class Transitions
     // Movement determined by sine wave
     public static float Sine(float start, float end, int currentPosition, int incrementTimes)
     {
-        // placeholder linear function 
+        // maybe works? no idea
+        
         float difference = end - start;
-        float step = difference / incrementTimes;
-        float now = difference + (step * currentPosition);
+        double[] sineValues = new double[incrementTimes + 1];
 
-        return start + now;
+        for (int i = 0; i <= incrementTimes; i++)
+        {
+            double progress = (double)i / incrementTimes;
+            sineValues[i] = Math.Sin(progress * 2 * Math.PI);
+        }
+
+        return difference * sineValues[currentPosition];
     }
 }

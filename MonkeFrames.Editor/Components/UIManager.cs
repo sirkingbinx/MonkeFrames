@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using Meta.XR.ImmersiveDebugger.UserInterface.Generic;
+using MonkeFrames.Compiler;
 using MonkeFrames.Editor.Utilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -104,6 +104,8 @@ public class UIManager : MonoBehaviour
 
     void MenuTo(CurrentMenu newMenu) => menu = (menu == newMenu ? CurrentMenu.Closed : newMenu);
 
+    public string CurrentStatus = "";
+
     public void OnGUI()
     {
         if (left == null)
@@ -194,6 +196,22 @@ public class UIManager : MonoBehaviour
             {
                 KeyframeManager.Instance.CurrentProject.FPS = (KeyframeManager.Instance.CurrentProject.FPS == 30 ? 60 : 30);
             }
+
+            if (GUI.Button(new Rect(start, 60, 300, 20), $"Compile", left))
+            {
+                Compiler.Build(KeyframeManager.Instance.CurrentProject, (status) => {
+                    CurrentStatus = status;
+                });
+            }
+
+            if (GUI.Button(new Rect(start, 80, 300, 20), $"Compile & Play", left))
+            {
+                Compiler.Build(KeyframeManager.Instance.CurrentProject, (status) => {
+                    CurrentStatus = status;
+                });
+
+                CurrentStatus = "Not implemented";
+            }
         }
 
         if (menu == CurrentMenu.F5)
@@ -224,11 +242,13 @@ public class UIManager : MonoBehaviour
             }
         }
 
+        ScreenDimensions = new Vector2(Screen.width, Screen.height);
+
+        // Status bar
+        GUI.Label(new Rect(10, ScreenDimensions.y - 30, ScreenDimensions.x - 20, 20), CurrentStatus);
+
         if (!ShowingUI)
             return;
-
-        // Thingy
-        ScreenDimensions = new Vector2(Screen.width, Screen.height);
 
         if (ShowingEditorUI) {
             float x = ScreenDimensions.x - WindowSize.x - 20;
@@ -252,7 +272,7 @@ public class UIManager : MonoBehaviour
             {
                 Keyframe k = KeyframeManager.Instance.Keyframes[i];
 
-                string displayString = $"K{i} p:{UnityUtilities.Vector3ToString(k.Position)}, r:{UnityUtilities.Vector3ToString(k.Rotation)}";
+                string displayString = $"Keyframe {i + 1} p:{UnityUtilities.Vector3ToString(k.Position)}, r:{UnityUtilities.Vector3ToString(k.Rotation)}";
                 bool selectionStart = GUILayout.Toggle(SelectedKeyframeIndex == i, displayString);
 
                 if (selectionStart && SelectedKeyframeIndex != i)
