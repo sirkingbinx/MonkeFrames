@@ -8,8 +8,8 @@ Create a keyframe by pressing V. It's properties will show up on the MonkeFrames
 > [!NOTE]
 > Upon release, MonkeFrames will be avaliable on [MonkeModManager](https://github.com/sirkingbinx/MonkeModManager/releases/latest)
 
-   1. Download `MonkeFrames.dll` from the [releases](https://github.com/sirkingbinx/MonkeFrames/releases/latest) page
-   2. Copy the file into `BepInEx/plugins/` (BepInEx) or `Mods` (MelonLoader)
+   1. Download `MonkeFrames.zip` from the [releases](https://github.com/sirkingbinx/MonkeFrames/releases/latest) page
+   2. Extract the zip file into `BepInEx/plugins/` (BepInEx) or `Mods` (MelonLoader)
 
 ## Usage
 ### Keyframe
@@ -20,13 +20,6 @@ Create a keyframe by pressing V. It's properties will show up on the MonkeFrames
 | `X`           | ✔️             | Replaces the selected keyframe with a new keyframe at the current location.                 |
 | `F`           | ✔️             | Teleports to the selected keyframe.                                                         |
 | `T`           | ❌              | Teleports to the player's current position.                                                 |
-
-### UI
-| Keybind       | Needs Selection | Action                                                                                      |
-| ------------- | --------------- | ------------------------------------------------------------------------------------------- |
-| `F1`          | ❌              | Enable/disable the mod, hide all UIs (if off)                                               |
-| `F2`          | ❌              | Opens a list of UI panels, press one to toggle it's visibility                              |
-| `F3`          | ❌              | Project controls like loading and saving                                                    |
 
 ## For Developers
 You can embed the keyframe functionality of MonkeFrames into your own projects. See [MonkeFrames.Compiler](/MonkeFrames.Compiler).
