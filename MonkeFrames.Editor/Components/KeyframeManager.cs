@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GorillaLocomotion;
 using MonkeFrames.Compiler.Models;
+using MonkeFrames.Editor.Utilities;
 using UnityEngine;
 
 using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
@@ -50,8 +51,11 @@ public class KeyframeManager : MonoBehaviour
         }
 
         CurrentProject.Keyframes = Keyframes;
+        
+        string posStr = $"Position:{UnityUtilities.Vector3ToString(k.Position)}";
+        string rotStr = $"Rotation:{UnityUtilities.Vector3ToString(k.Rotation)}";
 
-        CurrentStatus = $"Created keyframe {Keyframes.IndexOf(k)} at Position:{UnityUtilities.Vector3ToString(k.Position)} - Rotation:{UnityUtilities.Vector3ToString(k.Rotation)} - FOV:{k.FieldOfView}";
+        UIManager.Instance.CurrentStatus = $"Created keyframe {Keyframes.IndexOf(k)} at {posStr} - {rotStr} - FOV:{k.FieldOfView}";
 
         return k;
     }

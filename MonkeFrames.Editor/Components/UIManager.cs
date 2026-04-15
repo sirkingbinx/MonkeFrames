@@ -199,14 +199,14 @@ public class UIManager : MonoBehaviour
 
             if (GUI.Button(new Rect(start, 60, 300, 20), $"Compile", left))
             {
-                Compiler.Build(KeyframeManager.Instance.CurrentProject, (status) => {
+                Compiler.Compiler.Build(KeyframeManager.Instance.CurrentProject, (status) => {
                     CurrentStatus = status;
                 });
             }
 
             if (GUI.Button(new Rect(start, 80, 300, 20), $"Compile & Play", left))
             {
-                Compiler.Build(KeyframeManager.Instance.CurrentProject, (status) => {
+                Compiler.Compiler.Build(KeyframeManager.Instance.CurrentProject, (status) => {
                     CurrentStatus = status;
                 });
 

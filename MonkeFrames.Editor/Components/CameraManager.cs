@@ -95,7 +95,7 @@ public class CameraManager : MonoBehaviour
             cinemachine.enabled = enabled;
         }
 
-        gameObject.transform.Find("CM vcam 1").SetActive(enabled);
+        gameObject.transform.Find("CM vcam 1").gameObject.SetActive(enabled);
 
         CinemachineState = enabled;
         Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");

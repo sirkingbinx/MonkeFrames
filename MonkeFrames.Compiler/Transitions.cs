@@ -1,3 +1,4 @@
+using System;
 using MonkeFrames.Compiler.Models;
 using UnityEngine;
 
@@ -34,6 +35,6 @@ public static class Transitions
             sineValues[i] = Math.Sin(progress * 2 * Math.PI);
         }
 
-        return difference * sineValues[currentPosition];
+        return (float)(difference * sineValues[currentPosition]);
     }
 }

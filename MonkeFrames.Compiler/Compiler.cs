@@ -6,6 +6,7 @@ using MonkeFrames.Compiler.Converters;
 using UnityEngine;
 
 using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
+using System.Diagnostics;
 
 namespace MonkeFrames.Compiler;
 
@@ -25,21 +26,21 @@ public static class Compiler
             } catch { }
         };
 
-        status($"Setting up")
-        float projectDuration = 0f;
+        status($"Setting up");
+        double projectDuration = 0f;
 
         foreach (Keyframe keyframe in project.Keyframes) {
             projectDuration += Math.Ceiling(keyframe.Transition.Duration);
         }
         
-        int projectFrames = Math.Ceiling(projectDuration * project.FPS);
+        int projectFrames = (int)Math.Ceiling(projectDuration * project.FPS);
         Keyframe[] compiledKeyframes = new Keyframe[projectFrames];
 
         int filledKeyframes = 0;
 
         foreach (Keyframe keyframe in project.Keyframes)
         {
-            if (project.Keyframes.Count = (project.Keyframes.IndexOf(keyframe) + 1)) {
+            if (project.Keyframes.Count == (project.Keyframes.IndexOf(keyframe) + 1)) {
                 compiledKeyframes[filledKeyframes] = new Keyframe {
                     Position = keyframe.Position,
                     Rotation = keyframe.Rotation,
@@ -49,13 +50,13 @@ public static class Compiler
             }
 
             Keyframe nextKeyframe = project.Keyframes[(project.Keyframes.IndexOf(keyframe) + 1)];
-            int framesToFill = Math.Floor(keyframe.Duration * project.FPS);
+            int framesToFill = (int)Math.Floor(keyframe.Transition.Duration * project.FPS);
 
             for (int i = filledKeyframes; i < framesToFill; i++)
             {
-                status($"Generating frame {i}")
+                status($"Generating frame {i}");
 
-                Func<float, float, int, int> getNowAction;
+                Func<float, float, int, int, float> getNowAction;
 
                 if (keyframe.Transition.Effect == TransitionEffect.Cut)
                     getNowAction = Transitions.Cut;
@@ -76,7 +77,7 @@ public static class Compiler
             
                 Keyframe newKeyframe = new Keyframe {
                     Position = new Vector3(posXStep, posYStep, posZStep),
-                    Rotation = Quaternion.Euler(rotXStep, rotYStep, rotZStep),
+                    Rotation = new Vector3(rotXStep, rotYStep, rotZStep),
                     FieldOfView = fovStep,
                     Compiled = true
                 };
@@ -87,12 +88,12 @@ public static class Compiler
             filledKeyframes += framesToFill;
         }
 
-        status("Saving changes")
+        status("Saving changes");
         project.CompiledKeyframes = new List<Keyframe>(compiledKeyframes);
 
         timer.Stop();
 
-        status($"Compiled project {project.Name} in {ts.TotalMinutes}m {ts.Seconds:D2}s")
+        status($"Compiled project {project.Name} in {timer.Elapsed.TotalMinutes}m {timer.Elapsed.Seconds:D2}s");
         return project.CompiledKeyframes;
     }
 
