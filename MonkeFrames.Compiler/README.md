@@ -3,6 +3,9 @@ MonkeFrames.Compiler is the backbone to MonkeFrames, responsible for the keyfram
 
 MonkeFrames.Compiler can be embedded into any program for free, which makes it a pretty good backbone for other camera mods looking to add keyframe-based camera movement without a large amount of hassle.
 
+## Installation
+You can pick up a copy of the compiler library from the [releases](https://github.com/sirkingbinx/MonkeFrames/releases/latest) page and ship it with your mod however you'd like.
+
 ## Usage
 Create a new project for adding keyframes:
 ```cs
