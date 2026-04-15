@@ -123,4 +123,10 @@ public static class Compiler
 
         return project;
     }
+
+    public static string ProjectNameToFilename(string projectName)
+    {
+        TextInfo textInfo = CultureInfo.InvariantCulture.TextInfo;
+        return textInfo.ToTitleCase(input.ToLower()).Replace(" ", "") + ".frames";
+    }
 }

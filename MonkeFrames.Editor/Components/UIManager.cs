@@ -176,6 +176,8 @@ public class UIManager : MonoBehaviour
             {
                 GoToSelectedKeyframe();
                 menu = CurrentMenu.Closed;
+
+                CurrentStatus = $"Moved to keyframe";
             }
 
             if (GUI.Button(new Rect(start, 40, 300, 20), "To Monke", left))
@@ -183,10 +185,12 @@ public class UIManager : MonoBehaviour
                 CameraManager.Instance.Position = GorillaTagger.Instance.headCollider.transform.position;
                 CameraManager.Instance.Rotation = GorillaTagger.Instance.headCollider.transform.rotation;
                 menu = CurrentMenu.Closed;
+
+                CurrentStatus = $"Moved to gorilla";
             }
         }
 
-        if (menu == CurrentMenu.F4)
+        if (menu == CurrentMenu.F4 || menu == CurrentMenu.F4LoadMenu)
         {
             const float start = 350f;
 
@@ -197,20 +201,53 @@ public class UIManager : MonoBehaviour
                 KeyframeManager.Instance.CurrentProject.FPS = (KeyframeManager.Instance.CurrentProject.FPS == 30 ? 60 : 30);
             }
 
-            if (GUI.Button(new Rect(start, 60, 300, 20), $"Compile", left))
+            if (GUI.Button(new Rect(start, 60, 300, 20), $"Load Project", left))
+            {
+                menu = (menu == CurrentMenu.F4LoadMenu ? CurrentMenu.F4 : CurrentMenu.F4LoadMenu);
+            }
+
+            if (GUI.Button(new Rect(start, 80, 300, 20), $"Save Project", left))
+            {
+                SaveUtilities.Save();
+                CurrentStatus = $"Saved project {KeyframeManager.Instance.CurrentProject.Name}";
+            }
+
+            if (GUI.Button(new Rect(start, 100, 300, 20), $"Compile", left))
             {
                 Compiler.Build(KeyframeManager.Instance.CurrentProject, (status) => {
                     CurrentStatus = status;
                 });
             }
 
-            if (GUI.Button(new Rect(start, 80, 300, 20), $"Compile & Play", left))
+            if (GUI.Button(new Rect(start, 120, 300, 20), $"Compile & Play", left))
             {
                 Compiler.Build(KeyframeManager.Instance.CurrentProject, (status) => {
                     CurrentStatus = status;
                 });
 
                 CurrentStatus = "Not implemented";
+            }
+        }
+
+        if (CurrentMenu.F4LoadMenu)
+        {
+            float startX = 450f;
+            float startY = 60f;
+            
+            if (SaveUtilities.LoadableProjects.Count == 0) {
+                GUI.Button(new Rect(startX, startY, 300, 20), $"no projects to load (save one first)", left);
+            } else {
+                int i = startY;
+
+                foreach (string name in SaveUtilities.LoadableProjects)
+                {
+                    if (GUI.Button(new Rect(startX, i, 300, 20), name, left))
+                    {
+                        
+                    }
+
+                    i += 20;
+                }
             }
         }
 
@@ -305,7 +342,7 @@ public class UIManager : MonoBehaviour
                 GUI.Label(new Rect(x + 10, y + 55, 200, 20), "FOV: ");
                 CreateNumInputLabel(x + 50, y + 55, 'v', ref k.FieldOfView);
 
-                GUI.Label(new Rect(x + 10, WindowSize.y - 45, WindowSize.x, 20), $"guid: {k.GUID}");
+                GUI.Label(new Rect(x + 10, WindowSize.y - 45, WindowSize.x, 20), $"GUID: {k.GUID} - Duration: {k.Transition.Duration}s");
             } else
             {
                 GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
@@ -314,7 +351,7 @@ public class UIManager : MonoBehaviour
                 GUI.Label(new Rect(x, y + 10, WindowSize.x, 20), "Select a keyframe to view it's properties.", centeredStyle);
             }
 
-            GUI.Label(new Rect(x + 10, WindowSize.y - 25, WindowSize.x, 20), $"in project: {KeyframeManager.Instance.CurrentProject.Name} - keyframes: {KeyframeManager.Instance.Keyframes.Count}");
+            GUI.Label(new Rect(x + 10, WindowSize.y - 25, WindowSize.x, 20), $"Keyframes: {KeyframeManager.Instance.Keyframes.Count}");
             GUI.Label(new Rect(x + 10, WindowSize.y - 5, WindowSize.x, 20), $"MonkeFrames {Constants.Version} ({Constants.Loader})");
         }
     }
@@ -333,6 +370,7 @@ public class UIManager : MonoBehaviour
         F2,
         F3,
         F4,
+        F4LoadMenu,
         F5
     }
 }
