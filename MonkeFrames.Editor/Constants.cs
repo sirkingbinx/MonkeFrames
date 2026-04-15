@@ -9,7 +9,7 @@ public static class Constants
     public const string Version = "1.0";
     public const string Author = "bingus";
 
-    public static readonly Exporter Exporter = new Exporter(Guid, "MonkeFrames Keyframe Editor");
+    public static readonly Exporter Exporter = new Exporter(Guid, "MonkeFrames");
 
     public static string Loader = "";
 }

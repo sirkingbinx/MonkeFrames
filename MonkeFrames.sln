@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.4.11626.88 stable
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonkeFrames.Editor", "MonkeFrames.Core\MonkeFrames.Editor.csproj", "{00C4AF64-9837-47C3-841E-D0D1167430FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonkeFrames.Editor", "MonkeFrames.Editor\MonkeFrames.Editor.csproj", "{00C4AF64-9837-47C3-841E-D0D1167430FB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonkeFrames.Compiler", "MonkeFrames.Compiler\MonkeFrames.Compiler.csproj", "{79882752-8BEA-4C82-A942-848054C44783}"
 EndProject

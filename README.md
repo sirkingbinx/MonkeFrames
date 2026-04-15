@@ -16,10 +16,9 @@ Create a keyframe by pressing V. It's properties will show up on the MonkeFrames
 | Keybind       | Needs Selection | Action                                                                                      |
 | ------------- | --------------- | ------------------------------------------------------------------------------------------- |
 | `V`           | ❌             | Creates a keyframe at the current location.                                                 |
-| `B`           | ❌             | Creates a keyframe at the spectator camera's position, looking at the player's position.    |
 | `X`           | ✔️             | Replaces the selected keyframe with a new keyframe at the current location.                 |
 | `F`           | ✔️             | Teleports to the selected keyframe.                                                         |
-| `T`           | ❌              | Teleports to the player's current position.                                                 |
+| `T`           | ❌              | Create keyframe looking at the monke                                                 |
 
 ## For Developers
 You can embed the keyframe functionality of MonkeFrames into your own projects. See [MonkeFrames.Compiler](/MonkeFrames.Compiler).

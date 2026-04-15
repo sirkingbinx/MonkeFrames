@@ -6,8 +6,8 @@ using MonkeFrames.Editor.Utilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
-using static GorillaTelemetry;
 using Debug = UnityEngine.Debug;
+
 using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 
 namespace MonkeFrames.Editor.Components;
