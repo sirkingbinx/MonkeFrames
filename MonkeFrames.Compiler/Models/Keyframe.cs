@@ -18,6 +18,7 @@ public struct Keyframe
     public bool Compiled = false;
 
     // The keyframe's rotation converted into a Quaternion.
+    [JsonIgnore]
     public readonly Quaternion QuatRotation => Quaternion.Euler(Rotation);
 
     public static bool operator ==(Keyframe? left, Keyframe? right)

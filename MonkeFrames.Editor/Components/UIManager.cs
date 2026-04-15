@@ -1,7 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using MonkeFrames.Compiler;
+using MonkeFrames.Compiler.Models;
 using MonkeFrames.Editor.Utilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -28,6 +29,7 @@ public class UIManager : MonoBehaviour
     private Vector2 keyframesScrollPosition;
 
     public int SelectedKeyframeIndex = -1;
+    public bool AllowKeybinds = true;
 
     public Texture2D titlebarIcon;
 
@@ -52,7 +54,7 @@ public class UIManager : MonoBehaviour
 
     void GoToSelectedKeyframe()
     {
-        Keyframe k = KeyframeManager.Instance.Keyframes[SelectedKeyframeIndex];
+        Keyframe k = KeyframeManager.Instance.Project.Keyframes[SelectedKeyframeIndex];
         CameraManager.Instance.Position = k.Position;
         CameraManager.Instance.Rotation = k.QuatRotation;
         CameraManager.Instance.FieldOfView = k.FieldOfView;
@@ -60,7 +62,7 @@ public class UIManager : MonoBehaviour
 
     public void LateUpdate()
     {
-        if (ShowingEditorUI) {
+        if (ShowingUI && AllowKeybinds) {
             if (Keyboard.current.vKey.wasPressedThisFrame)
                 KeyframeManager.Instance.CreateKeyframe();
 
@@ -194,11 +196,14 @@ public class UIManager : MonoBehaviour
         {
             const float start = 350f;
 
-            KeyframeManager.Instance.CurrentProject.Name = GUI.TextField(new Rect(start, 20, 300, 20), KeyframeManager.Instance.CurrentProject.Name);
+            GUI.SetNextControlName("projectName");
+            KeyframeManager.Instance.Project.Name = GUI.TextField(new Rect(start, 20, 300, 20), KeyframeManager.Instance.Project.Name);
 
-            if (GUI.Button(new Rect(start, 40, 300, 20), $"FPS: {KeyframeManager.Instance.CurrentProject.FPS}", left))
+            AllowKeybinds = GUI.GetNameOfFocusedControl() != "projectName";
+
+            if (GUI.Button(new Rect(start, 40, 300, 20), $"FPS: {KeyframeManager.Instance.Project.FPS}", left))
             {
-                KeyframeManager.Instance.CurrentProject.FPS = (KeyframeManager.Instance.CurrentProject.FPS == 30 ? 60 : 30);
+                KeyframeManager.Instance.Project.FPS = (KeyframeManager.Instance.Project.FPS == 30 ? 60 : 30);
             }
 
             if (GUI.Button(new Rect(start, 60, 300, 20), $"Load Project", left))
@@ -209,19 +214,19 @@ public class UIManager : MonoBehaviour
             if (GUI.Button(new Rect(start, 80, 300, 20), $"Save Project", left))
             {
                 SaveUtilities.Save();
-                CurrentStatus = $"Saved project {KeyframeManager.Instance.CurrentProject.Name}";
+                CurrentStatus = $"Saved project {KeyframeManager.Instance.Project.Name}";
             }
 
             if (GUI.Button(new Rect(start, 100, 300, 20), $"Compile", left))
             {
-                Compiler.Compiler.Build(KeyframeManager.Instance.CurrentProject, (status) => {
+                Compiler.Compiler.Build(KeyframeManager.Instance.Project, (status) => {
                     CurrentStatus = status;
                 });
             }
 
             if (GUI.Button(new Rect(start, 120, 300, 20), $"Compile & Play", left))
             {
-                Compiler.Compiler.Build(KeyframeManager.Instance.CurrentProject, (status) => {
+                Compiler.Compiler.Build(KeyframeManager.Instance.Project, (status) => {
                     CurrentStatus = status;
                 });
 
@@ -229,21 +234,25 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        if (CurrentMenu.F4LoadMenu)
+        if (menu == CurrentMenu.F4LoadMenu)
         {
-            float startX = 450f;
+            float startX = 650f;
             float startY = 60f;
             
             if (SaveUtilities.LoadableProjects.Count == 0) {
                 GUI.Button(new Rect(startX, startY, 300, 20), $"no projects to load (save one first)", left);
             } else {
-                int i = startY;
+                float i = startY;
 
-                foreach (string name in SaveUtilities.LoadableProjects)
+                foreach (KeyValuePair<string, Project> set in SaveUtilities.LoadableProjects)
                 {
-                    if (GUI.Button(new Rect(startX, i, 300, 20), name, left))
+                    if (GUI.Button(new Rect(startX, i, 300, 20), set.Key, left))
                     {
-                        
+                        SaveUtilities.Save();
+                        KeyframeManager.Instance.Project = set.Value;
+                        KeyframeManager.Instance.RefreshOrbs();
+                        CurrentStatus = $"Opened project {KeyframeManager.Instance.Project.Name}";
+                        menu = CurrentMenu.Closed;
                     }
 
                     i += 20;
@@ -305,9 +314,9 @@ public class UIManager : MonoBehaviour
 
             keyframesScrollPosition = GUILayout.BeginScrollView(keyframesScrollPosition, GUILayout.Width(WindowSize.x - 20), GUILayout.Height(300));
 
-            for (int i = 0; i < KeyframeManager.Instance.Keyframes.Count; i++)
+            for (int i = 0; i < KeyframeManager.Instance.Project.Keyframes.Count; i++)
             {
-                Keyframe k = KeyframeManager.Instance.Keyframes[i];
+                Keyframe k = KeyframeManager.Instance.Project.Keyframes[i];
 
                 string displayString = $"Keyframe {i + 1} p:{UnityUtilities.Vector3ToString(k.Position)}, r:{UnityUtilities.Vector3ToString(k.Rotation)}";
                 bool selectionStart = GUILayout.Toggle(SelectedKeyframeIndex == i, displayString);
@@ -324,7 +333,7 @@ public class UIManager : MonoBehaviour
 
             if (SelectedKeyframeIndex != -1)
             {
-                Keyframe k = KeyframeManager.Instance.Keyframes[SelectedKeyframeIndex];
+                Keyframe k = KeyframeManager.Instance.Project.Keyframes[SelectedKeyframeIndex];
 
                 // Position
                 GUI.Label(new Rect(x + 10, y, 200, 20), "Position: ");
@@ -351,7 +360,7 @@ public class UIManager : MonoBehaviour
                 GUI.Label(new Rect(x, y + 10, WindowSize.x, 20), "Select a keyframe to view it's properties.", centeredStyle);
             }
 
-            GUI.Label(new Rect(x + 10, WindowSize.y - 25, WindowSize.x, 20), $"Keyframes: {KeyframeManager.Instance.Keyframes.Count}");
+            GUI.Label(new Rect(x + 10, WindowSize.y - 25, WindowSize.x, 20), $"Keyframes: {KeyframeManager.Instance.Project.Keyframes.Count}");
             GUI.Label(new Rect(x + 10, WindowSize.y - 5, WindowSize.x, 20), $"MonkeFrames {Constants.Version} ({Constants.Loader})");
         }
     }

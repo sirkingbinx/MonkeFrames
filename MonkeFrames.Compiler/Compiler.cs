@@ -7,6 +7,7 @@ using UnityEngine;
 
 using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace MonkeFrames.Compiler;
 
@@ -128,6 +129,6 @@ public static class Compiler
     public static string ProjectNameToFilename(string projectName)
     {
         TextInfo textInfo = CultureInfo.InvariantCulture.TextInfo;
-        return textInfo.ToTitleCase(input.ToLower()).Replace(" ", "") + ".frames";
+        return textInfo.ToTitleCase(projectName.ToLower()).Replace(" ", "") + ".frames";
     }
 }

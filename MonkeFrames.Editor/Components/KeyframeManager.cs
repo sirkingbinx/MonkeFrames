@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using GorillaLocomotion;
+using System.Linq;
 using MonkeFrames.Compiler.Models;
 using MonkeFrames.Editor.Utilities;
 using UnityEngine;
@@ -12,16 +12,38 @@ namespace MonkeFrames.Editor.Components;
 public class KeyframeManager : MonoBehaviour
 {
     public static KeyframeManager Instance;
+    public Project Project;
 
-    public List<Keyframe> Keyframes = [];
-    public Project CurrentProject;
+    public Dictionary<Keyframe, GameObject> Objects = new Dictionary<Keyframe, GameObject>();
+
+    public void CreateOrb(Keyframe keyframe)
+    {
+        GameObject mainOrb = new GameObject($"Keyframe Visual {keyframe.GUID}");
+
+        mainOrb.transform.position = keyframe.Position;
+        mainOrb.transform.rotation = keyframe.QuatRotation;
+
+        LineRenderer line = mainOrb.AddComponent<LineRenderer>();
+
+        line.startColor = Color.blue;
+        line.endColor = Color.blue;
+        line.startWidth = 0.05f;
+        line.endWidth = 0.15f;
+
+        line.material.shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+
+        line.SetPosition(0, mainOrb.transform.position);
+        line.SetPosition(1, mainOrb.transform.position + (mainOrb.transform.forward * 0.25f));
+
+        Objects.TryAdd(keyframe, mainOrb);
+    }
 
     public void Start()
     {
         Instance = this;
         Debug.Log("[MonkeFrames::KeyframeManager] creating new project \"new project\"");
 
-        CurrentProject = new Project("new project", Constants.Exporter);
+        Project = new Project("new project", Constants.Exporter);
 
         Debug.Log("[MonkeFrames::KeyframeManager] Keyframe manager is running");
     }
@@ -42,27 +64,38 @@ public class KeyframeManager : MonoBehaviour
 
         if (replaceKeyframeIdx != -1)
         {
-            Keyframes.RemoveAt(replaceKeyframeIdx);
-            Keyframes.Insert(replaceKeyframeIdx, k);
+            Project.Keyframes.RemoveAt(replaceKeyframeIdx);
+            Project.Keyframes.Insert(replaceKeyframeIdx, k);
         } else
         {
-            Keyframes.Add(k);
-            UIManager.Instance.SelectedKeyframeIndex = Keyframes.IndexOf(k);
+            Project.Keyframes.Add(k);
+            UIManager.Instance.SelectedKeyframeIndex = Project.Keyframes.IndexOf(k);
         }
 
-        CurrentProject.Keyframes = Keyframes;
+        CreateOrb(k);
         
-        string posStr = $"Position:{UnityUtilities.Vector3ToString(k.Position)}";
-        string rotStr = $"Rotation:{UnityUtilities.Vector3ToString(k.Rotation)}";
+        string posStr = $"Position: {UnityUtilities.Vector3ToString(k.Position)}";
+        string rotStr = $"Rotation: {UnityUtilities.Vector3ToString(k.Rotation)}";
 
-        UIManager.Instance.CurrentStatus = $"Created keyframe {Keyframes.IndexOf(k)} at {posStr} - {rotStr} - FOV:{k.FieldOfView}";
+        UIManager.Instance.CurrentStatus = $"Created keyframe {Project.Keyframes.IndexOf(k)} with properties {{ {posStr}, {rotStr}, FOV: {k.FieldOfView} }} ";
 
         return k;
     }
 
     public void DeleteKeyframe(int index)
     {
-        try { Keyframes.RemoveAt(index); } catch { };
+        try {
+            Objects[Project.Keyframes[index]].Destroy();
+            Objects.Remove(Project.Keyframes[index]);
+            Project.Keyframes.RemoveAt(index);
+        } catch { };
         UIManager.Instance.SelectedKeyframeIndex = -1;
+    }
+
+    public void RefreshOrbs()
+    {
+        Objects.Values.ForEach(g => g.Destroy());
+        Objects.Clear();
+        Project.Keyframes.ForEach(CreateOrb);
     }
 }

@@ -3,16 +3,12 @@ namespace MonkeFrames.Compiler.Models;
 public struct Transition
 {
     // Type of transition to apply
-    public TransitionEffect Effect;
+    public TransitionEffect Effect = TransitionEffect.Linear;
 
     // The amount of time it should take for the transition to apply
-    public float Duration;
+    public float Duration = 5f;
 
-    public Transition()
-    {
-        Effect = TransitionEffect.Unset;
-        Duration = -1f;
-    }
+    public Transition() { }
 
     public static Transition Linear
     {

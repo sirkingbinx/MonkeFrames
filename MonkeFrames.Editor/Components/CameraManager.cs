@@ -45,31 +45,34 @@ public class CameraManager : MonoBehaviour
         gameObject.transform.position = Position;
         gameObject.transform.rotation = Rotation;
 
-        float speed = 0.05f;
+        if (UIManager.Instance.AllowKeybinds)
+        {
+            float speed = 0.05f;
 
-        if (Keyboard.current.shiftKey.isPressed)
-            speed = 0.25f;
-        if (Keyboard.current.ctrlKey.isPressed)
-            speed = 0.005f;
+            if (Keyboard.current.shiftKey.isPressed)
+                speed = 0.25f;
+            if (Keyboard.current.ctrlKey.isPressed)
+                speed = 0.005f;
 
-        // Check keybinds
-        if (Keyboard.current.wKey.isPressed)
-            Position += transform.forward * speed;
+            // Check keybinds
+            if (Keyboard.current.wKey.isPressed)
+                Position += transform.forward * speed;
 
-        if (Keyboard.current.sKey.isPressed)
-            Position -= transform.forward * speed;
+            if (Keyboard.current.sKey.isPressed)
+                Position -= transform.forward * speed;
 
-        if (Keyboard.current.dKey.isPressed)
-            Position += transform.right * speed;
+            if (Keyboard.current.dKey.isPressed)
+                Position += transform.right * speed;
 
-        if (Keyboard.current.aKey.isPressed)
-            Position -= transform.right * speed;
+            if (Keyboard.current.aKey.isPressed)
+                Position -= transform.right * speed;
 
-        if (Keyboard.current.eKey.isPressed)
-            Position += transform.up * speed;
+            if (Keyboard.current.eKey.isPressed)
+                Position += transform.up * speed;
 
-        if (Keyboard.current.qKey.isPressed)
-            Position -= transform.up * speed;
+            if (Keyboard.current.qKey.isPressed)
+                Position -= transform.up * speed;
+        }
 
         FieldOfView += Mouse.current.scroll.ReadValue().y * 5; // Increment by 5
         FieldOfView = NumberUtilities.Bounds(FieldOfView, 15, 150);
@@ -94,8 +97,6 @@ public class CameraManager : MonoBehaviour
         {
             cinemachine.enabled = enabled;
         }
-
-        gameObject.transform.Find("CM vcam 1").gameObject.SetActive(enabled);
 
         CinemachineState = enabled;
         Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
