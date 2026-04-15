@@ -12,13 +12,13 @@ Create a keyframe by pressing V. It's properties will show up on the MonkeFrames
    2. Extract the zip file into `BepInEx/plugins/` (BepInEx) or `Mods` (MelonLoader)
 
 ## Usage
-### Keyframe
-| Keybind       | Needs Selection | Action                                                                                      |
-| ------------- | --------------- | ------------------------------------------------------------------------------------------- |
-| `V`           | ❌             | Creates a keyframe at the current location.                                                 |
-| `X`           | ✔️             | Replaces the selected keyframe with a new keyframe at the current location.                 |
-| `F`           | ✔️             | Teleports to the selected keyframe.                                                         |
-| `T`           | ❌              | Create keyframe looking at the monke                                                 |
+Press `V` to create a new keyframe. You can press `T` to create a new keyframe looking at the monke, `X` to replace the current keyframe with a new one, or click `Keyframe` > `Delete Keyframe` on the topbar.
+
+Once a keyframe is created, you can see it's values with the Keyframe Editor. Press `View` > `Keyframe Editor` to view and select every keyframe in your project.
+
+Once you are done with editing, you can compile your project (turn those keyframes into movement) with `Project` > `Compile`, then press `Project > Play`. Press Space to exit the player and return to MonkeFrames.
+
+You can save your project with `Project > Save`, then reopen it by selecting `Project > Open` and choosing your project. All projects are saved in a special folder you can access by pressing `Win` + `R`, and then entering `%USERFOLDER%/AppData/LocalLow/Another Axiom/Gorilla Tag/MonkeFrames/projects`.
 
 ## For Developers
 You can embed the keyframe functionality of MonkeFrames into your own projects. See [MonkeFrames.Compiler](/MonkeFrames.Compiler).
