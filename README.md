@@ -8,8 +8,8 @@ Create a keyframe by pressing V. It's properties will show up on the MonkeFrames
 > [!NOTE]
 > Upon release, MonkeFrames will be avaliable on [MonkeModManager](https://github.com/sirkingbinx/MonkeModManager/releases/latest)
 
-   1. Download `MonkeFrames.dll` from the [releases](https://github.com/sirkingbinx/MonkeFrames/releases/latest) page
-   2. Copy the file into `BepInEx/plugins/` (BepInEx) or `Mods` (MelonLoader)
+   1. Download `MonkeFrames.zip` from the [releases](https://github.com/sirkingbinx/MonkeFrames/releases/latest) page
+   2. Extract the zip file into `BepInEx/plugins/` (BepInEx) or `Mods` (MelonLoader)
 
 ## Usage
 ### Keyframe
