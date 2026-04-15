@@ -8,6 +8,7 @@ using UnityEngine;
 using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 
 namespace MonkeFrames.Compiler;
 
@@ -35,27 +36,36 @@ public static class Compiler
         }
         
         int projectFrames = (int)Math.Ceiling(projectDuration * project.FPS);
-        Keyframe[] compiledKeyframes = new Keyframe[projectFrames];
+        List<Keyframe> compiledKeyframes = [];
 
         int filledKeyframes = 0;
 
-        foreach (Keyframe keyframe in project.Keyframes)
+        for (int i = 0; i < project.Keyframes.Count; i++)
         {
-            if (project.Keyframes.Count == (project.Keyframes.IndexOf(keyframe) + 1)) {
-                compiledKeyframes[filledKeyframes] = new Keyframe {
-                    Position = keyframe.Position,
-                    Rotation = keyframe.Rotation,
-                    FieldOfView = keyframe.FieldOfView,
-                    Compiled = true
-                };
-            }
-
-            Keyframe nextKeyframe = project.Keyframes[(project.Keyframes.IndexOf(keyframe) + 1)];
+            Keyframe keyframe = project.Keyframes[i];
             int framesToFill = (int)Math.Floor(keyframe.Transition.Duration * project.FPS);
 
-            for (int i = filledKeyframes; i < framesToFill; i++)
+            if (i == project.Keyframes.Count - 1)
             {
-                status($"Generating frame {i}");
+                foreach (int j in Enumerable.Range(filledKeyframes, filledKeyframes + framesToFill))
+                {
+                    Keyframe newKeyframe = new Keyframe
+                    {
+                        Position = keyframe.Position,
+                        Rotation = keyframe.Rotation,
+                        FieldOfView = keyframe.FieldOfView,
+                        Compiled = true
+                    };
+
+                    compiledKeyframes[j] = newKeyframe;
+                }
+            }
+
+            Keyframe nextKeyframe = project.Keyframes[i + 1];
+
+            for (int j = filledKeyframes; j < framesToFill; j++)
+            {
+                status($"Generating frame {j}");
 
                 Func<float, float, int, int, float> getNowAction;
 
@@ -66,31 +76,32 @@ public static class Compiler
                 else
                     getNowAction = Transitions.Linear;
 
-                float posXStep = getNowAction(keyframe.Position.x, nextKeyframe.Position.x, i - filledKeyframes, framesToFill);
-                float posYStep = getNowAction(keyframe.Position.y, nextKeyframe.Position.y, i - filledKeyframes, framesToFill);
-                float posZStep = getNowAction(keyframe.Position.z, nextKeyframe.Position.z, i - filledKeyframes, framesToFill);
-                
-                float rotXStep = getNowAction(keyframe.Rotation.x, nextKeyframe.Rotation.x, i - filledKeyframes, framesToFill);
-                float rotYStep = getNowAction(keyframe.Rotation.y, nextKeyframe.Rotation.y, i - filledKeyframes, framesToFill);
-                float rotZStep = getNowAction(keyframe.Position.z, nextKeyframe.Rotation.z, i - filledKeyframes, framesToFill);
-            
-                float fovStep = getNowAction(keyframe.FieldOfView, nextKeyframe.FieldOfView, i - filledKeyframes, framesToFill);
-            
-                Keyframe newKeyframe = new Keyframe {
+                float posXStep = getNowAction(keyframe.Position.x, nextKeyframe.Position.x, j - filledKeyframes, framesToFill);
+                float posYStep = getNowAction(keyframe.Position.y, nextKeyframe.Position.y, j - filledKeyframes, framesToFill);
+                float posZStep = getNowAction(keyframe.Position.z, nextKeyframe.Position.z, j - filledKeyframes, framesToFill);
+
+                float rotXStep = getNowAction(keyframe.Rotation.x, nextKeyframe.Rotation.x, j - filledKeyframes, framesToFill);
+                float rotYStep = getNowAction(keyframe.Rotation.y, nextKeyframe.Rotation.y, j - filledKeyframes, framesToFill);
+                float rotZStep = getNowAction(keyframe.Position.z, nextKeyframe.Rotation.z, j - filledKeyframes, framesToFill);
+
+                float fovStep = getNowAction(keyframe.FieldOfView, nextKeyframe.FieldOfView, j - filledKeyframes, framesToFill);
+
+                Keyframe newKeyframe = new Keyframe
+                {
                     Position = new Vector3(posXStep, posYStep, posZStep),
                     Rotation = new Vector3(rotXStep, rotYStep, rotZStep),
                     FieldOfView = fovStep,
                     Compiled = true
                 };
 
-                compiledKeyframes[i] = newKeyframe;
+                compiledKeyframes[j] = newKeyframe;
             }
 
             filledKeyframes += framesToFill;
         }
 
         status("Saving changes");
-        project.CompiledKeyframes = new List<Keyframe>(compiledKeyframes);
+        project.CompiledKeyframes = compiledKeyframes;
 
         timer.Stop();
 
