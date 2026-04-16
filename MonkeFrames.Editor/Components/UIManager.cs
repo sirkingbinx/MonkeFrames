@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using MonkeFrames.Compiler;
 using MonkeFrames.Compiler.Models;
 using MonkeFrames.Editor.Utilities;
 using UnityEngine;
@@ -20,8 +22,9 @@ public class UIManager : MonoBehaviour
     public string CurrentTask;
 
     public bool ShowingUI = true;
-    public bool ShowingEditorUI = true;
-    public bool ShowingJoinerUI = true;
+    public bool ShowingEditorUI = false;
+    public bool ShowingJoinerUI = false;
+    public bool ShowingCompilerUI = false;
 
     public Vector2 ScreenDimensions;
     public Vector2 KeyframeWindowSize = new(600, 550);
@@ -90,12 +93,15 @@ public class UIManager : MonoBehaviour
         if (CameraManager.Instance.CinemachineState)
             return false;
 
-        bool button;
+        bool button = false;
 
-        if (c == null)
-            button = GUI.Button(new Rect(x, 0, 100, 20), text);
-        else
-            button = GUI.Button(new Rect(x, 0, 150, 20), c);
+        if (ShowingUI)
+        {
+            if (c == null)
+                button = GUI.Button(new Rect(x, 0, 100, 20), text);
+            else
+                button = GUI.Button(new Rect(x, 0, 150, 20), c);
+        }
 
         return key.wasPressedThisFrame || button;
     }
@@ -168,6 +174,12 @@ public class UIManager : MonoBehaviour
                 ShowingJoinerUI = !ShowingJoinerUI;
                 menu = CurrentMenu.Closed;
             }
+
+            if (GUI.Button(new Rect(start, 60, 300, 20), "Compiler Output", left))
+            {
+                ShowingCompilerUI = !ShowingCompilerUI;
+                menu = CurrentMenu.Closed;
+            }
         }
 
         if (menu == CurrentMenu.F3)
@@ -185,10 +197,10 @@ public class UIManager : MonoBehaviour
             if (GUI.Button(new Rect(start, 40, 300, 20), "To Monke", left))
             {
                 Vector3 headPos = GorillaTagger.Instance.headCollider.transform.position;
-                Vector3 headRot = GorillaTagger.Instance.headCollider.transform.rotation;
+                Vector3 headRot = GorillaTagger.Instance.headCollider.transform.rotation.eulerAngles;
 
                 CameraManager.Instance.Position = headPos;
-                CameraManager.Instance.Rotation = headRot;
+                CameraManager.Instance.Rotation = Quaternion.Euler(headRot);
                 menu = CurrentMenu.Closed;
 
                 CurrentStatus = $"Teleported to Monke (Position: {headPos.ToCoordinateString()} Rotation: {headRot.ToCoordinateString()})";
@@ -236,7 +248,7 @@ public class UIManager : MonoBehaviour
                     CurrentStatus = status;
                 });
 
-                CurrentStatus = "Not implemented";
+                CameraManager.Instance.StartPlayback();
             }
         }
 
@@ -293,13 +305,39 @@ public class UIManager : MonoBehaviour
 
         ScreenDimensions = new Vector2(Screen.width, Screen.height);
 
-        // Status bar
-        GUI.Label(new Rect(10, ScreenDimensions.y - 30, ScreenDimensions.x - 20, 20), CurrentStatus);
-
         if (!ShowingUI)
             return;
 
-        if (ShowingEditorUI) {
+        // Status bar
+        GUI.Label(new Rect(10, ScreenDimensions.y - 30, ScreenDimensions.x - 20, 20), CurrentStatus);
+
+        if (ShowingCompilerUI)
+        {
+            float x = 10f;
+            float y = ScreenDimensions.y - 300;
+
+            GUI.Box(new Rect(x, y + 30, 300, 290), "");
+
+            // Titlebar
+            GUI.DrawTexture(new Rect(x + 10, y + 5, 35, 35), titlebarIcon);
+            GUI.Label(
+                new Rect(x + 60, y + 15, KeyframeWindowSize.x - 65, 29),
+                "Compiler Output (Debug)"
+            );
+
+            if (!KeyframeManager.Instance.Project.CompiledKeyframes.Any()) {
+                GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
+                centeredStyle.alignment = TextAnchor.MiddleCenter;
+
+                GUI.Label(new Rect(10, 40, 280, 20), "Compile the project first.", centeredStyle);
+            } else
+            {
+                GUI.Label(new Rect(10, 40, 280, 20), $"Frames: {KeyframeManager.Instance.Project.CompiledKeyframes.Count}");
+            }
+        }
+
+        if (ShowingEditorUI)
+        {
             float x = ScreenDimensions.x - KeyframeWindowSize.x - 20;
             float y = 20f;
     
@@ -315,7 +353,7 @@ public class UIManager : MonoBehaviour
             // Start keyframes list
             GUILayout.BeginArea(new Rect(x + 10, y + 40, KeyframeWindowSize.x - 20, 300));
 
-            keyframesScrollPosition = GUILayout.BeginScrollView(keyframesScrollPosition, GUILayout.Width(WindowSize.x - 20), GUILayout.Height(300));
+            keyframesScrollPosition = GUILayout.BeginScrollView(keyframesScrollPosition, GUILayout.Width(KeyframeWindowSize.x - 20), GUILayout.Height(300));
 
             for (int i = 0; i < KeyframeManager.Instance.Project.Keyframes.Count; i++)
             {
@@ -336,42 +374,49 @@ public class UIManager : MonoBehaviour
 
             if (SelectedKeyframeIndex != -1)
             {
-                Keyframe k = KeyframeManager.Instance.Project.Keyframes[SelectedKeyframeIndex];
+                Keyframe k = KeyframeManager.Instance.Project.Keyframes.ElementAt(SelectedKeyframeIndex);
 
                 // Position
                 GUI.Label(new Rect(x + 10, y, 200, 20), "Position: ");
-                CreateNumInputLabel(x + 70, y, 'X', ref k.Position.x);
-                CreateNumInputLabel(x + 245, y, 'Y', ref k.Position.y);
-                CreateNumInputLabel(x + 420, y, 'Z', ref k.Position.z);
+                float px = CreateNumInputLabel(x + 70, y, 'X', ref k.Position.x);
+                float py = CreateNumInputLabel(x + 245, y, 'Y', ref k.Position.y);
+                float pz = CreateNumInputLabel(x + 420, y, 'Z', ref k.Position.z);
 
                 // Rotation
                 GUI.Label(new Rect(x + 10, y + 30, 200, 20), "Rotation: ");
-                CreateNumInputLabel(x + 70, y + 30, 'X', ref k.Rotation.x);
-                CreateNumInputLabel(x + 245, y + 30, 'Y', ref k.Rotation.y);
-                CreateNumInputLabel(x + 420, y + 30, 'Z', ref k.Rotation.z);
+                float rx = CreateNumInputLabel(x + 70, y + 30, 'X', ref k.Rotation.x);
+                float ry = CreateNumInputLabel(x + 245, y + 30, 'Y', ref k.Rotation.y);
+                float rz = CreateNumInputLabel(x + 420, y + 30, 'Z', ref k.Rotation.z);
 
                 // FOV
-                GUI.Label(new Rect(x + 10, y + 55, 200, 20), "FOV: ");
-                CreateNumInputLabel(x + 50, y + 55, 'v', ref k.FieldOfView);
+                GUI.Label(new Rect(x + 10, y + 60, 200, 20), "FOV: ");
+                float fov = CreateNumInputLabel(x + 50, y + 60, 'v', ref k.FieldOfView);
+
+                k.Position.Set(px, py, pz);
+                k.Rotation.Set(rx, ry, rz);
+                k.FieldOfView = fov;
 
                 // Transition
-                GUI.Label(new Rect(x + 10, y + 80, 200, 20), "Transition Style:");
+                GUI.Label(new Rect(x + 10, y + 95, 200, 20), "Transition Style:");
 
-                bool nowLinear = GUI.Toggle(new Rect(x + 120, y + 80, 50, 20), k.Transition.Effect == TransitionEffect.Linear, "Linear");
-                bool nowSine = GUI.Toggle(new Rect(x + 170, y + 80, 50, 20), k.Transition.Effect == TransitionEffect.Sine, "Sine");
-                bool nowCut = GUI.Toggle(new Rect(x + 220, y + 80, 50, 20), k.Transition.Effect == TransitionEffect.Cut, "Cut");
+                bool nowLinear = GUI.Toggle(new Rect(x + 120, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Linear, "Linear");
+                bool nowSine = GUI.Toggle(new Rect(x + 180, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Sine, "Sine");
+                bool nowCut = GUI.Toggle(new Rect(x + 240, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Cut, "Cut / None");
                 
                 if (nowLinear)
                     k.Transition.Effect = TransitionEffect.Linear;
-                else if (nowSine)
+                if (nowSine)
                     k.Transition.Effect = TransitionEffect.Sine;
-                else if (nowCut)
+                if (nowCut)
                     k.Transition.Effect = TransitionEffect.Cut;
 
-                GUI.Label(new Rect(x + 10, y + 100, 200, 20), "Duration:");
-                k.Transition.Duration = GUI.HorizontalSlider(new Rect(x + 60, y + 100, 250, 20), k.Transition.Duration, 0f, 30f);
+                GUI.Label(new Rect(x + 10, y + 120, 200, 20), "Duration:");
+                k.Transition.Duration = GUI.HorizontalSlider(new Rect(x + 75, y + 125, 395, 20), k.Transition.Duration, 0.0f, 30.0f);
+                GUI.Label(new Rect(x + 475, y + 120, 25, 20), $"{k.Transition.Duration:F2}s");
 
-                GUI.Label(new Rect(x + 10, KeyframeWindowSize.y - 25, KeyframeWindowSize.x, 20), $"GUID: {k.GUID} - Duration: {k.Transition.Duration}s");
+                GUI.Label(new Rect(x + 10, KeyframeWindowSize.y - 25, KeyframeWindowSize.x, 20), $"GUID: {k.GUID} - Duration: {k.Transition.Duration:F2}s");
+
+                KeyframeManager.Instance.Project.Keyframes[SelectedKeyframeIndex] = k;
             } else
             {
                 GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
@@ -385,10 +430,15 @@ public class UIManager : MonoBehaviour
     }
 
     // Width: 180
-    private void CreateNumInputLabel(float x, float y, char axis, ref float field)
+    private float CreateNumInputLabel(float x, float y, char axis, ref float field)
     {
         GUI.Label(new Rect(x, y, 20, 20), $"{axis}: ");
-        GUI.TextField(new Rect(x + 20, y, 150, 20), field.ToString());
+        string newNum = GUI.TextField(new Rect(x + 20, y, 150, 20), field.ToString());
+
+        if (float.TryParse(newNum, out float newValue))
+            return newValue;
+           
+        return field;
     }
 
     private enum CurrentMenu

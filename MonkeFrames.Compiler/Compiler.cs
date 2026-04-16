@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using MonkeFrames.Compiler.Models;
-using MonkeFrames.Compiler.Converters;
-using UnityEngine;
-
-using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using Newtonsoft.Json;
+using MonkeFrames.Compiler.Models;
+using UnityEngine;
+
+using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 
 namespace MonkeFrames.Compiler;
 
@@ -30,28 +29,28 @@ public static class Compiler
         
         List<Keyframe> compiledKeyframes = [];
 
-        foreach (var (i, keyframe) in project.Keyframes.Index())
+        foreach (var (keyframe, i) in project.Keyframes.Select((value, i) => (value, i)))
         {
             status($"K{i}");
 
-            int frames = (int)Math.Ceiling(keyframe.Transition.Duration * FPS);
+            int frames = (int)Math.Ceiling(keyframe.Transition.Duration * project.FPS);
             
             for (int j = 0; j < frames; j++) {
-                status($"K{i} - Generating frame {compiledKeyframes.Count} ({FPS} FPS)");
+                status($"K{i} - Generating frame {compiledKeyframes.Count} ({project.FPS} FPS)");
 
                 if (i == project.Keyframes.Count - 1) {
-                    Keyframe compiledKeyframe = new Keyframe {
+                    Keyframe strippedKeyframe = new Keyframe {
                         Position = keyframe.Position,
                         Rotation = keyframe.Rotation,
                         FieldOfView = keyframe.FieldOfView,
                         Compiled = true
                     };
 
-                    compiledKeyframes.Add(compiledKeyframe);
+                    compiledKeyframes.Add(strippedKeyframe);
                     continue;
                 }
 
-                var transition = compiledKeyframe.Transition.Effect switch {
+                Func<float, float, int, int, bool, float> transition = keyframe.Transition.Effect switch {
                     TransitionEffect.Linear => Transitions.Linear,
                     TransitionEffect.Sine => Transitions.Sine,
                     TransitionEffect.Cut => Transitions.Cut,
@@ -60,15 +59,15 @@ public static class Compiler
 
                 Keyframe next = project.Keyframes[i + 1];
 
-                float posX = transition(keyframe.Position.x, next.Position.x, j, frames);
-                float posY = transition(keyframe.Position.y, next.Position.y, j, frames);
-                float posZ = transition(keyframe.Position.z, next.Position.z, j, frames);
+                float posX = transition(keyframe.Position.x, next.Position.x, j, frames, false);
+                float posY = transition(keyframe.Position.y, next.Position.y, j, frames, false);
+                float posZ = transition(keyframe.Position.z, next.Position.z, j, frames, false);
 
-                float rotX = transition(keyframe.Rotation.x, next.Rotation.x, j, frames);
-                float rotX = transition(keyframe.Rotation.y, next.Rotation.y, j, frames);
-                float rotX = transition(keyframe.Rotation.z, next.Rotation.z, j, frames);
+                float rotX = transition(keyframe.Rotation.x, next.Rotation.x, j, frames, true);
+                float rotY = transition(keyframe.Rotation.y, next.Rotation.y, j, frames, true);
+                float rotZ = transition(keyframe.Rotation.z, next.Rotation.z, j, frames, true);
 
-                float fov = transition(keyframe.FieldOfView, next.FieldOfView, j, frames);
+                float fov = transition(keyframe.FieldOfView, next.FieldOfView, j, frames, false);
 
                 Keyframe compiledKeyframe = new Keyframe {
                     Position = new Vector3(posX, posY, posZ),
@@ -85,7 +84,7 @@ public static class Compiler
 
         timer.Stop();
 
-        status($"Compiled project {project.Name} in {timer.Elapsed.TotalMinutes}m {timer.Elapsed.Seconds:D2}s");
+        status($"Compiled project {project.Name} in {Math.Floor(timer.Elapsed.TotalMinutes)}m {timer.Elapsed.Seconds:D2}s");
         return project.CompiledKeyframes;
     }
 

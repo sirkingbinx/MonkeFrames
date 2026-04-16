@@ -72,6 +72,8 @@ public class KeyframeManager : MonoBehaviour
         k.Position = new Vector3(MathF.Round(k.Position.x, 2), MathF.Round(k.Position.y, 2), MathF.Round(k.Position.z, 2));
         k.Rotation = new Vector3(MathF.Round(k.Rotation.x, 2), MathF.Round(k.Rotation.y, 2), MathF.Round(k.Rotation.z, 2));
 
+        k.Transition.Duration = 5f;
+
         if (replaceKeyframeIdx != -1)
         {
             Project.Keyframes.RemoveAt(replaceKeyframeIdx);

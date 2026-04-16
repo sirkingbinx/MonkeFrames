@@ -1,29 +1,27 @@
 using System;
-using MonkeFrames.Compiler.Models;
-using UnityEngine;
 
 namespace MonkeFrames.Compiler;
 
 public static class Transitions
 {
     // Line straight up/down
-    public static float Linear(float start, float end, int currentPosition, int incrementTimes)
+    public static float Linear(float start, float end, int currentPosition, int incrementTimes, bool isRotation)
     {
         float difference = end - start;
         float step = difference / incrementTimes;
-        float now = difference + (step * currentPosition);
+        float now = (step * currentPosition);
 
         return start + now;
     }
 
     // Stay in place until done
-    public static float Cut(float start, float end, int currentPosition, int incrementTimes)
+    public static float Cut(float start, float end, int currentPosition, int incrementTimes, bool isRotation)
     {
         return currentPosition != incrementTimes ? start : end;
     }
 
     // Movement determined by sine wave
-    public static float Sine(float start, float end, int currentPosition, int incrementTimes)
+    public static float Sine(float start, float end, int currentPosition, int incrementTimes, bool isRotation)
     {
         // maybe works? no idea
         

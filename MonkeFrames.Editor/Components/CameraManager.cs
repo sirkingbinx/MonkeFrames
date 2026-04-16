@@ -1,7 +1,10 @@
+using System.Collections;
 using MonkeFrames.Editor.Utilities;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 
 namespace MonkeFrames.Editor.Components;
 
@@ -14,6 +17,8 @@ public class CameraManager : MonoBehaviour
     public Vector3 Position;
     public Quaternion Rotation;
     public float FieldOfView = 70f;
+
+    public bool InPlayback = false;
 
     private void Start()
     {
@@ -51,7 +56,9 @@ public class CameraManager : MonoBehaviour
         gameObject.transform.position = Position;
         gameObject.transform.rotation = Rotation;
 
-        if (UIManager.Instance.AllowKeybinds)
+        Camera?.fieldOfView = FieldOfView;
+
+        if (UIManager.Instance.AllowKeybinds && !InPlayback)
         {
             float speed = 0.05f;
 
@@ -80,18 +87,22 @@ public class CameraManager : MonoBehaviour
                 Position -= transform.up * speed;
         }
 
-        FieldOfView += Mouse.current.scroll.ReadValue().y * 5; // Increment by 5
-        FieldOfView = NumberUtilities.Bounds(FieldOfView, 15, 150);
-
-        Cursor.lockState = Mouse.current.rightButton.isPressed ? CursorLockMode.Locked : CursorLockMode.None;
-
-        if (Mouse.current.rightButton.isPressed)
+        if (!InPlayback)
         {
-            mousePos += Mouse.current.delta.ReadValue() / 5f;
-            Rotation = Quaternion.Euler(-mousePos.y * 0.5f, mousePos.x * 0.5f, 0f);
+            FieldOfView += Mouse.current.scroll.ReadValue().y * 5; // Increment by 5
+            FieldOfView = NumberUtilities.Bounds(FieldOfView, 15, 150);
+
+            Cursor.lockState = Mouse.current.rightButton.isPressed ? CursorLockMode.Locked : CursorLockMode.None;
+
+            if (Mouse.current.rightButton.isPressed)
+            {
+                mousePos += Mouse.current.delta.ReadValue() / 5f;
+                Rotation = Quaternion.Euler(-mousePos.y * 0.5f, mousePos.x * 0.5f, 0f);
+            }
         }
 
-        Camera?.fieldOfView = FieldOfView;
+        if (InPlayback && Keyboard.current.spaceKey.wasPressedThisFrame)
+            StopPlayback();
     }
 
     Vector2 mousePos = new Vector2(0, 0);
@@ -106,5 +117,53 @@ public class CameraManager : MonoBehaviour
 
         CinemachineState = enabled;
         Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
+    }
+
+    // Playback shit
+    // Don't touch this its weird
+
+    int playbackPosition = 0;
+    int playbackEnding;
+
+    IEnumerator PlaybackCoroutine()
+    {
+        WaitForSeconds wait = new WaitForSeconds(1f / KeyframeManager.Instance.Project.FPS);
+
+        while (InPlayback)
+        {
+            if (playbackEnding == playbackEnding - 1)
+            {
+                InPlayback = false;
+                UIManager.Instance.ShowingUI = true;
+                StopCoroutine("PlaybackCoroutine");
+            }
+
+            Keyframe currentFrame = KeyframeManager.Instance.Project.CompiledKeyframes[playbackPosition];
+
+            Position = currentFrame.Position;
+            Rotation = currentFrame.QuatRotation;
+            FieldOfView = currentFrame.FieldOfView;
+
+            playbackPosition++;
+            yield return wait;
+        }
+    }
+
+    public void StartPlayback()
+    {
+        InPlayback = true;
+        UIManager.Instance.ShowingUI = false;
+        playbackPosition = 0;
+        playbackEnding = KeyframeManager.Instance.Project.CompiledKeyframes.Count;
+
+        StartCoroutine("PlaybackCoroutine");
+    }
+
+    public void StopPlayback()
+    {
+        InPlayback = false;
+        UIManager.Instance.ShowingUI = true;
+        playbackPosition = 0;
+        StopCoroutine("PlaybackCoroutine");
     }
 }
