@@ -42,7 +42,7 @@ public static class Compiler
 
         for (int i = 0; i < project.Keyframes.Count; i++)
         {
-            Keyframe keyframe = project.Keyframes[i];
+            Keyframe keyframe = project.Keyframes.ElementAt(i);
             int framesToFill = (int)Math.Floor(keyframe.Transition.Duration * project.FPS);
 
             if (i == project.Keyframes.Count - 1)
@@ -61,7 +61,7 @@ public static class Compiler
                 }
             }
 
-            Keyframe nextKeyframe = project.Keyframes[i + 1];
+            Keyframe nextKeyframe = project.Keyframes.ElementAt(i + 1);
 
             for (int j = filledKeyframes; j < framesToFill; j++)
             {

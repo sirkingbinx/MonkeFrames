@@ -91,10 +91,15 @@ public class KeyframeManager : MonoBehaviour
         UIManager.Instance.SelectedKeyframeIndex = -1;
     }
 
-    public void RefreshOrbs()
+    public void DeleteOrbs()
     {
         Objects.Values.ForEach(g => g.Destroy());
         Objects.Clear();
+    }
+
+    public void RefreshOrbs()
+    {
+        DeleteOrbs();
         Project.Keyframes.ForEach(CreateOrb);
     }
 }

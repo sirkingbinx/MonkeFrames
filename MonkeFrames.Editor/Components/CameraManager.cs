@@ -30,6 +30,12 @@ public class CameraManager : MonoBehaviour
     public void SetModEnabled(bool enabled)
     {
         SetCinemachineState(!enabled);
+
+        if (enabled)
+            KeyframeManager.Instance.RefreshOrbs();
+        else
+            KeyframeManager.Instance.DeleteOrbs();
+
         UIManager.Instance.ShowingUI = enabled;
     }
 

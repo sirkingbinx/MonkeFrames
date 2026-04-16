@@ -17,7 +17,8 @@ public static class Transitions
     }
 
     // Stay in place until done
-    public static float Cut(float start, float end, int currentPosition, int incrementTimes) {
+    public static float Cut(float start, float end, int currentPosition, int incrementTimes)
+    {
         return currentPosition != incrementTimes ? start : end;
     }
 

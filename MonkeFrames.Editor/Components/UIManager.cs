@@ -150,7 +150,7 @@ public class UIManager : MonoBehaviour
                 menu = CurrentMenu.Closed;
             }
 
-            GUI.Button(new Rect(0, 60, 300, 20), $"MonkeFrames v{Constants.Version} - {Constants.Loader}");
+            GUI.Button(new Rect(0, 60, 300, 20), $"MonkeFrames v{Constants.VersionID}");
         }
 
         if (menu == CurrentMenu.F2)
@@ -213,12 +213,14 @@ public class UIManager : MonoBehaviour
 
             if (GUI.Button(new Rect(start, 80, 300, 20), $"Save Project", left))
             {
+                menu = CurrentMenu.Closed;
                 SaveUtilities.Save();
                 CurrentStatus = $"Saved project {KeyframeManager.Instance.Project.Name}";
             }
 
             if (GUI.Button(new Rect(start, 100, 300, 20), $"Compile", left))
             {
+                menu = CurrentMenu.Closed;
                 Compiler.Compiler.Build(KeyframeManager.Instance.Project, (status) => {
                     CurrentStatus = status;
                 });
@@ -226,6 +228,7 @@ public class UIManager : MonoBehaviour
 
             if (GUI.Button(new Rect(start, 120, 300, 20), $"Compile & Play", left))
             {
+                menu = CurrentMenu.Closed;
                 Compiler.Compiler.Build(KeyframeManager.Instance.Project, (status) => {
                     CurrentStatus = status;
                 });

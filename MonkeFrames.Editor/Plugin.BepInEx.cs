@@ -2,7 +2,7 @@ using BepInEx;
 
 namespace MonkeFrames.Editor;
 
-[BepInPlugin(Constants.Guid, Constants.Name, Constants.Version + ".0")]
+[BepInPlugin(Constants.Guid, Constants.Name, Constants.Version)]
 public class PluginBepInEx : BaseUnityPlugin
 {
     private void Start()
