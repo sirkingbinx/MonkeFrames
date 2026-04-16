@@ -153,6 +153,7 @@ public class CameraManager : MonoBehaviour
     {
         InPlayback = true;
         UIManager.Instance.ShowingUI = false;
+        KeyframeManager.Instance.DeleteOrbs();
         playbackPosition = 0;
         playbackEnding = KeyframeManager.Instance.Project.CompiledKeyframes.Count;
 
@@ -163,6 +164,7 @@ public class CameraManager : MonoBehaviour
     {
         InPlayback = false;
         UIManager.Instance.ShowingUI = true;
+        KeyframeManager.Instance.RefreshOrbs();
         playbackPosition = 0;
         StopCoroutine("PlaybackCoroutine");
     }
