@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MonkeFrames.Compiler.Models;
 using MonkeFrames.Editor.Utilities;
 using UnityEngine;
@@ -45,6 +46,16 @@ public class KeyframeManager : MonoBehaviour
         Project = new Project("new project", Constants.Exporter);
 
         Debug.Log("[MonkeFrames::KeyframeManager] Keyframe manager is running");
+    }
+
+    public void LoadProject(Project p)
+    {
+        if (Project.Keyframes.Any())
+            SaveUtilities.Save();
+            
+        Project = p;
+        RefreshOrbs();
+        UIManager.Instance.CurrentStatus = $"Loaded project {p.Name} ({Compiler.Compiler.ProjectNameToFilename(p.Name)})";
     }
 
     public Keyframe CreateKeyframe(int replaceKeyframeIdx = -1, bool lookAtPlayer = false)

@@ -24,7 +24,7 @@ public class UIManager : MonoBehaviour
     public bool ShowingJoinerUI = true;
 
     public Vector2 ScreenDimensions;
-    public Vector2 WindowSize = new(600, 800);
+    public Vector2 KeyframeWindowSize = new(600, 550);
 
     private Vector2 keyframesScrollPosition;
 
@@ -101,7 +101,7 @@ public class UIManager : MonoBehaviour
     }
 
     GUIContent primaryButton;
-    CurrentMenu menu;
+    CurrentMenu menu = CurrentMenu.Closed;
     GUIStyle left;
 
     void MenuTo(CurrentMenu newMenu) => menu = (menu == newMenu ? CurrentMenu.Closed : newMenu);
@@ -150,7 +150,7 @@ public class UIManager : MonoBehaviour
                 menu = CurrentMenu.Closed;
             }
 
-            GUI.Button(new Rect(0, 60, 300, 20), $"MonkeFrames v{Constants.VersionID}");
+            GUI.Button(new Rect(0, 60, 300, 20), $"v{Constants.VersionID}");
         }
 
         if (menu == CurrentMenu.F2)
@@ -179,16 +179,19 @@ public class UIManager : MonoBehaviour
                 GoToSelectedKeyframe();
                 menu = CurrentMenu.Closed;
 
-                CurrentStatus = $"Moved to keyframe";
+                CurrentStatus = $"Moved to Keyframe";
             }
 
             if (GUI.Button(new Rect(start, 40, 300, 20), "To Monke", left))
             {
-                CameraManager.Instance.Position = GorillaTagger.Instance.headCollider.transform.position;
-                CameraManager.Instance.Rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+                Vector3 headPos = GorillaTagger.Instance.headCollider.transform.position;
+                Vector3 headRot = GorillaTagger.Instance.headCollider.transform.rotation;
+
+                CameraManager.Instance.Position = headPos;
+                CameraManager.Instance.Rotation = headRot;
                 menu = CurrentMenu.Closed;
 
-                CurrentStatus = $"Moved to gorilla";
+                CurrentStatus = $"Teleported to Monke (Position: {headPos.ToCoordinateString()} Rotation: {headRot.ToCoordinateString()})";
             }
         }
 
@@ -221,7 +224,7 @@ public class UIManager : MonoBehaviour
             if (GUI.Button(new Rect(start, 100, 300, 20), $"Compile", left))
             {
                 menu = CurrentMenu.Closed;
-                Compiler.Compiler.Build(KeyframeManager.Instance.Project, (status) => {
+                KeyframeManager.Instance.Project.Build((status) => {
                     CurrentStatus = status;
                 });
             }
@@ -229,7 +232,7 @@ public class UIManager : MonoBehaviour
             if (GUI.Button(new Rect(start, 120, 300, 20), $"Compile & Play", left))
             {
                 menu = CurrentMenu.Closed;
-                Compiler.Compiler.Build(KeyframeManager.Instance.Project, (status) => {
+                KeyframeManager.Instance.Project.Build((status) => {
                     CurrentStatus = status;
                 });
 
@@ -251,11 +254,8 @@ public class UIManager : MonoBehaviour
                 {
                     if (GUI.Button(new Rect(startX, i, 300, 20), set.Key, left))
                     {
-                        SaveUtilities.Save();
-                        KeyframeManager.Instance.Project = set.Value;
-                        KeyframeManager.Instance.RefreshOrbs();
-                        CurrentStatus = $"Opened project {KeyframeManager.Instance.Project.Name}";
                         menu = CurrentMenu.Closed;
+                        KeyframeManager.Instance.LoadProject(set.Value);
                     }
 
                     i += 20;
@@ -300,20 +300,20 @@ public class UIManager : MonoBehaviour
             return;
 
         if (ShowingEditorUI) {
-            float x = ScreenDimensions.x - WindowSize.x - 20;
+            float x = ScreenDimensions.x - KeyframeWindowSize.x - 20;
             float y = 20f;
     
-            GUI.Box(new Rect(x, y, WindowSize.x, WindowSize.y), "");
+            GUI.Box(new Rect(x, y, KeyframeWindowSize.x, KeyframeWindowSize.y), "");
 
             // Titlebar
             GUI.DrawTexture(new Rect(x + 10, y + 5, 40, 40), titlebarIcon);
             GUI.Label(
-                new Rect(x + 55, y + 15, WindowSize.x - 65, 29),
+                new Rect(x + 55, y + 15, KeyframeWindowSize.x - 65, 29),
                 "Keyframe Editor"
             );
 
             // Start keyframes list
-            GUILayout.BeginArea(new Rect(x + 10, y + 40, WindowSize.x - 20, 300));
+            GUILayout.BeginArea(new Rect(x + 10, y + 40, KeyframeWindowSize.x - 20, 300));
 
             keyframesScrollPosition = GUILayout.BeginScrollView(keyframesScrollPosition, GUILayout.Width(WindowSize.x - 20), GUILayout.Height(300));
 
@@ -354,17 +354,33 @@ public class UIManager : MonoBehaviour
                 GUI.Label(new Rect(x + 10, y + 55, 200, 20), "FOV: ");
                 CreateNumInputLabel(x + 50, y + 55, 'v', ref k.FieldOfView);
 
-                GUI.Label(new Rect(x + 10, WindowSize.y - 45, WindowSize.x, 20), $"GUID: {k.GUID} - Duration: {k.Transition.Duration}s");
+                // Transition
+                GUI.Label(new Rect(x + 10, y + 80, 200, 20), "Transition Style:");
+
+                bool nowLinear = GUI.Toggle(new Rect(x + 120, y + 80, 50, 20), k.Transition.Effect == TransitionEffect.Linear, "Linear");
+                bool nowSine = GUI.Toggle(new Rect(x + 170, y + 80, 50, 20), k.Transition.Effect == TransitionEffect.Sine, "Sine");
+                bool nowCut = GUI.Toggle(new Rect(x + 220, y + 80, 50, 20), k.Transition.Effect == TransitionEffect.Cut, "Cut");
+                
+                if (nowLinear)
+                    k.Transition.Effect = TransitionEffect.Linear;
+                else if (nowSine)
+                    k.Transition.Effect = TransitionEffect.Sine;
+                else if (nowCut)
+                    k.Transition.Effect = TransitionEffect.Cut;
+
+                GUI.Label(new Rect(x + 10, y + 100, 200, 20), "Duration:");
+                k.Transition.Duration = GUI.HorizontalSlider(new Rect(x + 60, y + 100, 250, 20), k.Transition.Duration, 0f, 30f);
+
+                GUI.Label(new Rect(x + 10, KeyframeWindowSize.y - 25, KeyframeWindowSize.x, 20), $"GUID: {k.GUID} - Duration: {k.Transition.Duration}s");
             } else
             {
                 GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
                 centeredStyle.alignment = TextAnchor.MiddleCenter;
 
-                GUI.Label(new Rect(x, y + 10, WindowSize.x, 20), "Select a keyframe to view it's properties.", centeredStyle);
+                GUI.Label(new Rect(x, y + 10, KeyframeWindowSize.x, 20), "Select a keyframe to view it's properties.", centeredStyle);
             }
 
-            GUI.Label(new Rect(x + 10, WindowSize.y - 25, WindowSize.x, 20), $"Keyframes: {KeyframeManager.Instance.Project.Keyframes.Count}");
-            GUI.Label(new Rect(x + 10, WindowSize.y - 5, WindowSize.x, 20), $"MonkeFrames {Constants.Version} ({Constants.Loader})");
+            GUI.Label(new Rect(x + 10, KeyframeWindowSize.y - 5, KeyframeWindowSize.x, 20), $"Keyframes: {KeyframeManager.Instance.Project.Keyframes.Count}");
         }
     }
 

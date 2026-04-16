@@ -56,7 +56,7 @@ public class Project
     /// <summary>
     /// Build the project. Shorthand for Compiler.Build(p)
     /// </summary>
-    public void Build() => Compiler.Build(this);
+    public void Build(Action<string> onStatusUpdate = null) => Compiler.Build(this, onStatusUpdate);
 
     /// <summary>
     /// Convert the project into savable JSON data. Shorthand for Compiler.ConvertToJSON(p)
