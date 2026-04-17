@@ -44,7 +44,7 @@ public class CameraManager : MonoBehaviour
         UIManager.Instance.ShowingUI = enabled;
     }
 
-    private void FixedUpdate()
+    private void LateUpdate()
     {
         if (CinemachineState)
             return; // Don't mess with camera while not managing the freecam

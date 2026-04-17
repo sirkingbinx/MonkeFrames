@@ -7,11 +7,16 @@ public static class Transitions
     // Line straight up/down
     public static float Linear(float start, float end, int currentPosition, int incrementTimes, bool isRotation)
     {
-        float difference = end - start;
-        float step = difference / incrementTimes;
-        float now = (step * currentPosition);
+        if (!isRotation)
+        {
+            float difference = end - start;
+            float step = difference / incrementTimes;
+            float now = (step * currentPosition);
 
-        return start + now;
+            return start + now;
+        }
+
+        return 0f;
     }
 
     // Stay in place until done
@@ -34,6 +39,6 @@ public static class Transitions
             sineValues[i] = Math.Sin(progress * 2 * Math.PI);
         }
 
-        return (float)(difference * sineValues[currentPosition]);
+        return start + (float)(difference * sineValues[currentPosition]);
     }
 }
