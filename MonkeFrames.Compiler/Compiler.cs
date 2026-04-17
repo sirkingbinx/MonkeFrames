@@ -8,14 +8,16 @@ using MonkeFrames.Compiler.Models;
 using UnityEngine;
 
 using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
+using System.Threading.Tasks;
 
 namespace MonkeFrames.Compiler;
 
 public static class Compiler
 {
-    public static List<Keyframe> Build(Project project, Action<string> onStatusUpdate = null)
+    public static async Task<CompilerDiagnostics> Build(Project project, Action<string> onStatusUpdate = null)
     {
-        Stopwatch timer = Stopwatch.StartNew(); // Project build time
+        Stopwatch timer = new Stopwatch(); // Project build time
+        timer.Start();
 
         Action<string> status = (text) =>
         {
@@ -84,8 +86,16 @@ public static class Compiler
 
         timer.Stop();
 
-        status($"Compiled project {project.Name} in {Math.Floor(timer.Elapsed.TotalMinutes)}m {timer.Elapsed.Seconds:D2}s");
-        return project.CompiledKeyframes;
+        CompilerDiagnostics diagnostics = new CompilerDiagnostics
+        {
+            BuildTime = timer.Elapsed,
+            BuiltFrames = compiledKeyframes.Count,
+            FramesPerSecond = project.FPS
+        };
+
+        status($"Compiled {project.Name} in {Math.Floor(timer.Elapsed.TotalMinutes)}m {timer.Elapsed.Seconds:D2}s");
+
+        return diagnostics;
     }
 
     /// <summary>

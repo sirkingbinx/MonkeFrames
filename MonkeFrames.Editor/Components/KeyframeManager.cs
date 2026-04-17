@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MonkeFrames.Compiler.Models;
 using MonkeFrames.Editor.Utilities;
 using UnityEngine;
@@ -57,6 +58,25 @@ public class KeyframeManager : MonoBehaviour
         RefreshOrbs();
         UIManager.Instance.CurrentStatus = $"Loaded project {p.Name} ({Compiler.Compiler.ProjectNameToFilename(p.Name)})";
     }
+
+    public void StartBuild()
+    {
+        Task.Run(async () => {
+            CompilerDiagnostics diagnostics = await Project.Build((text) => UIManager.Instance.CurrentStatus = text);
+            LatestResults = diagnostics;
+        });
+    }
+
+    public void StartBuildAndRun()
+    {
+        Task.Run(async () => {
+            CompilerDiagnostics diagnostics = await Project.Build((text) => UIManager.Instance.CurrentStatus = text);
+            LatestResults = diagnostics;
+            CameraManager.Instance.StartPlayback();
+        });
+    }
+
+    public CompilerDiagnostics? LatestResults = null;
 
     public Keyframe CreateKeyframe(int replaceKeyframeIdx = -1, bool lookAtPlayer = false)
     {

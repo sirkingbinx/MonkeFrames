@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour
 
     public string CurrentTask;
 
-    public bool ShowingUI = true;
+    public bool ShowingUI = false;
     public bool ShowingEditorUI = false;
     public bool ShowingJoinerUI = false;
     public bool ShowingCompilerUI = false;
@@ -74,6 +74,9 @@ public class UIManager : MonoBehaviour
 
             if (Keyboard.current.xKey.wasPressedThisFrame && SelectedKeyframeIndex != -1)
                 KeyframeManager.Instance.CreateKeyframe(replaceKeyframeIdx: SelectedKeyframeIndex);
+
+            if (Keyboard.current.deleteKey.wasPressedThisFrame && SelectedKeyframeIndex != -1)
+                KeyframeManager.Instance.DeleteKeyframe(SelectedKeyframeIndex);
 
             if (SelectedKeyframeIndex != -1 && Keyboard.current.fKey.wasPressedThisFrame)
             {
@@ -236,19 +239,13 @@ public class UIManager : MonoBehaviour
             if (GUI.Button(new Rect(start, 100, 300, 20), $"Compile", left))
             {
                 menu = CurrentMenu.Closed;
-                KeyframeManager.Instance.Project.Build((status) => {
-                    CurrentStatus = status;
-                });
+                KeyframeManager.Instance.StartBuild();
             }
 
             if (GUI.Button(new Rect(start, 120, 300, 20), $"Compile & Play", left))
             {
                 menu = CurrentMenu.Closed;
-                KeyframeManager.Instance.Project.Build((status) => {
-                    CurrentStatus = status;
-                });
-
-                CameraManager.Instance.StartPlayback();
+                KeyframeManager.Instance.StartBuildAndRun();
             }
         }
 
@@ -316,7 +313,7 @@ public class UIManager : MonoBehaviour
             float x = 10f;
             float y = ScreenDimensions.y - 300;
 
-            GUI.Box(new Rect(x, y + 30, 300, 290), "");
+            GUI.Box(new Rect(x, y, 300, 290), "");
 
             // Titlebar
             GUI.DrawTexture(new Rect(x + 10, y + 5, 35, 35), titlebarIcon);
@@ -325,14 +322,16 @@ public class UIManager : MonoBehaviour
                 "Compiler Output (Debug)"
             );
 
-            if (!KeyframeManager.Instance.Project.CompiledKeyframes.Any()) {
+            if (!KeyframeManager.Instance.LatestResults.HasValue) {
                 GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
                 centeredStyle.alignment = TextAnchor.MiddleCenter;
 
-                GUI.Label(new Rect(10, 40, 280, 20), "Compile the project first.", centeredStyle);
+                GUI.Label(new Rect(10, y + 50, 280, 20), "Compile the project first.", centeredStyle);
             } else
             {
-                GUI.Label(new Rect(10, 40, 280, 20), $"Frames: {KeyframeManager.Instance.Project.CompiledKeyframes.Count}");
+                GUI.Label(new Rect(10, y + 50, 280, 20), $"made Frames: {KeyframeManager.Instance.LatestResults.Value.BuiltFrames}");
+                GUI.Label(new Rect(10, y + 50, 280, 20), $"in     Time: {KeyframeManager.Instance.LatestResults.Value.BuildTime.ToReadableString()}");
+                GUI.Label(new Rect(10, y + 50, 280, 20), $"at      FPS: {KeyframeManager.Instance.LatestResults.Value.FramesPerSecond}");
             }
         }
 

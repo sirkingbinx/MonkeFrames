@@ -4,18 +4,13 @@ namespace MonkeFrames.Compiler;
 
 public static class Transitions
 {
-    private static (float, bool) difference(bool isRotation, float start, float end) {
-        float n = isRotation && (start - end > 0) ? (start - end) : (end - start);
-        return (n, start - end > 0);
-    }
-
     // Line straight up/down
     public static float Linear(float start, float end, int currentPosition, int incrementTimes, bool isRotation)
     {
-        var (difference, sub) = difference(isRotation, start, end);
+        var difference = end - start;
         float step = difference / incrementTimes;
         float now = (step * currentPosition);
-        return sub ? start - now : start + now;
+        return start + now;
     }
 
     // Stay in place until done
@@ -27,7 +22,7 @@ public static class Transitions
     // Movement determined by sine wave
     public static float Sine(float start, float end, int currentPosition, int incrementTimes, bool isRotation)
     {
-        var (difference, sub) = difference(isRotation, start, end);
+        var difference = end - start;
         double[] sineValues = new double[incrementTimes + 1];
 
         for (int i = 0; i <= incrementTimes; i++)
@@ -37,6 +32,6 @@ public static class Transitions
         }
 
         float now = (float)(difference * sineValues[currentPosition]);
-        return sub ? start - now : start + now;
+        return start + now;
     }
 }
