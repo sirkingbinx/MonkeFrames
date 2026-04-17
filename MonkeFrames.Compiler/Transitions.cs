@@ -14,6 +14,15 @@ public static class Transitions
             float now = (step * currentPosition);
 
             return start + now;
+        } else {
+            float difference = (start - end > 0) ? start - end : end - start;
+            float step = difference / incrementTimes;
+            float now = (step * currentPosition);
+
+            if (start - end > 0)
+                return start - now;
+            else
+                return start + now;
         }
 
         return 0f;
