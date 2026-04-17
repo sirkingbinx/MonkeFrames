@@ -4,28 +4,18 @@ namespace MonkeFrames.Compiler;
 
 public static class Transitions
 {
+    private static (float, bool) difference(bool isRotation, float start, float end) {
+        float n = isRotation && (start - end > 0) ? (start - end) : (end - start);
+        return (n, start - end > 0);
+    }
+
     // Line straight up/down
     public static float Linear(float start, float end, int currentPosition, int incrementTimes, bool isRotation)
     {
-        if (!isRotation)
-        {
-            float difference = end - start;
-            float step = difference / incrementTimes;
-            float now = (step * currentPosition);
-
-            return start + now;
-        } else {
-            float difference = (start - end > 0) ? start - end : end - start;
-            float step = difference / incrementTimes;
-            float now = (step * currentPosition);
-
-            if (start - end > 0)
-                return start - now;
-            else
-                return start + now;
-        }
-
-        return 0f;
+        var (difference, sub) = difference(isRotation, start, end);
+        float step = difference / incrementTimes;
+        float now = (step * currentPosition);
+        return sub ? start - now : start + now;
     }
 
     // Stay in place until done
@@ -37,9 +27,7 @@ public static class Transitions
     // Movement determined by sine wave
     public static float Sine(float start, float end, int currentPosition, int incrementTimes, bool isRotation)
     {
-        // maybe works? no idea
-        
-        float difference = end - start;
+        var (difference, sub) = difference(isRotation, start, end);
         double[] sineValues = new double[incrementTimes + 1];
 
         for (int i = 0; i <= incrementTimes; i++)
@@ -48,6 +36,7 @@ public static class Transitions
             sineValues[i] = Math.Sin(progress * 2 * Math.PI);
         }
 
-        return start + (float)(difference * sineValues[currentPosition]);
+        float now = (float)(difference * sineValues[currentPosition]);
+        return sub ? start - now : start + now;
     }
 }
