@@ -4,7 +4,7 @@ using System;
 
 namespace MonkeFrames.Compiler.Converters;
 
-public class Vector3Converter : JsonConverter<Vector3>
+internal class Vector3Converter : JsonConverter<Vector3>
 {
     public override void WriteJson(JsonWriter writer, Vector3 value, JsonSerializer serializer)
     {

@@ -25,6 +25,8 @@ public class CameraManager : MonoBehaviour
         Position = gameObject.transform.position;
         Rotation = gameObject.transform.rotation;
 
+        SetCinemachineState(false);
+
         Instance = this;
 
         Debug.Log("[MonkeFrames::CameraManager] All camera-based stuff should be set up");

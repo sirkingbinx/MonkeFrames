@@ -61,22 +61,16 @@ public class KeyframeManager : MonoBehaviour
 
     public void StartBuild()
     {
-        Task.Run(async () => {
-            CompilerDiagnostics diagnostics = await Project.Build((text) => UIManager.Instance.CurrentStatus = text);
-            LatestResults = diagnostics;
-        });
+        Task.Run(async () => await Project.Build((text) => UIManager.Instance.CurrentStatus = text));
     }
 
     public void StartBuildAndRun()
     {
         Task.Run(async () => {
-            CompilerDiagnostics diagnostics = await Project.Build((text) => UIManager.Instance.CurrentStatus = text);
-            LatestResults = diagnostics;
+            await Project.Build((text) => UIManager.Instance.CurrentStatus = text);
             CameraManager.Instance.StartPlayback();
         });
     }
-
-    public CompilerDiagnostics? LatestResults = null;
 
     public Keyframe CreateKeyframe(int replaceKeyframeIdx = -1, bool lookAtPlayer = false)
     {

@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace MonkeFrames.Compiler.Models;
 
+/// <summary>
+/// Projects hold metadata for an animation.
+/// </summary>
 public class Project
 {
     /// <summary>
@@ -33,10 +36,10 @@ public class Project
     public int FPS {
         get => field;
         set {
-            if (value is 30 or 60)
+            if (value is 30 or 60 or 120)
                 field = value;
             else
-                throw new ArgumentException("FPS must be either 30 or 60.", nameof(value));
+                throw new ArgumentException("FPS must be either 30, 60, or 120.", nameof(value));
         }
     }
 
@@ -44,20 +47,18 @@ public class Project
     /// A list of built keyframes for the project for use with cameras.
     /// </summary>
     [JsonIgnore]
-    public List<Keyframe> CompiledKeyframes {
-        get {
-            if (field == null)
-                throw new ArgumentNullException("The project is not built. Please use .Compile().");
+    public List<Keyframe> CompiledKeyframes;
 
-            return field;
-        }
-        internal set => field = value;
-    }
+    /// <summary>
+    /// Represents if the project has been compiled.
+    /// </summary>
+    [JsonIgnore]
+    public bool IsCompiled;
 
     /// <summary>
     /// Build the project. Shorthand for Compiler.Build(p)
     /// </summary>
-    public async Task<CompilerDiagnostics> Build(Action<string> onStatusUpdate = null) => await Compiler.Build(this, onStatusUpdate);
+    public async Task Build(Action<string> onStatusUpdate = null) => await Compiler.Build(this, onStatusUpdate);
 
     /// <summary>
     /// Convert the project into savable JSON data. Shorthand for Compiler.ConvertToJSON(p)

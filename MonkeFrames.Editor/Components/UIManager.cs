@@ -20,7 +20,7 @@ public class UIManager : MonoBehaviour
 
     public string CurrentTask;
 
-    public bool ShowingUI = false;
+    public bool ShowingUI = true;
     public bool ShowingEditorUI = false;
     public bool ShowingJoinerUI = false;
     public bool ShowingCompilerUI = false;
@@ -177,11 +177,13 @@ public class UIManager : MonoBehaviour
                 menu = CurrentMenu.Closed;
             }
 
-            if (GUI.Button(new Rect(start, 60, 300, 20), "Compiler Output", left))
+#if DEBUG
+            if (GUI.Button(new Rect(start, 60, 300, 20), "Diagnostics", left))
             {
                 ShowingCompilerUI = !ShowingCompilerUI;
                 menu = CurrentMenu.Closed;
             }
+#endif
         }
 
         if (menu == CurrentMenu.F3)
@@ -220,7 +222,12 @@ public class UIManager : MonoBehaviour
 
             if (GUI.Button(new Rect(start, 40, 300, 20), $"FPS: {KeyframeManager.Instance.Project.FPS}", left))
             {
-                KeyframeManager.Instance.Project.FPS = (KeyframeManager.Instance.Project.FPS == 30 ? 60 : 30);
+                if (KeyframeManager.Instance.Project.FPS == 30)
+                    KeyframeManager.Instance.Project.FPS = 60;
+                else if (KeyframeManager.Instance.Project.FPS == 60)
+                    KeyframeManager.Instance.Project.FPS = 120;
+                else
+                    KeyframeManager.Instance.Project.FPS = 30;
             }
 
             if (GUI.Button(new Rect(start, 60, 300, 20), $"Load Project", left))
@@ -318,19 +325,18 @@ public class UIManager : MonoBehaviour
             GUI.DrawTexture(new Rect(x + 10, y + 5, 35, 35), titlebarIcon);
             GUI.Label(
                 new Rect(x + 60, y + 15, KeyframeWindowSize.x - 65, 29),
-                "Compiler Output (Debug)"
+                "MonkeFrames.Compiler Diagnostics"
             );
 
-            if (!KeyframeManager.Instance.LatestResults.HasValue) {
+            if (!KeyframeManager.Instance.Project.IsCompiled) {
                 GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
                 centeredStyle.alignment = TextAnchor.MiddleCenter;
 
-                GUI.Label(new Rect(10, y + 50, 280, 20), "Compile the project first.", centeredStyle);
+                GUI.Label(new Rect(x + 10, y + 50, 280, 20), "Compile the project first.", centeredStyle);
             } else
             {
-                GUI.Label(new Rect(10, y + 50, 280, 20), $"made Frames: {KeyframeManager.Instance.LatestResults.Value.BuiltFrames}");
-                GUI.Label(new Rect(10, y + 50, 280, 20), $"in     Time: {KeyframeManager.Instance.LatestResults.Value.BuildTime.ToReadableString()}");
-                GUI.Label(new Rect(10, y + 50, 280, 20), $"at      FPS: {KeyframeManager.Instance.LatestResults.Value.FramesPerSecond}");
+                GUI.Label(new Rect(x + 10, y + 50, 280, 20), $"made Frames: {KeyframeManager.Instance.Project.CompiledKeyframes.Count}");
+                GUI.Label(new Rect(x + 10, y + 70, 280, 20), $"at      FPS: {KeyframeManager.Instance.Project.FPS}");
             }
         }
 
@@ -397,15 +403,13 @@ public class UIManager : MonoBehaviour
                 // Transition
                 GUI.Label(new Rect(x + 10, y + 95, 200, 20), "Transition Style:");
 
-                bool nowLinear = GUI.Toggle(new Rect(x + 120, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Linear, "Linear");
-                bool nowSine = GUI.Toggle(new Rect(x + 180, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Sine, "Sine");
-                bool nowCut = GUI.Toggle(new Rect(x + 240, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Cut, "Cut / None");
-                
-                if (nowLinear)
+                if (GUI.Toggle(new Rect(x + 120, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Linear, "Linear"))
                     k.Transition.Effect = TransitionEffect.Linear;
-                if (nowSine)
+
+                if (GUI.Toggle(new Rect(x + 195, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Sine, "Sine"))
                     k.Transition.Effect = TransitionEffect.Sine;
-                if (nowCut)
+
+                if (GUI.Toggle(new Rect(x + 270, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Cut, "Cut / None"))
                     k.Transition.Effect = TransitionEffect.Cut;
 
                 GUI.Label(new Rect(x + 10, y + 120, 200, 20), "Duration:");
