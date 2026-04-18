@@ -21,23 +21,8 @@ public static class Compiler
     /// Asyncronously build a project.
     /// </summary>
     /// <param name="project">The project to build.</param>
-    /// <param name="onStatusUpdate">Called every time the project reaches a new target. The current step is sent as a string.</param>
-    /// <returns></returns>
-    public static async Task Build(Project project, Action<string> onStatusUpdate = null)
+    public static async Task Build(Project project)
     {
-        Stopwatch timer = new Stopwatch(); // Project build time
-        timer.Start();
-
-        Action<string> status = (text) =>
-        {
-            if (onStatusUpdate == null)
-                return;
-
-            try {
-                onStatusUpdate($"Compiling project {project.Name}: {text}");
-            } catch { }
-        };
-        
         List<Keyframe> compiledKeyframes = [];
 
         foreach (var (keyframe, i) in project.Keyframes.Select((value, i) => (value, i)))
@@ -45,33 +30,15 @@ public static class Compiler
             int frames = (int)Math.Ceiling(keyframe.Transition.Duration * project.FPS);
             
             for (int j = 0; j < frames; j++) {
-                status($"K{i} - Generating frame {compiledKeyframes.Count} ({project.FPS} FPS)");
-
-                if (i == project.Keyframes.Count - 1) {
-                    Keyframe strippedKeyframe = new Keyframe {
-                        Position = keyframe.Position,
-                        Rotation = keyframe.Rotation,
-                        FieldOfView = keyframe.FieldOfView,
-                        Compiled = true
-                    };
-
-                    compiledKeyframes.Add(strippedKeyframe);
-                    continue;
-                }
-
                 Vector3 newPosition;
                 Quaternion newRotation;
                 float newFOV;
 
-                Keyframe next = project.Keyframes[i + 1];
+                int newIdx = (i + 1 == project.Keyframes.Count ? i : i + 1);
+                Keyframe next = project.Keyframes[newIdx];
 
                 switch (keyframe.Transition.Effect)
                 {
-                    case TransitionEffect.Sine:
-                        newPosition = Transitions.Sine(keyframe.Position, next.Position, j, frames);
-                        newRotation = Transitions.Sine(keyframe.QuatRotation, next.QuatRotation, j, frames);
-                        newFOV = Transitions.Sine(keyframe.FieldOfView, next.FieldOfView, j, frames);
-                        break;
                     case TransitionEffect.Cut:
                         newPosition = Transitions.Cut(keyframe.Position, next.Position, j, frames);
                         newRotation = Transitions.Cut(keyframe.QuatRotation, next.QuatRotation, j, frames);
@@ -98,10 +65,6 @@ public static class Compiler
 
         project.CompiledKeyframes = compiledKeyframes;
         project.IsCompiled = true;
-
-        timer.Stop();
-
-        status($"Compiled {project.Name} in {Math.Floor(timer.Elapsed.TotalMinutes)}m {timer.Elapsed.Seconds:D2}s");
     }
 
     /// <summary>

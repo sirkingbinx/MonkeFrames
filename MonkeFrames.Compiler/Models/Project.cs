@@ -58,7 +58,7 @@ public class Project
     /// <summary>
     /// Build the project. Shorthand for Compiler.Build(p)
     /// </summary>
-    public async Task Build(Action<string> onStatusUpdate = null) => await Compiler.Build(this, onStatusUpdate);
+    public async Task Build(Action<string> onStatusUpdate = null) => await Compiler.Build(this);
 
     /// <summary>
     /// Convert the project into savable JSON data. Shorthand for Compiler.ConvertToJSON(p)

@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using GorillaLocomotion;
+using GorillaNetworking;
 using MonkeFrames.Compiler.Models;
 using MonkeFrames.Editor.Utilities;
 using UnityEngine;
@@ -21,9 +23,7 @@ public class UIManager : MonoBehaviour
     public string CurrentTask;
 
     public bool ShowingUI = true;
-    public bool ShowingEditorUI = false;
-    public bool ShowingJoinerUI = false;
-    public bool ShowingCompilerUI = false;
+    public bool ShowingEditorUI, ShowingLoaderUI, ShowingCompilerUI = false;
 
     public Vector2 ScreenDimensions;
     public Vector2 KeyframeWindowSize = new(600, 550);
@@ -116,6 +116,27 @@ public class UIManager : MonoBehaviour
 
     public string CurrentStatus = "";
 
+    public Dictionary<string, GorillaSetZoneTrigger> mapTriggers = new()
+    { };
+
+    public void GetMapTriggers()
+    {
+        var allMapTriggers = Object.FindObjectsByType<GorillaSetZoneTrigger>(FindObjectsSortMode.None);
+        foreach (GorillaSetZoneTrigger zoneTrigger in allMapTriggers)
+        {
+            int last = -1;
+
+            if (zoneTrigger.gameObject.name.LastIndexOf("To") != -1)
+                last = zoneTrigger.gameObject.name.LastIndexOf("To") + 2;
+
+            if (last == -1)
+                continue;
+            
+            string mapName = zoneTrigger.gameObject.name[last ..];
+            mapTriggers.TryAdd(mapName, zoneTrigger);
+        }
+    }
+
     public void OnGUI()
     {
         if (left == null)
@@ -171,19 +192,40 @@ public class UIManager : MonoBehaviour
                 menu = CurrentMenu.Closed;
             }
 
-            if (GUI.Button(new Rect(start, 40, 300, 20), "Room Joiner", left))
-            {
-                ShowingJoinerUI = !ShowingJoinerUI;
-                menu = CurrentMenu.Closed;
-            }
+            int startY = 40;
 
 #if DEBUG
-            if (GUI.Button(new Rect(start, 60, 300, 20), "Diagnostics", left))
+            if (GUI.Button(new Rect(start, startY, 300, 20), "Diagnostics", left))
             {
                 ShowingCompilerUI = !ShowingCompilerUI;
                 menu = CurrentMenu.Closed;
             }
+
+            startY += 20;
 #endif
+            if (!mapTriggers.Any())
+                GetMapTriggers();
+
+            foreach (var set in mapTriggers)
+            {
+                if (GUI.Button(new Rect(start, startY, 300, 20), $"Load Map: {set.Key}", left))
+                {
+                    bool allowed = !NetworkSystem.Instance.InRoom || PhotonNetworkController.Instance.currentGameType.ToLower().Contains("MODDED");
+
+                    if (allowed)
+                    {
+                        set.Value.OnBoxTriggered();
+                        GTPlayer.Instance.TeleportTo(set.Value.transform, false, false);
+                    } else
+                    {
+                        CurrentStatus = "You must either be in a modded lobby or disconnected to change the current map.";
+                    }
+
+                    menu = CurrentMenu.Closed;
+                }
+
+                startY += 20;
+            }
         }
 
         if (menu == CurrentMenu.F3)
@@ -406,10 +448,7 @@ public class UIManager : MonoBehaviour
                 if (GUI.Toggle(new Rect(x + 120, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Linear, "Linear"))
                     k.Transition.Effect = TransitionEffect.Linear;
 
-                if (GUI.Toggle(new Rect(x + 195, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Sine, "Sine"))
-                    k.Transition.Effect = TransitionEffect.Sine;
-
-                if (GUI.Toggle(new Rect(x + 270, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Cut, "Cut / None"))
+                if (GUI.Toggle(new Rect(x + 195, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Cut, "Cut / None"))
                     k.Transition.Effect = TransitionEffect.Cut;
 
                 GUI.Label(new Rect(x + 10, y + 120, 200, 20), "Duration:");

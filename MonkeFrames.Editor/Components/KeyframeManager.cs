@@ -61,13 +61,13 @@ public class KeyframeManager : MonoBehaviour
 
     public void StartBuild()
     {
-        Task.Run(async () => await Project.Build((text) => UIManager.Instance.CurrentStatus = text));
+        Task.Run(async () => await Project.Build());
     }
 
     public void StartBuildAndRun()
     {
         Task.Run(async () => {
-            await Project.Build((text) => UIManager.Instance.CurrentStatus = text);
+            await Project.Build();
             CameraManager.Instance.StartPlayback();
         });
     }

@@ -49,11 +49,6 @@ public enum TransitionEffect
     Linear = 0,
 
     /// <summary>
-    /// Movement is smoothed from start to finish with a sine wave.
-    /// </summary>
-    Sine,
-
-    /// <summary>
     /// The camera stays at the keyframe's position for the entire duration of the transition.
     /// </summary>
     Cut

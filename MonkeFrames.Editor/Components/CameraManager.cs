@@ -112,6 +112,9 @@ public class CameraManager : MonoBehaviour
     {
         if (gameObject.TryGetComponent<CinemachineBrain>(out var cinemachine))
         {
+            CinemachineCamera vcam = cinemachine.ActiveVirtualCamera as CinemachineCamera;
+            vcam?.gameObject.MotherfuckingSetActive(enabled);
+
             cinemachine.enabled = enabled;
         }
 
