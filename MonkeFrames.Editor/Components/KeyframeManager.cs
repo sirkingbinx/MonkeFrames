@@ -17,6 +17,11 @@ public class KeyframeManager : MonoBehaviour
 
     public Dictionary<Keyframe, GameObject> Objects = new Dictionary<Keyframe, GameObject>();
 
+    public KeyframeManager()
+    {
+        Instance = this;
+    }
+
     public void CreateOrb(Keyframe keyframe)
     {
         GameObject mainOrb = new GameObject($"Keyframe Visual {keyframe.GUID}");
@@ -59,15 +64,25 @@ public class KeyframeManager : MonoBehaviour
         UIManager.Instance.CurrentStatus = $"Loaded project {p.Name} ({Compiler.Compiler.ProjectNameToFilename(p.Name)})";
     }
 
+    public bool IsCompiling;
+
     public void StartBuild()
     {
-        Task.Run(async () => await Project.Build());
+        Task.Run(async () => {
+            IsCompiling = true;
+            await Task.Delay(100); // give frame time to process
+            await Project.Build();
+            IsCompiling = false;
+        }); 
     }
 
     public void StartBuildAndRun()
     {
         Task.Run(async () => {
+            IsCompiling = true;
+            await Task.Delay(100); // give frame time to process
             await Project.Build();
+            IsCompiling = false;
             CameraManager.Instance.StartPlayback();
         });
     }
@@ -127,6 +142,6 @@ public class KeyframeManager : MonoBehaviour
     public void RefreshOrbs()
     {
         DeleteOrbs();
-        Project.Keyframes.ForEach(CreateOrb);
+        Project?.Keyframes.ForEach(CreateOrb);
     }
 }

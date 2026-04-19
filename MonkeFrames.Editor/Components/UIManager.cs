@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using GorillaLocomotion;
 using GorillaNetworking;
 using MonkeFrames.Compiler.Models;
+using MonkeFrames.Editor.Models;
 using MonkeFrames.Editor.Utilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
     public string CurrentTask;
 
     public bool ShowingUI = true;
-    public bool ShowingEditorUI, ShowingLoaderUI, ShowingCompilerUI = false;
+    public bool ShowingEditorUI, ShowingJoinerUI, ShowingCompilerUI = false;
 
     public Vector2 ScreenDimensions;
     public Vector2 KeyframeWindowSize = new(600, 550);
@@ -35,10 +35,13 @@ public class UIManager : MonoBehaviour
 
     public Texture2D titlebarIcon;
 
-    public void Start()
+    public UIManager()
     {
         Instance = this;
+    }
 
+    public void Start()
+    {
         Debug.Log("[MonkeFrames::UIManager] Loading titlebar icon");
         
         using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("icon");
@@ -116,26 +119,17 @@ public class UIManager : MonoBehaviour
 
     public string CurrentStatus = "";
 
-    public Dictionary<string, GorillaSetZoneTrigger> mapTriggers = new()
-    { };
-
-    public void GetMapTriggers()
+    public void JoinRoom(string room)
     {
-        var allMapTriggers = Object.FindObjectsByType<GorillaSetZoneTrigger>(FindObjectsSortMode.None);
-        foreach (GorillaSetZoneTrigger zoneTrigger in allMapTriggers)
-        {
-            int last = -1;
+        if (NetworkSystem.Instance.InRoom)
+            NetworkSystem.Instance.ReturnToSinglePlayer();
 
-            if (zoneTrigger.gameObject.name.LastIndexOf("To") != -1)
-                last = zoneTrigger.gameObject.name.LastIndexOf("To") + 2;
+        if (room == "") return;
 
-            if (last == -1)
-                continue;
-            
-            string mapName = zoneTrigger.gameObject.name[last ..];
-            mapTriggers.TryAdd(mapName, zoneTrigger);
-        }
+        PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(room.ToUpper(), JoinType.Solo);
     }
+
+    public string roomName;
 
     public void OnGUI()
     {
@@ -182,7 +176,7 @@ public class UIManager : MonoBehaviour
             GUI.Button(new Rect(0, 60, 300, 20), $"v{Constants.VersionID}");
         }
 
-        if (menu == CurrentMenu.F2)
+        if (menu is CurrentMenu.F2 or CurrentMenu.F2LoadMenu)
         {
             const float start = 150f;
 
@@ -192,40 +186,41 @@ public class UIManager : MonoBehaviour
                 menu = CurrentMenu.Closed;
             }
 
-            int startY = 40;
+            if (GUI.Button(new Rect(start, 40, 300, 20), "Code Joiner", left))
+            {
+                ShowingJoinerUI = !ShowingJoinerUI;
+                menu = CurrentMenu.Closed;
+            }
+
+            if (GUI.Button(new Rect(start, 60, 300, 20), "Load Map", left))
+            {
+                menu = (menu == CurrentMenu.F2LoadMenu ? CurrentMenu.F2 : CurrentMenu.F2LoadMenu);
+            }
+
+            if (menu == CurrentMenu.F2LoadMenu)
+            {
+                int startY = 60;
+
+                foreach (MapData map in MapLoader.maps)
+                {
+                    if (GUI.Button(new Rect(start + 300, startY, 300, 20), map.Name, left))
+                    {
+                        MapLoader.Load(map);
+                        menu = CurrentMenu.Closed;
+                    }
+
+                    startY += 20;
+                }
+            }
 
 #if DEBUG
-            if (GUI.Button(new Rect(start, startY, 300, 20), "Diagnostics", left))
+            if (GUI.Button(new Rect(start, 80, 300, 20), "Diagnostics", left))
             {
                 ShowingCompilerUI = !ShowingCompilerUI;
                 menu = CurrentMenu.Closed;
             }
 
-            startY += 20;
 #endif
-            if (!mapTriggers.Any())
-                GetMapTriggers();
-
-            foreach (var set in mapTriggers)
-            {
-                if (GUI.Button(new Rect(start, startY, 300, 20), $"Load Map: {set.Key}", left))
-                {
-                    bool allowed = !NetworkSystem.Instance.InRoom || PhotonNetworkController.Instance.currentGameType.ToLower().Contains("MODDED");
-
-                    if (allowed)
-                    {
-                        set.Value.OnBoxTriggered();
-                        GTPlayer.Instance.TeleportTo(set.Value.transform, false, false);
-                    } else
-                    {
-                        CurrentStatus = "You must either be in a modded lobby or disconnected to change the current map.";
-                    }
-
-                    menu = CurrentMenu.Closed;
-                }
-
-                startY += 20;
-            }
         }
 
         if (menu == CurrentMenu.F3)
@@ -356,6 +351,25 @@ public class UIManager : MonoBehaviour
         // Status bar
         GUI.Label(new Rect(10, ScreenDimensions.y - 30, ScreenDimensions.x - 20, 20), CurrentStatus);
 
+        if (ShowingJoinerUI)
+        {
+            float x = 10f;
+            float y = 100f;
+
+            GUI.Box(new Rect(x, y, 300, 290), "");
+
+            GUI.DrawTexture(new Rect(x + 10, y + 5, 35, 35), titlebarIcon);
+            GUI.Label(
+                new Rect(x + 60, y + 15, KeyframeWindowSize.x - 65, 29),
+                "Room Joiner"
+            );
+
+            roomName = GUI.TextField(new Rect(x + 10, y + 50, 280, 20), roomName);
+
+            if (GUI.Button(new Rect(x + 100, y + 80, 100, 20), "Join"))
+                JoinRoom(roomName);
+        }
+
         if (ShowingCompilerUI)
         {
             float x = 10f;
@@ -418,7 +432,14 @@ public class UIManager : MonoBehaviour
             // modify y to add all the stuff from the keyframe list and title
             y = 375f;
 
-            if (SelectedKeyframeIndex != -1)
+            if (KeyframeManager.Instance.IsCompiling)
+            {
+                GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
+                centeredStyle.alignment = TextAnchor.MiddleCenter;
+
+                GUI.Label(new Rect(x, y + 10, KeyframeWindowSize.x, 20), "Compiling, please wait...", centeredStyle);
+            } 
+            else if (SelectedKeyframeIndex != -1)
             {
                 Keyframe k = KeyframeManager.Instance.Project.Keyframes.ElementAt(SelectedKeyframeIndex);
 
@@ -487,6 +508,7 @@ public class UIManager : MonoBehaviour
         Closed = -1,
         F1 = 0,
         F2,
+        F2LoadMenu,
         F3,
         F4,
         F4LoadMenu,

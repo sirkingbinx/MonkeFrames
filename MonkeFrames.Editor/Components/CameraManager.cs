@@ -1,4 +1,5 @@
 using System.Collections;
+using GorillaExtensions;
 using MonkeFrames.Editor.Utilities;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -20,14 +21,17 @@ public class CameraManager : MonoBehaviour
 
     public bool InPlayback = false;
 
+    public CameraManager()
+    {
+        Instance = this;
+    }
+
     private void Start()
     {
         Position = gameObject.transform.position;
         Rotation = gameObject.transform.rotation;
 
         SetCinemachineState(false);
-
-        Instance = this;
 
         Debug.Log("[MonkeFrames::CameraManager] All camera-based stuff should be set up");
     }
@@ -110,13 +114,12 @@ public class CameraManager : MonoBehaviour
 
     public void SetCinemachineState(bool enabled)
     {
-        if (gameObject.TryGetComponent<CinemachineBrain>(out var cinemachine))
-        {
-            CinemachineCamera vcam = cinemachine.ActiveVirtualCamera as CinemachineCamera;
-            vcam?.gameObject.MotherfuckingSetActive(enabled);
+        CinemachineBrain brain = gameObject.GetComponent<CinemachineBrain>();
+        gameObject.transform.Find("CM vcam1").gameObject.SetActive(enabled);
+        brain.enabled = enabled;
 
-            cinemachine.enabled = enabled;
-        }
+        // GameObject gameCamera = GameObject.Find("LCKTablet");
+        // gameCamera.SetActive(enabled);
 
         CinemachineState = enabled;
         Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
@@ -169,6 +172,7 @@ public class CameraManager : MonoBehaviour
         UIManager.Instance.ShowingUI = true;
         KeyframeManager.Instance.RefreshOrbs();
         playbackPosition = 0;
+
         StopCoroutine("PlaybackCoroutine");
     }
 }
