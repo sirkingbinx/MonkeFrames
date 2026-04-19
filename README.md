@@ -16,7 +16,7 @@ Press `V` to create a new keyframe. You can press `T` to create a new keyframe l
 
 Once a keyframe is created, you can see it's values with the Keyframe Editor. Press `View` > `Keyframe Editor` to view and select every keyframe in your project.
 
-Once you are done with editing, you can compile your project (turn those keyframes into movement) with `Project` > `Compile`, then press `Project > Play`. Press Space to exit the player and return to MonkeFrames.
+Once you are done with editing, you can compile your project (turn those keyframes into movement) with `Project` > `Compile`, then press `Project > Compile & Play`. Press Space to exit the player and return to MonkeFrames.
 
 You can save your project with `Project > Save Project`, then reopen it by selecting `Project > Load Project` and choosing your project. All projects are saved in a special folder you can access by pressing `Win` + `R`, and then entering `%USERFOLDER%/AppData/LocalLow/Another Axiom/Gorilla Tag/MonkeFrames/projects`.
 
