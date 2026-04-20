@@ -15,6 +15,11 @@ public class KeyframeManager : MonoBehaviour
     public static KeyframeManager Instance;
     public Project Project;
 
+    public bool Autosave {
+        get => Project.CustomProperties.ElementAtOrDefault("MONKEFRAMES_AUTOSAVE");
+        set => Project.CustomProperties["MONKEFRAMES_AUTOSAVE"] = value;
+    }
+
     public Dictionary<Keyframe, GameObject> Objects = new Dictionary<Keyframe, GameObject>();
 
     public KeyframeManager()
@@ -50,12 +55,23 @@ public class KeyframeManager : MonoBehaviour
         Debug.Log("[MonkeFrames::KeyframeManager] creating new project \"new project\"");
 
         Project = new Project("new project", Constants.Exporter);
+        Project.CustomProperties["MONKEFRAMES_AUTOSAVE"] = true;
 
         Debug.Log("[MonkeFrames::KeyframeManager] Keyframe manager is running");
     }
 
+    string lastLoaded = "";
+
     public void LoadProject(Project p)
     {
+        if (p.Exporter.Version != Compiler.Constants.Version && lastLoaded != p.Name)
+        {
+            UIManager.Instance.CurrentStatus = $"{p.Name} was exported with an old version of the compiler, current version is {Compiler.Constants.Version}, project version is {p.Exporter.Name} {p.Exporter.Version}. Load the project again to ignore.";
+            lastLoaded = p.Name;
+        }
+
+        lastLoaded = "";
+
         if (Project.Keyframes.Any())
             SaveUtilities.Save();
             
@@ -66,8 +82,18 @@ public class KeyframeManager : MonoBehaviour
 
     public bool IsCompiling;
 
+    public void InvokeAutosave()
+    {
+        if (!Autosave)
+            return;
+
+            SaveUtilities.Save();
+    }
+
     public void StartBuild()
     {
+        InvokeAutosave();
+
         Task.Run(async () => {
             IsCompiling = true;
             await Task.Delay(100); // give frame time to process
@@ -78,6 +104,8 @@ public class KeyframeManager : MonoBehaviour
 
     public void StartBuildAndRun()
     {
+        InvokeAutosave();
+
         Task.Run(async () => {
             IsCompiling = true;
             await Task.Delay(100); // give frame time to process
@@ -118,6 +146,7 @@ public class KeyframeManager : MonoBehaviour
         string posStr = $"Position: {UnityUtilities.Vector3ToString(k.Position)}";
         string rotStr = $"Rotation: {UnityUtilities.Vector3ToString(k.Rotation)}";
 
+        InvokeAutosave();
         UIManager.Instance.CurrentStatus = $"Created keyframe {Project.Keyframes.IndexOf(k)} with properties {{ {posStr}, {rotStr}, FOV: {k.FieldOfView} }} ";
 
         return k;
@@ -131,6 +160,8 @@ public class KeyframeManager : MonoBehaviour
             Project.Keyframes.RemoveAt(index);
         } catch { };
         UIManager.Instance.SelectedKeyframeIndex = -1;
+
+        InvokeAutosave();
     }
 
     public void DeleteOrbs()

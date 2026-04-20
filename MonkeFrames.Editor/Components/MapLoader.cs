@@ -6,10 +6,10 @@ using UnityEngine;
 
 namespace MonkeFrames.Editor.Components;
 
-public class MapLoader
+public static class MapLoader
 {
     public static List<MapData> maps = [
-        new("Forest", -71.32f, 11.79f, -90.67f),
+        new("Forest", -71.32f, 11.79f, -90.67f), // fix me
         new("Basement", -41.10f, 16.673f, -95.34f),
         new("Canyons", -74.59f, 11.5f, -92.38f),
         new("City", -66.19f, 13.78f, -95.64f),
@@ -21,6 +21,8 @@ public class MapLoader
 
     public static void Load(MapData map)
     {
+        InvokeAutosave(); // just in case
+        
         if (transformGeneratingObject == null)
             transformGeneratingObject = new GameObject("MonkeFrames Transform Finding Thingymabob");
 

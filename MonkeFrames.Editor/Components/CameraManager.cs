@@ -118,9 +118,6 @@ public class CameraManager : MonoBehaviour
         gameObject.transform.Find("CM vcam1").gameObject.SetActive(enabled);
         brain.enabled = enabled;
 
-        // GameObject gameCamera = GameObject.Find("LCKTablet");
-        // gameCamera.SetActive(enabled);
-
         CinemachineState = enabled;
         Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
     }

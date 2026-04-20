@@ -57,7 +57,7 @@ public class UIManager : MonoBehaviour
         Debug.Log("[MonkeFrames::UIManager] UI manager is running");
     }
 
-    void GoToSelectedKeyframe()
+    public void GoToSelectedKeyframe()
     {
         Keyframe k = KeyframeManager.Instance.Project.Keyframes[SelectedKeyframeIndex];
         CameraManager.Instance.Position = k.Position;
@@ -257,22 +257,17 @@ public class UIManager : MonoBehaviour
 
             AllowKeybinds = GUI.GetNameOfFocusedControl() != "projectName";
 
-            if (GUI.Button(new Rect(start, 40, 300, 20), $"FPS: {KeyframeManager.Instance.Project.FPS}", left))
+            if (GUI.Button(new Rect(start, 40, 300, 20), $"Project Settings", left))
             {
-                if (KeyframeManager.Instance.Project.FPS == 30)
-                    KeyframeManager.Instance.Project.FPS = 60;
-                else if (KeyframeManager.Instance.Project.FPS == 60)
-                    KeyframeManager.Instance.Project.FPS = 120;
-                else
-                    KeyframeManager.Instance.Project.FPS = 30;
+                menu = (menu == CurrentMenu.F4ProjectSettings ? CurrentMenu.F4 : CurrentMenu.F4ProjectSettings);
             }
 
-            if (GUI.Button(new Rect(start, 60, 300, 20), $"Load Project", left))
+            if (GUI.Button(new Rect(start, 60, 300, 20), $"Load", left))
             {
                 menu = (menu == CurrentMenu.F4LoadMenu ? CurrentMenu.F4 : CurrentMenu.F4LoadMenu);
             }
 
-            if (GUI.Button(new Rect(start, 80, 300, 20), $"Save Project", left))
+            if (GUI.Button(new Rect(start, 80, 300, 20), $"Save", left))
             {
                 menu = CurrentMenu.Closed;
                 SaveUtilities.Save();
@@ -285,7 +280,7 @@ public class UIManager : MonoBehaviour
                 KeyframeManager.Instance.StartBuild();
             }
 
-            if (GUI.Button(new Rect(start, 120, 300, 20), $"Compile & Play", left))
+            if (GUI.Button(new Rect(start, 120, 300, 20), $"Play", left))
             {
                 menu = CurrentMenu.Closed;
                 KeyframeManager.Instance.StartBuildAndRun();
@@ -312,6 +307,27 @@ public class UIManager : MonoBehaviour
 
                     i += 20;
                 }
+            }
+        }
+
+        if (menu == CurrentMenu.F4ProjectSettings)
+        {
+            int start = 650;
+            int startY = 40;
+
+            if (GUI.Button(new Rect(start, startY, 300, 20), $"FPS: {KeyframeManager.Instance.Project.FPS}", left))
+            {
+                if (KeyframeManager.Instance.Project.FPS == 30)
+                    KeyframeManager.Instance.Project.FPS = 60;
+                else if (KeyframeManager.Instance.Project.FPS == 60)
+                    KeyframeManager.Instance.Project.FPS = 120;
+                else
+                    KeyframeManager.Instance.Project.FPS = 30;
+            }
+
+            if (GUI.Button(new Rect(start, startY, 300, 20), $"Autosave: {KeyframeManager.Instance.Autosaving.Format("ON/OFF")}", left))
+            {
+                KeyframeManager.Instance.Autosaving = !KeyframeManager.Instance.Autosaving;
             }
         }
 
@@ -512,6 +528,7 @@ public class UIManager : MonoBehaviour
         F3,
         F4,
         F4LoadMenu,
+        F4ProjectSettings,
         F5
     }
 }

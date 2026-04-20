@@ -31,6 +31,11 @@ public class Project
     public List<Keyframe> Keyframes { get; set; }
 
     /// <summary>
+    /// Properties used by a certain exporter for the project.
+    /// </summary>
+    public Dictionary<string, object> CustomProperties { get; set; };
+
+    /// <summary>
     /// FPS of the project. Can be either 30 or 60.
     /// </summary>
     public int FPS {
@@ -78,6 +83,7 @@ public class Project
         Name = projectName;
         Version = Constants.Version;
         Exporter = projectExporter;
+        CustomProperties = new();
         FPS = 30;
         Keyframes = new List<Keyframe>();
     }

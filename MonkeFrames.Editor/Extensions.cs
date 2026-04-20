@@ -21,13 +21,12 @@ public static class Extensions
         return parts.Count > 0 ? string.Join(", ", parts) : "0 seconds";
     }
 
-    public static void MotherfuckingSetActive(this Behaviour behaviour, bool active)
-    {
-        ForceSetState.Set(behaviour, active);
-    }
+    public static string Format(this bool boolean, string format = "true/false") {
+        string[] onOff = format.Split("/");
 
-    public static void MotherfuckingSetActive(this GameObject go, bool active)
-    {
-        ForceSetState.Set(go, active);
+        if (onOff.Length != 2)
+            throw new ArgumentException("Formats must have two values seperated by '/'. (eg. true/false)");
+        
+        return boolean ? onOff[0] : onOff[1];
     }
 }
