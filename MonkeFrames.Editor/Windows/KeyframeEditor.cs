@@ -7,7 +7,7 @@ namespace MonkeFrames.Editor.Windows;
 public class KeyframeEditor : IEditorWindow
 {
     public string Name => "Keyframe Editor";
-    public Rect Rect => new Rect(UIManager.Instance.Screen.x - 620, 600, 550);
+    public Rect Rect => new Rect(UIManager.Instance.Screen.x - 620, 100, 600, 550);
 
     public Project Project = KeyframeManager.Instance.Project;
     public Vector2 KeyframeListScrollPos;

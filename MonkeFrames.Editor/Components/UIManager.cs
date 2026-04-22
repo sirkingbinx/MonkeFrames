@@ -13,6 +13,18 @@ public class UIManager : MonoBehaviour
     public Vector2 Screen;
     public Texture2D Icon;
 
+    public GUIStyle CenterText
+    {
+        get {
+            if (field == null) {
+                field = new GUIStyle(GUI.skin.label);
+                field.alignment = TextAnchor.MiddleCenter;
+            }
+
+            return field;
+        }
+    }
+
     public List<IEditorMenu> Menus;
     public List<IEditorWindow> Windows;
 

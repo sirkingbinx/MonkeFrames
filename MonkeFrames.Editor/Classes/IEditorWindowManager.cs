@@ -11,7 +11,9 @@ public class IEditorWindowManager
     public IEditorWindow Window;
     public Rect WindowPosition;
     public int WindowID;
+
     public bool Visible = false;
+    public bool LastVisible = false;
 
     public IEditorWindowManager(IEditorWindow window)
     {
@@ -60,6 +62,15 @@ public class IEditorWindowManager
         if (Visible) {
             GUI.Window(WindowID, WindowPosition, CreateWindow, GUIContent.none);
             GUI.DragWindow(new Rect(0, 0, WindowPosition.width, 20));
+        }
+
+        if (Visible != LastVisible) {
+            if (Visible)
+                Window.OnOpen();
+            else
+                Window.OnClose();
+            
+            LastVisible = Visible;
         }
     }
 }
