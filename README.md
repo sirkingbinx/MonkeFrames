@@ -5,11 +5,15 @@ MonkeFrames is a keyframe-based camera animator loosely based on the Orion Drift
 Create a keyframe by pressing V. It's properties will show up on the MonkeFrames panel in the top right. You can tweak its transitions, position, and rotation, or replace the currently selected keyframe by pressing X.
 
 ## Installation
-> [!NOTE]
-> Upon release, MonkeFrames will be avaliable on [MonkeModManager](https://github.com/sirkingbinx/MonkeModManager/releases/latest)
+### MonkeModManager
+You can install MonkeFrames with [MonkeModManager](https://github.com/sirkingbinx/MonkeModManager/releases/latest).
+1. Search for "MonkeFrames" on the Search bar
+2. Check the box next to "MonkeFrames"
+3. Press "Install / Update"
 
-   1. Download `MonkeFrames.zip` from the [releases](https://github.com/sirkingbinx/MonkeFrames/releases/latest) page
-   2. Extract the zip file into `BepInEx/plugins/` (BepInEx) or `Mods` (MelonLoader)
+### Manual
+1. Download `MonkeFrames.zip` from the [releases](https://github.com/sirkingbinx/MonkeFrames/releases/latest) page
+2. Extract the zip file into `BepInEx/plugins/` (BepInEx) or `Mods` (MelonLoader)
 
 ## Usage
 Press `V` to create a new keyframe. You can press `T` to create a new keyframe looking at the monke, `X` to replace the current keyframe with a new one, or click `Keyframe` > `Delete Keyframe` on the topbar to delete the selected keyframe.
