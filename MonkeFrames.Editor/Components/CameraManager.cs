@@ -45,7 +45,7 @@ public class CameraManager : MonoBehaviour
         else
             KeyframeManager.Instance.DeleteOrbs();
 
-        UIManager.Instance.ShowingUI = enabled;
+        UIManager.Instance.Drawing = enabled;
     }
 
     private void LateUpdate()
@@ -62,7 +62,7 @@ public class CameraManager : MonoBehaviour
 
         Camera?.fieldOfView = FieldOfView;
 
-        if (UIManager.Instance.AllowKeybinds && !InPlayback)
+        if (!InPlayback)
         {
             float speed = 0.05f;
 

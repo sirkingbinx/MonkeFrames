@@ -19,7 +19,6 @@ namespace MonkeFrames.Editor
             tpc.AddComponent<CameraManager>();
             tpc.AddComponent<KeyframeManager>();
             tpc.AddComponent<UIManager>();
-            tpc.AddComponent<ForceSetState>();
 
             Debug.Log("[MonkeFrames::Initialize] All components added");
 

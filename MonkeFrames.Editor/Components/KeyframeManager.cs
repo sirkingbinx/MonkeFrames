@@ -61,7 +61,7 @@ public class KeyframeManager : MonoBehaviour
             
         Project = p;
         RefreshOrbs();
-        UIManager.Instance.CurrentStatus = $"Loaded project {p.Name} ({Compiler.Compiler.ProjectNameToFilename(p.Name)})";
+        UIManager.Instance.Status = $"Loaded project {p.Name} ({Compiler.Compiler.ProjectNameToFilename(p.Name)})";
     }
 
     public bool IsCompiling;
@@ -110,7 +110,7 @@ public class KeyframeManager : MonoBehaviour
         } else
         {
             Project.Keyframes.Add(k);
-            UIManager.Instance.SelectedKeyframeIndex = Project.Keyframes.IndexOf(k);
+            // UIManager.Instance.SelectedKeyframeIndex = Project.Keyframes.IndexOf(k);
         }
 
         CreateOrb(k);
@@ -118,7 +118,7 @@ public class KeyframeManager : MonoBehaviour
         string posStr = $"Position: {UnityUtilities.Vector3ToString(k.Position)}";
         string rotStr = $"Rotation: {UnityUtilities.Vector3ToString(k.Rotation)}";
 
-        UIManager.Instance.CurrentStatus = $"Created keyframe {Project.Keyframes.IndexOf(k)} with properties {{ {posStr}, {rotStr}, FOV: {k.FieldOfView} }} ";
+        UIManager.Instance.Status = $"Created keyframe {Project.Keyframes.IndexOf(k)} with properties {{ {posStr}, {rotStr}, FOV: {k.FieldOfView} }} ";
 
         return k;
     }
@@ -130,7 +130,7 @@ public class KeyframeManager : MonoBehaviour
             Objects.Remove(Project.Keyframes[index]);
             Project.Keyframes.RemoveAt(index);
         } catch { };
-        UIManager.Instance.SelectedKeyframeIndex = -1;
+        // UIManager.Instance.SelectedKeyframeIndex = -1;
     }
 
     public void DeleteOrbs()
