@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using UnityEngine;
 
@@ -11,6 +12,9 @@ public class UIManager : MonoBehaviour
     public string Status = "";
     public Vector2 Screen;
     public Texture2D Icon;
+
+    public List<IEditorMenu> Menus;
+    public List<IEditorWindow> Windows;
 
     public bool Drawing;
 

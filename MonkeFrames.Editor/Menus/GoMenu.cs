@@ -6,6 +6,7 @@ namespace MonkeFrames.Editor.Menus;
 public class GoMenu : IEditorMenu
 {
     public string Name => "Go";
+    public int Index => 2;
 
     [EditorMenuItem("Gorilla")]
     public void ToGorilla()
