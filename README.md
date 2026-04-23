@@ -25,6 +25,14 @@ Once you are done with editing, you can compile your project (turn those keyfram
 You can save your project with `Project > Save Project`, then reopen it by selecting `Project > Load Project` and choosing your project. All projects are saved in a special folder you can access by pressing `Win` + `R`, and then entering `%USERFOLDER%/AppData/LocalLow/Another Axiom/Gorilla Tag/MonkeFrames/projects`.
 
 ## For Developers
+### Issue Trackers
+All issue tracking (including bug reporting, feature requests, or any other MonkeFrames inquiries) happens on the [Discord](https://discord.gg/rdqRNQ9nXT). Use the `#issues` forum channel and select any tags that apply.
+
+### Contribution
+- **MonkeFrames.Editor** is freely avaliable for pull requests.
+- **MonkeFrames.Compiler** is avaliable for pull requests but is much less open to change. We accept optimization tweaks, code cleanup, but not much in terms of functionality change.
+
+### Embed MonkeFrames into your project
 You can embed the keyframe functionality of MonkeFrames into your own projects. See [MonkeFrames.Compiler](/MonkeFrames.Compiler).
 
 ## Credits
