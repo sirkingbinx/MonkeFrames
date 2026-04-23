@@ -87,10 +87,7 @@ public class CameraManager : MonoBehaviour
 
             if (Keyboard.current.qKey.isPressed)
                 Position -= transform.up * speed;
-        }
-
-        if (!InPlayback)
-        {
+            
             FieldOfView += Mouse.current.scroll.ReadValue().y * 5; // Increment by 5
             FieldOfView = NumberUtilities.Bounds(FieldOfView, 15, 150);
 
