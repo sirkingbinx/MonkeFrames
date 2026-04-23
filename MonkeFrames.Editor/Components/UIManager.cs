@@ -1,6 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using MonkeFrames.Editor.Classes;
+using MonkeFrames.Editor.Interfaces;
+using MonkeFrames.Editor.Utilities;
 using UnityEngine;
 
 namespace MonkeFrames.Editor.Components;
@@ -10,7 +15,6 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
 
     public string Status = "";
-    public Vector2 Screen;
     public Texture2D Icon;
 
     public GUIStyle CenterText
@@ -25,8 +29,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public List<IEditorMenu> Menus;
-    public List<IEditorWindow> Windows;
+    public List<IEditorMenuManager> Menus = [];
+    public List<IEditorWindowManager> Windows = [];
+
+    public int CurrentMenuIndex = -1;
 
     public bool Drawing;
 
@@ -45,16 +51,61 @@ public class UIManager : MonoBehaviour
         stream.CopyTo(data);
         Icon = UnityUtilities.CreateTexture(data.ToArray());
 
+        Debug.Log("[MonkeFrames::UIManager] Initializing managers...");
+
+        List<Type> windowTypes = Assembly.GetExecutingAssembly().GetLoadableTypes()
+            .Where(t => typeof(IEditorWindow).IsAssignableFrom(t) && t.IsClass).ToList();
+        List<Type> menuTypes = Assembly.GetExecutingAssembly().GetLoadableTypes()
+            .Where(t => typeof(IEditorMenu).IsAssignableFrom(t) && t.IsClass).ToList();
+
+        foreach (Type windowType in windowTypes)
+        {
+            if (Activator.CreateInstance(windowType) is not IEditorWindow window)
+                return;
+
+            Windows.Add(new IEditorWindowManager(window));
+        }
+
+        foreach (Type menuType in menuTypes)
+        {
+            if (Activator.CreateInstance(menuType) is not IEditorMenu menu)
+                return;
+
+            Menus.Add(new IEditorMenuManager(menu));
+        }
+
         Debug.Log("[MonkeFrames::UIManager] UI manager is running");
+
+        CameraManager.Instance.SetModEnabled(true);
+    }
+
+    public void OpenWindow(string menuName)
+    {
+        Windows.First(w => w.Window.Name == menuName).Visible = true;
+    }
+
+    public void CloseWindow(string menuName)
+    {
+        Windows.First(w => w.Window.Name == menuName).Visible = false;
+    }
+
+    public void ToggleWindow(string menuName)
+    {
+        var w = Windows.First(w => w.Window.Name == menuName);
+        w?.Visible = !w.Visible;
     }
 
     public void OnGUI()
     {
-        Screen = new Vector2(Screen.width, Screen.height);
-
         if (!Drawing)
             return;
 
-        GUI.Label(new Rect(10, ScreenDimensions.y - 30, ScreenDimensions.x - 10, 20), Status);
+        Menus.ForEach(menu => { CurrentMenuIndex = menu.Draw(CurrentMenuIndex); });
+        Windows.ForEach(window => {
+            if (window.Visible)
+                window.Draw();
+        });
+
+        GUI.Label(new Rect(10, Screen.width - 30, Screen.height - 10, 20), Status);
     }
 }

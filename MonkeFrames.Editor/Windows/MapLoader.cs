@@ -1,4 +1,5 @@
 using MonkeFrames.Editor.Components;
+using MonkeFrames.Editor.Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,10 +24,7 @@ public class MapLoader : IEditorWindow
         foreach (var map in Maps)
         {
             if (GUILayout.Button(map.Key))
-                map.Value.OnColliderTriggered();
-            
-            // something like that idk
-            // i wrote this on a chromebook man don't judge me
+                map.Value.OnBoxTriggered();
         }
 
         GUILayout.EndScrollView();

@@ -1,30 +1,35 @@
 using UnityEngine;
 using MonkeFrames.Compiler.Models;
 using MonkeFrames.Editor.Components;
+using MonkeFrames.Editor.Interfaces;
+using MonkeFrames.Editor.Utilities;
+
+using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
+using System.Linq;
 
 namespace MonkeFrames.Editor.Windows;
 
 public class KeyframeEditor : IEditorWindow
 {
     public string Name => "Keyframe Editor";
-    public Rect Rect => new Rect(UIManager.Instance.Screen.x - 620, 100, 600, 550);
+    public Rect Rect => new Rect(Screen.width - 620, 100, 600, 550);
 
     public Project Project = KeyframeManager.Instance.Project;
     public Vector2 KeyframeListScrollPos;
-    public int Selection;
+    public int Selection = -1;
 
     public void OnDraw()
     {
-        GUILayout.BeginArea(new Rect(10, 30, Rect.width - 20, 300));
+        GUILayout.BeginArea(new Rect(10, 35, Rect.width - 20, 295));
 
         KeyframeListScrollPos = GUILayout.BeginScrollView(KeyframeListScrollPos, GUILayout.Width(Rect.width - 20), GUILayout.Height(300));
 
         for (int i = 0; i < Project.Keyframes.Count; i++)
         {
-            Keyframe k = Project.Keyframes[i];
+            Keyframe k = Project.Keyframes.ElementAt(i);
 
             string displayString = $"Keyframe {i + 1} / P: {UnityUtilities.Vector3ToString(k.Position)} / R: {UnityUtilities.Vector3ToString(k.Rotation)}";
-            bool selectionStart = GUILayout.Toggle(SelectedKeyframeIndex == i, displayString);
+            bool selectionStart = GUILayout.Toggle(Selection == i, displayString);
 
             if (selectionStart && Selection != i)
                 Selection = i;
@@ -40,7 +45,7 @@ public class KeyframeEditor : IEditorWindow
             GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);
             centeredStyle.alignment = TextAnchor.MiddleCenter;
 
-            GUI.Label(new Rect(x + 10, 385, Rect.width, 20), "Compiling, please wait...", centeredStyle);
+            GUI.Label(new Rect(10, 385, Rect.width, 20), "Compiling, please wait...", centeredStyle);
         } 
         else if (Selection != -1)
         {
@@ -76,9 +81,9 @@ public class KeyframeEditor : IEditorWindow
             k.Transition.Duration = GUI.HorizontalSlider(new Rect(75, y + 125, 395, 20), k.Transition.Duration, 0.0f, 30.0f);
             GUI.Label(new Rect(475, y + 120, 25, 20), $"{k.Transition.Duration:F2}s");
 
-            GUI.Label(new Rect(10, KeyframeWindowSize.y - 25, KeyframeWindowSize.x, 20), $"GUID: {k.GUID} - Duration: {k.Transition.Duration:F2}s");
+            GUI.Label(new Rect(10, Rect.height - 25, Rect.width, 20), $"GUID: {k.GUID} - Duration: {k.Transition.Duration:F2}s");
 
-            KeyframeManager.Instance.Project.Keyframes[SelectedKeyframeIndex] = k;
+            KeyframeManager.Instance.Project.Keyframes[Selection] = k;
         } else
         {
             GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);

@@ -1,3 +1,4 @@
+using MonkeFrames.Editor.Interfaces;
 using UnityEngine;
 
 namespace MonkeFrames.Editor.Windows;

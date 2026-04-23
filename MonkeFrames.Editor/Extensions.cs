@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using MonkeFrames.Editor.Components;
 using MonkeFrames.Editor.Utilities;
 using UnityEngine;
@@ -21,13 +23,15 @@ public static class Extensions
         return parts.Count > 0 ? string.Join(", ", parts) : "0 seconds";
     }
 
-    public static void MotherfuckingSetActive(this Behaviour behaviour, bool active)
+    public static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
     {
-        ForceSetState.Set(behaviour, active);
-    }
-
-    public static void MotherfuckingSetActive(this GameObject go, bool active)
-    {
-        ForceSetState.Set(go, active);
+        try
+        {
+            return assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException e)
+        {
+            return e.Types.Where(t => t != null);
+        }
     }
 }

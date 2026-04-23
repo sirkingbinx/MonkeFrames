@@ -31,8 +31,6 @@ public class CameraManager : MonoBehaviour
         Position = gameObject.transform.position;
         Rotation = gameObject.transform.rotation;
 
-        SetCinemachineState(false);
-
         Debug.Log("[MonkeFrames::CameraManager] All camera-based stuff should be set up");
     }
 
@@ -51,7 +49,7 @@ public class CameraManager : MonoBehaviour
     private void LateUpdate()
     {
         if (CinemachineState)
-            return; // Don't mess with camera while not managing the freecam
+            return;
 
         if (Camera == null)
             Camera = gameObject.GetComponent<Camera>();
@@ -140,7 +138,7 @@ public class CameraManager : MonoBehaviour
             if (playbackEnding == playbackEnding - 1)
             {
                 InPlayback = false;
-                UIManager.Instance.ShowingUI = true;
+                UIManager.Instance.Drawing = true;
                 StopCoroutine("PlaybackCoroutine");
             }
 
@@ -158,7 +156,7 @@ public class CameraManager : MonoBehaviour
     public void StartPlayback()
     {
         InPlayback = true;
-        UIManager.Instance.ShowingUI = false;
+        UIManager.Instance.Drawing = false;
         KeyframeManager.Instance.DeleteOrbs();
         playbackPosition = 0;
         playbackEnding = KeyframeManager.Instance.Project.CompiledKeyframes.Count;
@@ -169,7 +167,7 @@ public class CameraManager : MonoBehaviour
     public void StopPlayback()
     {
         InPlayback = false;
-        UIManager.Instance.ShowingUI = true;
+        UIManager.Instance.Drawing = true;
         KeyframeManager.Instance.RefreshOrbs();
         playbackPosition = 0;
 

@@ -1,3 +1,5 @@
+using System;
+using MonkeFrames.Editor.Components;
 using MonkeFrames.Editor.Interfaces;
 using UnityEngine;
 
@@ -6,7 +8,6 @@ namespace MonkeFrames.Editor.Classes;
 public class IEditorWindowManager
 {
     public static int WindowIDs = 0;
-    public static GUISkin WindowStyle;
 
     public IEditorWindow Window;
     public Rect WindowPosition;
@@ -19,7 +20,6 @@ public class IEditorWindowManager
     {
         Window = window;
         WindowPosition = window.Rect;
-        WindowStyle = GUI.skin.box;
 
         WindowIDs++;
         WindowID = WindowIDs;
@@ -42,10 +42,10 @@ public class IEditorWindowManager
         // |                                 |   <
         // |_________________________________|   <
 
-        GUI.DrawTexture(new Rect(5, 0, 20, 20), UIManager.Instance.titlebarIcon);
-        GUI.Label(new Rect(25, 20, WindowPosition.width - 55, 20), Window.Name, WindowStyle);
+        GUI.DrawTexture(new Rect(5, 5, 20, 20), UIManager.Instance.Icon);
+        GUI.Label(new Rect(30, 5, WindowPosition.width - 60, 20), Window.Name);
 
-        if (GUI.Button(new Rect(WindowPosition.width - 25, 0, 20, 20), "X"))
+        if (GUI.Button(new Rect(WindowPosition.width - 25, 5, 20, 20), "X"))
             Visible = false;
 
         try
@@ -55,14 +55,14 @@ public class IEditorWindowManager
         {
             Debug.LogError($"Error drawing window \"{Window.Name}\" ({WindowID}): {ex.Message}");
         }
+
+        GUI.DragWindow();
     }
 
     public void Draw()
     {
-        if (Visible) {
-            GUI.Window(WindowID, WindowPosition, CreateWindow, GUIContent.none);
-            GUI.DragWindow(new Rect(0, 0, WindowPosition.width, 20));
-        }
+        if (Visible)
+            GUI.Window(WindowID, WindowPosition, CreateWindow, GUIContent.none, GUI.skin.box);
 
         if (Visible != LastVisible) {
             if (Visible)

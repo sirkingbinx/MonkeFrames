@@ -21,8 +21,6 @@ namespace MonkeFrames.Editor
             tpc.AddComponent<UIManager>();
 
             Debug.Log("[MonkeFrames::Initialize] All components added");
-
-            CameraManager.Instance.SetModEnabled(true);
         }
     }
 }

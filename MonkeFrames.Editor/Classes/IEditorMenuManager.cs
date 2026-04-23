@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using MonkeFrames.Editor.Attributes;
 using MonkeFrames.Editor.Interfaces;
 using UnityEngine;
 
@@ -25,15 +28,28 @@ public class IEditorMenuManager
     }
 
     public IEditorMenu Menu;
-    public List<EditorMenuItem> Items;
+    public List<EditorMenuItem> Items = [];
 
-    public IEditorWindowManager(IEditorMenu menu)
+    public IEditorMenuManager(IEditorMenu menu)
     {
         Menu = menu;
+
+        List<MethodInfo> menuItemMethods = Menu.GetType()
+            .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+            .Where(m => m.IsDefined(typeof(EditorMenuItem)))
+            .ToList();
+
+        foreach (MethodInfo method in menuItemMethods)
+        {
+            EditorMenuItem item = method.GetCustomAttribute<EditorMenuItem>();
+            item.Action = () => method.Invoke(menu, []);
+
+            Items.Add(item);
+        }
     }
     
     // return index of menu to open, or -1 to hide all
-    public EditorActionType Draw(int openedIndex)
+    public int Draw(int openedIndex)
     {
         int x = Menu.Index * 100;
         int y = 20;
@@ -55,9 +71,9 @@ public class IEditorMenuManager
             }
         }
 
-        if (GUI.Button(new Rect(x, 0, 100, 20), menu.Name))
+        if (GUI.Button(new Rect(x, 0, 100, 20), Menu.Name))
         {
-            if (openedIndex == menu.Name)
+            if (openedIndex == Menu.Index)
                 return -1;
             else
                 return Menu.Index;
