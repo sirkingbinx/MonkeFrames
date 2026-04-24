@@ -14,6 +14,8 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
+    public int Selection;
+
     public string Status = "";
     public Texture2D Icon;
 

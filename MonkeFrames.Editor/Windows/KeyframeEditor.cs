@@ -16,7 +16,6 @@ public class KeyframeEditor : IEditorWindow
 
     public Project Project = KeyframeManager.Instance.Project;
     public Vector2 KeyframeListScrollPos;
-    public int Selection = -1;
 
     public void OnDraw()
     {
@@ -29,10 +28,10 @@ public class KeyframeEditor : IEditorWindow
             Keyframe k = Project.Keyframes.ElementAt(i);
 
             string displayString = $"Keyframe {i + 1} / P: {UnityUtilities.Vector3ToString(k.Position)} / R: {UnityUtilities.Vector3ToString(k.Rotation)}";
-            bool selectionStart = GUILayout.Toggle(Selection == i, displayString);
+            bool selectionStart = GUILayout.Toggle(UIManager.Instance.Selection == i, displayString);
 
-            if (selectionStart && Selection != i)
-                Selection = i;
+            if (selectionStart && UIManager.Instance.Selection != i)
+                UIManager.Instance.Selection = i;
         }
 
         GUILayout.EndScrollView();
@@ -47,9 +46,9 @@ public class KeyframeEditor : IEditorWindow
 
             GUI.Label(new Rect(10, 385, Rect.width, 20), "Compiling, please wait...", centeredStyle);
         } 
-        else if (Selection != -1)
+        else if (UIManager.Instance.Selection != -1)
         {
-            Keyframe k = KeyframeManager.Instance.Project.Keyframes[Selection];
+            Keyframe k = KeyframeManager.Instance.Project.Keyframes[UIManager.Instance.Selection];
 
             GUI.Label(new Rect(10, y, 200, 20), "Position: ");
             float px = CreateNumInputLabel(70, y, 'X', ref k.Position.x);
@@ -83,7 +82,7 @@ public class KeyframeEditor : IEditorWindow
 
             GUI.Label(new Rect(10, Rect.height - 25, Rect.width, 20), $"GUID: {k.GUID} - Duration: {k.Transition.Duration:F2}s");
 
-            KeyframeManager.Instance.Project.Keyframes[Selection] = k;
+            KeyframeManager.Instance.Project.Keyframes[UIManager.Instance.Selection] = k;
         } else
         {
             GUIStyle centeredStyle = new GUIStyle(GUI.skin.label);

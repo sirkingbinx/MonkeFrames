@@ -11,18 +11,36 @@ public class KeyframeMenu : IEditorMenu
     [EditorMenuItem("New")]
     public void NewKeyframe()
     {
-
+        KeyframeManager.Instance.CreateKeyframe();
     }
 
-    [EditorMenuItem("Replace")]
+    [EditorMenuItem("New towards Monke")]
+    public void NewKeyframe()
+    {
+        KeyframeManager.Instance.CreateKeyframe(lookAtPlayer: true);
+    }
+
+    [EditorMenuItem("Replace Selection")]
     public void ReplaceKeyframe()
     {
+        if (UIManager.Instance.Selection == -1)
+        {
+            UIManager.Instance.Status = "Please select a keyframe in the keyframe editor before performing this action.";
+            return;
+        }
         
+        KeyframeManager.Instance.CreateKeyframe(replaceKeyframeIdx: UIManager.Instance.Selection);
     }
 
-    [EditorMenuItem("Delete")]
+    [EditorMenuItem("Delete Selection")]
     public void DeleteKeyframe()
     {
-        
+        if (UIManager.Instance.Selection == -1)
+        {
+            UIManager.Instance.Status = "Please select a keyframe in the keyframe editor before performing this action.";
+            return;
+        }
+
+        KeyframeManager.Instance.DeleteKeyframe(UIManager.Instance.Selection);
     }
 }

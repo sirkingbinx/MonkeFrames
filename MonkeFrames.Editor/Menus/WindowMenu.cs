@@ -26,14 +26,4 @@ public class WindowMenu : IEditorMenu
     {
         UIManager.Instance.ToggleWindow("Map Loader");
     }
-
-    #if DEBUG
-
-    [EditorMenuItem("Diagnostics")]
-    public void Diagnostics()
-    {
-        UIManager.Instance.ToggleWindow("Diagnostics");
-    }
-
-    #endif
 }

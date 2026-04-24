@@ -11,6 +11,8 @@ namespace MonkeFrames.Editor.Utilities;
 
 public static class SaveUtilities
 {
+    public static string ProjectDirectory => Path.Combine(Application.persistentDataPath, "MonkeFrames", "projects");
+    
     public static Dictionary<string, Project> LoadableProjects
     {
         get {
