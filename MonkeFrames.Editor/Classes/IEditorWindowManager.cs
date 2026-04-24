@@ -62,7 +62,7 @@ public class IEditorWindowManager
     public void Draw()
     {
         if (Visible)
-            GUI.Window(WindowID, WindowPosition, CreateWindow, GUIContent.none, GUI.skin.box);
+            WindowPosition = GUI.Window(WindowID, WindowPosition, CreateWindow, GUIContent.none, GUI.skin.box);
 
         if (Visible != LastVisible) {
             if (Visible)
