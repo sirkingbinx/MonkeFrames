@@ -12,22 +12,22 @@ namespace MonkeFrames.Editor.Windows;
 public class KeyframeEditor : IEditorWindow
 {
     public string Name => "Keyframe Editor";
-    public Rect Rect => new Rect(Screen.width - 620, 100, 600, 550);
+    public Rect Rect => new Rect(Screen.width - 620, 100, 600, 590);
 
-    public Project Project = KeyframeManager.Instance.Project;
+    public Compiler.Models.Project Project => KeyframeManager.Instance.Project;
     public Vector2 KeyframeListScrollPos;
 
     public void OnDraw()
     {
-        GUILayout.BeginArea(new Rect(10, 35, Rect.width - 20, 295));
+        GUILayout.BeginArea(new Rect(10, 35, Rect.width - 20, 550));
 
-        KeyframeListScrollPos = GUILayout.BeginScrollView(KeyframeListScrollPos, GUILayout.Width(Rect.width - 20), GUILayout.Height(300));
+        KeyframeListScrollPos = GUILayout.BeginScrollView(KeyframeListScrollPos, GUILayout.Width(Rect.width - 20), GUILayout.Height(320));
 
         for (int i = 0; i < Project.Keyframes.Count; i++)
         {
             Keyframe k = Project.Keyframes.ElementAt(i);
 
-            string displayString = $"Keyframe {i + 1} / P: {UnityUtilities.Vector3ToString(k.Position)} / R: {UnityUtilities.Vector3ToString(k.Rotation)}";
+            string displayString = $"Keyframe {i + 1} / Position: {UnityUtilities.Vector3ToString(k.Position)} - Rotation: {UnityUtilities.Vector3ToString(k.Rotation)}";
             bool selectionStart = GUILayout.Toggle(UIManager.Instance.Selection == i, displayString);
 
             if (selectionStart && UIManager.Instance.Selection != i)
@@ -80,7 +80,7 @@ public class KeyframeEditor : IEditorWindow
             k.Transition.Duration = GUI.HorizontalSlider(new Rect(75, y + 125, 395, 20), k.Transition.Duration, 0.0f, 30.0f);
             GUI.Label(new Rect(475, y + 120, 25, 20), $"{k.Transition.Duration:F2}s");
 
-            GUI.Label(new Rect(10, Rect.height - 25, Rect.width, 20), $"GUID: {k.GUID} - Duration: {k.Transition.Duration:F2}s");
+            GUI.Label(new Rect(10, Rect.height - 50, Rect.width, 20), $"GUID: {k.GUID} - Duration: {k.Transition.Duration:F2}s");
 
             KeyframeManager.Instance.Project.Keyframes[UIManager.Instance.Selection] = k;
         } else
@@ -91,7 +91,7 @@ public class KeyframeEditor : IEditorWindow
             GUI.Label(new Rect(0, 10, Rect.width, 40), "Select a keyframe to view it's properties.", centeredStyle);
         }
 
-        GUI.Label(new Rect(10, Rect.height - 20, Rect.width, 20), $"Keyframes: {KeyframeManager.Instance.Project.Keyframes.Count}");
+        GUI.Label(new Rect(10, Rect.height - 25, Rect.width, 20), $"Keyframes: {KeyframeManager.Instance.Project.Keyframes.Count}");
     }
 
     private float CreateNumInputLabel(float x, float y, char axis, ref float field)

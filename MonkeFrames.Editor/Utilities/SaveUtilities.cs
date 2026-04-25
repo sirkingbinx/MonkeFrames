@@ -11,7 +11,7 @@ namespace MonkeFrames.Editor.Utilities;
 
 public static class SaveUtilities
 {
-    public static string ProjectDirectory => Path.Combine(Application.persistentDataPath, "MonkeFrames", "projects");
+    public static string ProjectDirectory => Path.Combine(Constants.DataFolder, "projects");
     
     public static Dictionary<string, Project> LoadableProjects
     {
@@ -42,10 +42,9 @@ public static class SaveUtilities
         Project project = KeyframeManager.Instance.Project;
         string projectJson = project.ToJson();
 
-        string projectDir = Path.Combine(Application.persistentDataPath, "MonkeFrames", "projects");
-        string projectPath = Path.Combine(projectDir, Compiler.Compiler.ProjectNameToFilename(project.Name));
+        string projectPath = Path.Combine(ProjectDirectory, Compiler.Compiler.ProjectNameToFilename(project.Name));
 
-        Directory.CreateDirectory(projectDir);
+        Directory.CreateDirectory(ProjectDirectory);
 
         File.WriteAllText(projectPath, projectJson);
     }

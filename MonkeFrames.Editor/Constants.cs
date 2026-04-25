@@ -1,4 +1,6 @@
+using System.IO;
 using MonkeFrames.Compiler.Models;
+using UnityEngine;
 
 namespace MonkeFrames.Editor;
 
@@ -10,6 +12,7 @@ public static class Constants
     public static readonly string VersionID = $"{Version} Beta 1";
     public const string Author = "bingus";
 
+    public static string DataFolder => Path.Combine(Application.persistentDataPath, "MonkeFrames");
     public static readonly Exporter Exporter = new Exporter(Guid, "MonkeFrames");
 
     public static string Loader = "";

@@ -1,4 +1,9 @@
+using System.Collections.Generic;
+using System.Diagnostics;
+using MonkeFrames.Compiler.Models;
+using MonkeFrames.Editor.Components;
 using MonkeFrames.Editor.Interfaces;
+using MonkeFrames.Editor.Utilities;
 using UnityEngine;
 
 namespace MonkeFrames.Editor.Windows.Project;
@@ -12,7 +17,6 @@ public class LoadProject : IEditorWindow
 
     public void OnDraw()
     {
-        GUILayout.Begin
         if (SaveUtilities.LoadableProjects.Count == 0) {
             GUI.Label(new Rect(10, 30, Rect.width - 20, 20), "No projects saved");
         } else {
@@ -20,7 +24,7 @@ public class LoadProject : IEditorWindow
             
             ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUILayout.Width(Rect.width - 10), GUILayout.Height(Rect.height - 55));
             
-            foreach (KeyValuePair<string, Project> set in SaveUtilities.LoadableProjects)
+            foreach (KeyValuePair<string, Compiler.Models.Project> set in SaveUtilities.LoadableProjects)
             {
                 if (GUILayout.Button(set.Key))
                 {

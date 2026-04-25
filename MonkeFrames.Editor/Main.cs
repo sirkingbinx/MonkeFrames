@@ -1,4 +1,6 @@
-﻿using MonkeFrames.Editor.Components;
+﻿using System;
+using MonkeFrames.Editor.Classes;
+using MonkeFrames.Editor.Components;
 using UnityEngine;
 
 namespace MonkeFrames.Editor
@@ -21,6 +23,21 @@ namespace MonkeFrames.Editor
             tpc.AddComponent<UIManager>();
 
             Debug.Log("[MonkeFrames::Initialize] All components added");
+
+            Application.quitting += OnMonkeFramesUnloaded;
         }
+
+        public static Action OnMonkeFramesLoaded = () =>
+        {
+            Debug.Log($"[MonkeFrames::Initialize] Welcome to MonkeFrames version {Constants.Version}");
+
+            Settings.Load();
+            CameraManager.Instance.SetModEnabled(true);
+        };
+
+        public static Action OnMonkeFramesUnloaded = () =>
+        {
+            Settings.Save();
+        };
     }
 }

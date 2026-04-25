@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MonkeFrames.Compiler.Models;
+using MonkeFrames.Editor.Classes;
 using MonkeFrames.Editor.Utilities;
 using UnityEngine;
-
+using UnityEngine.InputSystem;
 using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 
 namespace MonkeFrames.Editor.Components;
@@ -31,8 +32,8 @@ public class KeyframeManager : MonoBehaviour
 
         LineRenderer line = mainOrb.AddComponent<LineRenderer>();
 
-        line.startColor = Color.blue;
-        line.endColor = Color.blue;
+        line.startColor = Settings.current.AccentColor;
+        line.endColor = Settings.current.AccentColor;
         line.startWidth = 0.05f;
         line.endWidth = 0.15f;
 
@@ -54,10 +55,30 @@ public class KeyframeManager : MonoBehaviour
         Debug.Log("[MonkeFrames::KeyframeManager] Keyframe manager is running");
     }
 
+    public void Update()
+    {
+        if (CameraManager.Instance.InPlayback)
+            return;
+
+        if (Keyboard.current.vKey.wasPressedThisFrame)
+            CreateKeyframe();
+
+        if (Keyboard.current.tKey.wasPressedThisFrame)
+            CreateKeyframe(lookAtPlayer: true);
+
+        if (Keyboard.current.xKey.wasPressedThisFrame && UIManager.Instance.Selection != -1)
+            CreateKeyframe(replaceKeyframeIdx: UIManager.Instance.Selection);
+
+        if (Keyboard.current.deleteKey.wasPressedThisFrame && UIManager.Instance.Selection != -1)
+            DeleteKeyframe(UIManager.Instance.Selection);
+    }
+
     public void LoadProject(Project p)
     {
         if (Project.Keyframes.Any())
             SaveUtilities.Save();
+
+        UIManager.Instance.Selection = -1;
             
         Project = p;
         RefreshOrbs();
@@ -110,7 +131,7 @@ public class KeyframeManager : MonoBehaviour
         } else
         {
             Project.Keyframes.Add(k);
-            // UIManager.Instance.SelectedKeyframeIndex = Project.Keyframes.IndexOf(k);
+            UIManager.Instance.Selection = Project.Keyframes.IndexOf(k);
         }
 
         CreateOrb(k);

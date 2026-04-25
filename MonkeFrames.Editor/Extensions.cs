@@ -34,4 +34,17 @@ public static class Extensions
             return e.Types.Where(t => t != null);
         }
     }
+
+    public static void SetAlpha(this Texture2D tex, float alphaValue)
+    {
+        Color[] pixels = tex.GetPixels();
+
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            pixels[i].a = alphaValue;
+        }
+
+        tex.SetPixels(pixels);
+        tex.Apply();
+    }
 }

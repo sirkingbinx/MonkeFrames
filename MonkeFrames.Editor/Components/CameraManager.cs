@@ -48,6 +48,9 @@ public class CameraManager : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (Keyboard.current.f1Key.wasPressedThisFrame && CinemachineState)
+            SetModEnabled(true);
+
         if (CinemachineState)
             return;
 

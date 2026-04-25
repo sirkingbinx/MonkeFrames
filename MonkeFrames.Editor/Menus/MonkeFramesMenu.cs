@@ -10,13 +10,13 @@ public class MonkeFramesMenu : IEditorMenu
     public int Index => 0;
 
     [EditorMenuItem("Disable/Enable (F1)")]
-    public void About()
+    public void Disable()
     {
         CameraManager.Instance.SetModEnabled(false);
     }
 
     [EditorMenuItem("Settings")]
-    public void About()
+    public void Settings()
     {
         UIManager.Instance.ToggleWindow("Settings");
     }

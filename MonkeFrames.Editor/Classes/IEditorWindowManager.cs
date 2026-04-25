@@ -8,6 +8,7 @@ namespace MonkeFrames.Editor.Classes;
 public class IEditorWindowManager
 {
     public static int WindowIDs = 0;
+    public static GUIStyle WindowStyle;
 
     public IEditorWindow Window;
     public Rect WindowPosition;
@@ -56,13 +57,23 @@ public class IEditorWindowManager
             Debug.LogError($"Error drawing window \"{Window.Name}\" ({WindowID}): {ex.Message}");
         }
 
-        GUI.DragWindow();
+        GUI.DragWindow(new Rect(0, 0, WindowPosition.width, 30));
     }
 
     public void Draw()
     {
+        WindowStyle ??= GUI.skin.box;
+
+        GUI.backgroundColor = new Color(1, 1, 1, 0.95f);
+
         if (Visible)
-            WindowPosition = GUI.Window(WindowID, WindowPosition, CreateWindow, GUIContent.none, GUI.skin.box);
+            WindowPosition = GUI.Window(WindowID, WindowPosition, CreateWindow, GUIContent.none, WindowStyle);
+
+        if (WindowPosition.x >= Screen.width - 20)
+            WindowPosition.x = 0;
+
+        if (WindowPosition.y >= Screen.height - 20)
+            WindowPosition.y = 20;
 
         if (Visible != LastVisible) {
             if (Visible)

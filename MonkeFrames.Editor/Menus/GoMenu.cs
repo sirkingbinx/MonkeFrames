@@ -1,7 +1,11 @@
 using MonkeFrames.Editor.Attributes;
+using MonkeFrames.Editor.Components;
 using MonkeFrames.Editor.Interfaces;
+using UnityEngine;
 
 namespace MonkeFrames.Editor.Menus;
+
+using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 
 public class GoMenu : IEditorMenu
 {

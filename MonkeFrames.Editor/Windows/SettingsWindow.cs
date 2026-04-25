@@ -1,4 +1,5 @@
 using MonkeFrames.Editor.Classes;
+using MonkeFrames.Editor.Components;
 using MonkeFrames.Editor.Interfaces;
 using MonkeFrames.Editor.Utilities;
 using System.Collections.Generic;
@@ -9,14 +10,14 @@ namespace MonkeFrames.Editor.Windows;
 public class SettingsWindow : IEditorWindow
 {
     public string Name => "Settings";
-    public Rect Rect => new Rect(115, 30, 300, 400);
+    public Rect Rect => new Rect(115, 30, 500, 200);
 
     bool colorSelectionDropped = false;
 
     public List<Color> colors = [
         Color.red,
         Color.orange,
-        Color.gold,
+        Color.yellow,
         Color.green,
         Color.blue,
         Color.purple
@@ -24,36 +25,46 @@ public class SettingsWindow : IEditorWindow
 
     public void OnDraw()
     {
-        // Accent Color
-        GUI.Label(new Rect(10, 30, 80, 20),
-            new GUIContent(
-                "Accent Color: ",
-                "The color used for keyframe markers, colored UI elements, and any other colored items.")
-        );
-
-        Settings.AccentColor, colorSelectionDropped = GUIUtilities.Dropdown(
-            new Rect(100, 30, 100, 20),
-            Settings.AccentColor,
-            colorSelectionDropped,
-            colors,
-            UnityUtilities.ColorToString
-        );
-
         // Autosave Projects
-        Settings.Autosave = GUI.Toggle(
-            new Rect(10, 50, Rect.width - 20, 20),
+        Settings.current.Autosave = GUI.Toggle(
+            new Rect(10, 55, 150, 20),
+            Settings.current.Autosave,
             new GUIContent(
                 "Autosave Projects",
                 "Automatically save any named project when it's keyframes are changed.")
         );
 
+        // Accent color
+        GUI.Label(new Rect(10, 30, 100, 20),
+            new GUIContent(
+                "Accent Color:",
+                "Your favorite color (used for colored things.)")
+        );
+
+        var colorPreference = GUIUtilities.Dropdown(
+            new Rect(120, 30, Rect.width - 130, 20),
+            Settings.current.AccentColor,
+            colorSelectionDropped,
+            colors,
+            UnityUtilities.ColorToString
+        );
+
+        Settings.current.AccentColor = colorPreference.Item1;
+        colorSelectionDropped = colorPreference.Item2;
+
         GUI.Label(
             new Rect(10, Rect.height - 25, Rect.width - 20, 20),
             string.IsNullOrEmpty(GUI.tooltip)
-                ? "Tooltips will appear here"
+                ? "Changes saved when closing settings. Hints will appear here."
                 : GUI.tooltip
         );
 
 		GUI.tooltip = "";
+    }
+
+    public void OnClose()
+    {
+        KeyframeManager.Instance.RefreshOrbs();
+        Settings.Save();
     }
 }

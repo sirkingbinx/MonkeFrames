@@ -1,4 +1,5 @@
 using MonkeFrames.Editor.Attributes;
+using MonkeFrames.Editor.Components;
 using MonkeFrames.Editor.Interfaces;
 
 namespace MonkeFrames.Editor.Menus;
@@ -15,7 +16,7 @@ public class KeyframeMenu : IEditorMenu
     }
 
     [EditorMenuItem("New towards Monke")]
-    public void NewKeyframe()
+    public void NewKeyframeTowardsMonke()
     {
         KeyframeManager.Instance.CreateKeyframe(lookAtPlayer: true);
     }

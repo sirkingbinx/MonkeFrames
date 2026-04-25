@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MonkeFrames.Editor.Utilities;
@@ -11,20 +12,20 @@ public static class GUIUtilities
         T newCurrent = current;
         bool newDroppedDown = droppedDown;
 
-        if (GUI.Button(rect, toString(options[current])))
+        if (GUI.Button(rect, toString(current)))
             newDroppedDown = !newDroppedDown;
 
-        if (droppedDown)
-        {
-            for (int i = 0; i < options; i++)
-            {
-                int newY = rect.y + (rect.height + (i * rect.height));
+        if (!droppedDown)
+            return (newCurrent, newDroppedDown);
 
-                if (GUI.Button(new Rect(rect.x, newY, rect.width, rect.height), toString(options[current])))
-                {
-                    newCurrent = options[current];
-                    newDroppedDown = false;
-                }
+        foreach (var option in options.Select((item, index) => new { item, index }))
+        {
+            int newY = (int)(rect.y + (rect.height + (option.index * rect.height)));
+
+            if (GUI.Button(new Rect(rect.x, newY, rect.width, rect.height), toString(option.item)))
+            {
+                newCurrent = option.item;
+                newDroppedDown = false;
             }
         }
 

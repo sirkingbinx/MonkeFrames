@@ -14,7 +14,7 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
-    public int Selection;
+    public int Selection = -1;
 
     public string Status = "";
     public Texture2D Icon;
@@ -78,7 +78,7 @@ public class UIManager : MonoBehaviour
 
         Debug.Log("[MonkeFrames::UIManager] UI manager is running");
 
-        CameraManager.Instance.SetModEnabled(true);
+        Main.OnMonkeFramesLoaded.Invoke();
     }
 
     public void OpenWindow(string menuName)

@@ -10,17 +10,27 @@ namespace MonkeFrames.Editor.Utilities
             return $"({vec.x}, {vec.y}, {vec.z})";
         }
 
-        public static Color ColorToString(Color color)
+        public static string ColorToString(Color color)
         {
-            return color switch {
-                Color.red => "Red",
-                Color.orange => "Orange",
-                Color.gold => "Yellow",
-                Color.green => "Green",
-                Color.blue => "Blue",
-                Color.purple => "Purple",
-                _ => color.ToString()
-            };
+            if (color == Color.red)
+                return "Red";
+
+            if (color == Color.orange)
+                return "Orange";
+
+            if (color == Color.yellow)
+                return "Yellow";
+
+            if (color == Color.green)
+                return "Green";
+
+            if (color == Color.blue)
+                return "Blue";
+
+            if (color == Color.purple)
+                return "Purple";
+
+            return color.ToString();
         }
 
         public static Texture2D CreateTexture(byte[] img)
