@@ -4,6 +4,9 @@ powershell -c "iex ((Get-Content '%~f0') -join [Environment]::Newline); iex 'ins
 goto :eof
 #>
 
+# (C) Copyright 2026 SirKingBinx
+# MIT License
+
 ####
 #### CHANGEME
 ####
