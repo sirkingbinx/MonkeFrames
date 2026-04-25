@@ -21,9 +21,9 @@ public class WindowMenu : IEditorMenu
         UIManager.Instance.ToggleWindow("Room Manager");
     }
 
-    [EditorMenuItem("Map Loader")]
+    [EditorMenuItem("Environment Manager")]
     public void MapLoader()
     {
-        UIManager.Instance.ToggleWindow("Map Loader");
+        UIManager.Instance.ToggleWindow("Environment Manager");
     }
 }

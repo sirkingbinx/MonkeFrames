@@ -13,9 +13,7 @@ public class ProjectMenu : IEditorMenu
     [EditorMenuItem("Project Settings")]
     public void OpenProjectSettings()
     {
-        // bro made a fake error message :skull:
-        // Think you're funny?
-        UIManager.Instance.Status = "NotImplementedException";
+        UIManager.Instance.ToggleWindow("Project Settings");
     }
 
     [EditorMenuItem("Load Project")]
