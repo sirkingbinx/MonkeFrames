@@ -26,7 +26,7 @@ You can save your project with `Project > Save Project`, then reopen it by selec
 
 ## For Developers
 ### Issue Trackers
-All issue tracking (including bug reporting, feature requests, or any other MonkeFrames inquiries) happens on the [Discord](https://discord.gg/rdqRNQ9nXT). Use the `#issues` forum channel and select any tags that apply.
+All issue tracking (including bug reporting, feature requests, or any other MonkeFrames inquiries) happens on the [Discord](https://discord.gg/monkeframes). Use the `#issues` forum channel and select any tags that apply.
 
 ### Contribution
 - **MonkeFrames.Editor** is freely avaliable for pull requests.
