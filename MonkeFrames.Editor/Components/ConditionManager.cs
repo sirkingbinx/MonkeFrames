@@ -1,8 +1,12 @@
-﻿namespace MonkeFrames.Editor.Utilities;
+﻿using UnityEngine;
 
-public static class ConditionsUtilities
+namespace MonkeFrames.Editor.Components;
+
+public class ConditionManager : MonoBehaviour
 {
-    public static int Time
+    public static int Time;
+
+    public static int _Time
     {
         get => BetterDayNightManager.instance.currentTimeIndex;
         set {
@@ -17,5 +21,16 @@ public static class ConditionsUtilities
     {
         get => BetterDayNightManager.instance.CurrentWeather();
         set => BetterDayNightManager.instance.SetFixedWeather(value);
+    }
+
+    private void Start()
+    {
+        Time = _Time;
+    }
+
+    private void Update()
+    {
+        if (Time != _Time)
+            _Time = Time;
     }
 }

@@ -14,8 +14,8 @@ public class ProjectSettings : IEditorWindow
     public void OnDraw()
     {
         GUI.Label(new Rect(10, 35, 40, 20), new GUIContent("FPS", "The amount of frames per second in your project"));
-        Project.FPS = (int)GUI.HorizontalSlider(new Rect(55, 35, Rect.width - 130, 20), Project.FPS, 30, 120);
-        GUI.Label(new Rect(Rect.width - 45, 40, 45, 20), Project.FPS.ToString());
+        Project.FPS = (int)GUI.HorizontalSlider(new Rect(55, 40, Rect.width - 120, 20), Project.FPS, 30, 120);
+        GUI.Label(new Rect(Rect.width - 45, 35, 45, 20), Project.FPS.ToString());
 
         GUI.Label(new Rect(10, 55, 55, 20), new GUIContent("Name", "The display name of your project"));
         Project.Name = GUI.TextField(new Rect(70, 55, Rect.width - 80, 20), Project.Name);

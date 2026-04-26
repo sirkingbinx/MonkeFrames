@@ -32,12 +32,12 @@ public class EnvironmentManager : IEditorWindow
         GUILayout.EndArea();
 
         GUI.Label(new Rect(10, Rect.height - 70, 75, 20), "Time:");
-        ConditionsUtilities.Time = (int)GUI.HorizontalSlider(new Rect(95, Rect.height - 70, Rect.width - 105, 20), ConditionsUtilities.Time, 0, BetterDayNightManager.instance.timeOfDayRange.Length);
+        ConditionManager.Time = (int)GUI.HorizontalSlider(new Rect(95, Rect.height - 70, Rect.width - 105, 20), ConditionManager.Time, 0, BetterDayNightManager.instance.timeOfDayRange.Length);
 
-        if (GUI.Toggle(new Rect(10, Rect.height - 50, Rect.width - 20, 20), ConditionsUtilities.Conditions == BetterDayNightManager.WeatherType.Raining, "Rain / Snow"))
-            ConditionsUtilities.Conditions = BetterDayNightManager.WeatherType.Raining;
+        if (GUI.Toggle(new Rect(10, Rect.height - 50, Rect.width - 20, 20), ConditionManager.Conditions == BetterDayNightManager.WeatherType.Raining, "Rain / Snow"))
+            ConditionManager.Conditions = BetterDayNightManager.WeatherType.Raining;
         else
-            ConditionsUtilities.Conditions = BetterDayNightManager.WeatherType.None;
+            ConditionManager.Conditions = BetterDayNightManager.WeatherType.None;
 
         GUI.Label(new Rect(10, Rect.height - 25, Rect.width - 20, 20), "Note: May fall out of the world", UIManager.Instance.CenterText);
     }

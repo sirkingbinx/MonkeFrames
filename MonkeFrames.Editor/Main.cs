@@ -18,9 +18,12 @@ namespace MonkeFrames.Editor
 
             GameObject tpc = GorillaTagger.Instance.thirdPersonCamera.transform.Find("Shoulder Camera").gameObject;
 
+            tpc.SetActive(true);
+
             tpc.AddComponent<CameraManager>();
             tpc.AddComponent<KeyframeManager>();
             tpc.AddComponent<UIManager>();
+            tpc.AddComponent<ConditionManager>();
 
             Debug.Log("[MonkeFrames::Initialize] All components added");
 
@@ -32,6 +35,7 @@ namespace MonkeFrames.Editor
             Debug.Log($"[MonkeFrames::Initialize] Welcome to MonkeFrames version {Constants.Version}");
 
             Settings.Load();
+
             CameraManager.Instance.SetModEnabled(true);
         };
 
