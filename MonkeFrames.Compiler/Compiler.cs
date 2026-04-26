@@ -43,6 +43,11 @@ public static class Compiler
                         newRotation = Transitions.Cut(keyframe.QuatRotation, next.QuatRotation, j, frames);
                         newFOV = Transitions.Cut(keyframe.FieldOfView, next.FieldOfView, j, frames);
                         break;
+                    case TransitionEffect.Sine:
+                        newPosition = Transitions.Sine(keyframe.Position, next.Position, j, frames);
+                        newRotation = Transitions.Sine(keyframe.QuatRotation, next.QuatRotation, j, frames);
+                        newFOV = Transitions.Sine(keyframe.FieldOfView, next.FieldOfView, j, frames);
+                        break;
                     default:
                     case TransitionEffect.Linear:
                         newPosition = Transitions.Linear(keyframe.Position, next.Position, j, frames);

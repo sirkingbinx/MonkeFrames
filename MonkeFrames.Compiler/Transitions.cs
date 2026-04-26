@@ -25,10 +25,7 @@ internal static class Transitions
 
     private static float LinearFloat(float start, float end, int currentPosition, int incrementTimes)
     {
-        var difference = end - start;
-        float step = difference / incrementTimes;
-        float now = (step * currentPosition);
-        return start + now;
+        return Mathf.Lerp(start, end, (float)currentPosition / incrementTimes);
     }
 
     public static Vector3 Cut(Vector3 start, Vector3 end, int currentPosition, int incrementTimes) =>
@@ -53,5 +50,34 @@ internal static class Transitions
     private static float CutFloat(float start, float end, int currentPosition, int incrementTimes)
     {
         return currentPosition != incrementTimes ? start : end;
+    }
+
+    public static Vector3 Sine(Vector3 start, Vector3 end, int currentPosition, int incrementTimes) =>
+        SineVector3(start, end, currentPosition, incrementTimes);
+
+    public static Quaternion Sine(Quaternion start, Quaternion end, int currentPosition, int incrementTimes) =>
+       SineQuaternion(start, end, currentPosition, incrementTimes);
+
+    public static float Sine(float start, float end, int currentPosition, int incrementTimes) =>
+        SineFloat(start, end, currentPosition, incrementTimes);
+
+    private const float sineFrequency = 0.159f;
+
+    private static Vector3 SineVector3(Vector3 start, Vector3 end, int currentPosition, int incrementTimes)
+    {
+        float point = Mathf.SmoothStep(0f, 1f, (float)currentPosition / incrementTimes * (Mathf.PI / 2));
+        return Vector3.Lerp(start, end, point);
+    }
+
+    private static Quaternion SineQuaternion(Quaternion start, Quaternion end, int currentPosition, int incrementTimes)
+    {
+        float point = Mathf.SmoothStep(0f, 1f, (float)currentPosition / incrementTimes * (Mathf.PI / 2));
+        return Quaternion.Lerp(start, end, point);
+    }
+
+    private static float SineFloat(float start, float end, int currentPosition, int incrementTimes)
+    {
+        float point = Mathf.SmoothStep(0f, 1f, (float)currentPosition / incrementTimes * (Mathf.PI / 2));
+        return Mathf.Lerp(start, end, point);
     }
 }

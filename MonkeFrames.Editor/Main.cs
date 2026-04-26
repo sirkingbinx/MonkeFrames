@@ -9,6 +9,7 @@ namespace MonkeFrames.Editor
     {
         public static void Start()
         {
+            HarmonyLib.Harmony.CreateAndPatchAll(typeof(Main).Assembly, Constants.Guid);
             GorillaTagger.OnPlayerSpawned(OnPlayerSpawned);
         }
 

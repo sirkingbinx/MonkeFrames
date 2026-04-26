@@ -1,5 +1,6 @@
 using System.Collections;
 using GorillaExtensions;
+using GorillaNetworking;
 using MonkeFrames.Editor.Utilities;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -18,6 +19,8 @@ public class CameraManager : MonoBehaviour
     public Vector3 Position;
     public Quaternion Rotation;
     public float FieldOfView = 70f;
+
+    public GameObject CameraMarker;
 
     public bool InPlayback = false;
 
@@ -43,6 +46,10 @@ public class CameraManager : MonoBehaviour
         else
             KeyframeManager.Instance.DeleteOrbs();
 
+        if (CameraMarker == null)
+            CameraMarker = KeyframeManager.Instance.CreateOrb("MonkeFrames Spectator Camera");
+
+        CameraMarker.SetActive(enabled);
         UIManager.Instance.Drawing = enabled;
     }
 
@@ -50,6 +57,8 @@ public class CameraManager : MonoBehaviour
     {
         if (Keyboard.current.f1Key.wasPressedThisFrame && CinemachineState)
             SetModEnabled(true);
+
+        PhotonNetworkController.Instance.disableAFKKick = !CinemachineState;
 
         if (CinemachineState)
             return;
@@ -60,6 +69,9 @@ public class CameraManager : MonoBehaviour
         // Update values
         gameObject.transform.position = Position;
         gameObject.transform.rotation = Rotation;
+
+        CameraMarker.transform.position = Position;
+        CameraMarker.transform.rotation = Rotation;
 
         Camera?.fieldOfView = FieldOfView;
 
@@ -90,7 +102,23 @@ public class CameraManager : MonoBehaviour
 
             if (Keyboard.current.qKey.isPressed)
                 Position -= transform.up * speed;
-            
+
+            if (Keyboard.current.leftArrowKey.isPressed)
+            {
+                Vector3 eulers = Rotation.eulerAngles;
+                eulers.z -= speed;
+
+                Rotation = Quaternion.Euler(eulers);
+            }
+
+            if (Keyboard.current.rightArrowKey.isPressed)
+            {
+                Vector3 eulers = Rotation.eulerAngles;
+                eulers.z += speed;
+
+                Rotation = Quaternion.Euler(eulers);
+            }
+
             FieldOfView += Mouse.current.scroll.ReadValue().y * 5; // Increment by 5
             FieldOfView = NumberUtilities.Bounds(FieldOfView, 15, 150);
 
@@ -115,9 +143,6 @@ public class CameraManager : MonoBehaviour
         CinemachineBrain brain = gameObject.GetComponent<CinemachineBrain>();
         gameObject.transform.Find("CM vcam1").gameObject.SetActive(enabled);
         brain.enabled = enabled;
-
-        // GameObject gameCamera = GameObject.Find("LCKTablet");
-        // gameCamera.SetActive(enabled);
 
         CinemachineState = enabled;
         Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");

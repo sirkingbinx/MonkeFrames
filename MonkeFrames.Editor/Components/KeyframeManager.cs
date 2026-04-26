@@ -23,12 +23,9 @@ public class KeyframeManager : MonoBehaviour
         Instance = this;
     }
 
-    public void CreateOrb(Keyframe keyframe)
+    public GameObject CreateOrb(string name)
     {
-        GameObject mainOrb = new GameObject($"Keyframe Visual {keyframe.GUID}");
-
-        mainOrb.transform.position = keyframe.Position;
-        mainOrb.transform.rotation = keyframe.QuatRotation;
+        GameObject mainOrb = new GameObject($"{name} Visual");
 
         LineRenderer line = mainOrb.AddComponent<LineRenderer>();
 
@@ -42,6 +39,16 @@ public class KeyframeManager : MonoBehaviour
         line.SetPosition(0, mainOrb.transform.position);
         line.SetPosition(1, mainOrb.transform.position + (mainOrb.transform.forward * 0.25f));
 
+        return mainOrb;
+    }
+
+    public void CreateOrb(Keyframe keyframe)
+    {
+        GameObject mainOrb = CreateOrb($"Keyframe Visual {keyframe.GUID}");
+
+        mainOrb.transform.position = keyframe.Position;
+        mainOrb.transform.rotation = keyframe.QuatRotation;
+
         Objects.TryAdd(keyframe, mainOrb);
     }
 
@@ -51,6 +58,7 @@ public class KeyframeManager : MonoBehaviour
         Debug.Log("[MonkeFrames::KeyframeManager] creating new project \"new project\"");
 
         Project = new Project("new project", Constants.Exporter);
+        Project.FPS = 60;
 
         Debug.Log("[MonkeFrames::KeyframeManager] Keyframe manager is running");
     }

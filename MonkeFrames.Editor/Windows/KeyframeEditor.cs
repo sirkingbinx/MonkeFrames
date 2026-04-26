@@ -73,7 +73,10 @@ public class KeyframeEditor : IEditorWindow
             if (GUI.Toggle(new Rect(120, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Linear, "Linear"))
                 k.Transition.Effect = TransitionEffect.Linear;
 
-            if (GUI.Toggle(new Rect(195, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Cut, "Cut / None"))
+            if (GUI.Toggle(new Rect(195, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Sine, "Sine"))
+                k.Transition.Effect = TransitionEffect.Sine;
+
+            if (GUI.Toggle(new Rect(265, y + 95, 75, 20), k.Transition.Effect == TransitionEffect.Cut, "Cut / None"))
                 k.Transition.Effect = TransitionEffect.Cut;
 
             GUI.Label(new Rect(10, y + 120, 200, 20), "Duration:");

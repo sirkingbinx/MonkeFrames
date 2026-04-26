@@ -51,5 +51,10 @@ public enum TransitionEffect
     /// <summary>
     /// The camera stays at the keyframe's position for the entire duration of the transition.
     /// </summary>
-    Cut
+    Cut,
+
+    /// <summary>
+    /// The camera's movement delta is determined by a sine wave, applying slower movement to the tips of the transition.
+    /// </summary>
+    Sine
 }
