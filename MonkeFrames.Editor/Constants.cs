@@ -10,7 +10,7 @@ public static class Constants
     public const string Name = "MonkeFrames";
     public const string Guid = "bingus.monkeframes";
     public const string Version = "1.1";
-    public static readonly string VersionID = $"{Version} Beta 3";
+    public static readonly string VersionID = $"{Version} Stable 1";
     public const string Author = "bingus";
 
     public static string DataFolder => Path.Combine(Application.persistentDataPath, "MonkeFrames");
