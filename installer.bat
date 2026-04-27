@@ -1,6 +1,6 @@
 <# ::
 @echo off
-powershell -c "iex ((Get-Content '%~f0') -join [Environment]::Newline); iex 'installer %*'"
+powershell -c "iex ((Get-Content '%~f0') -join [Environment]::Newline)"
 goto :eof
 #>
 
