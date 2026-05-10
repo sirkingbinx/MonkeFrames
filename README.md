@@ -1,7 +1,7 @@
 <h1 id="readme">
   <img src="/MonkeFrames.Editor/Resources/MFtitleWhite.png" height=200><br>
   <img src="https://img.shields.io/github/downloads/sirkingbinx/MonkeFrames/total"/>
-  <a href="https://sirkingbinx.dev/mmm_install?mods=MonkeFrames%2B%2B~https%3A%2F%2Fgithub.com%2Fsirkingbinx%2FMonkeFrames%2Freleases%2Flatest%2Fdownload%2FMonkeFrames%2Edll">
+  <a href="https://sirkingbinx.dev/mmm_install?mods=MonkeFrames~https%3A%2F%2Fgithub.com%2Fsirkingbinx%2FMonkeFrames%2Freleases%2Flatest%2Fdownload%2FMonkeFrames%2EBepInEx%2Ezip">
     <img src="https://img.shields.io/badge/install_with-MonkeModManager-blue"/>
   </a>
 </h1>
