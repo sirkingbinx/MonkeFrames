@@ -1,3 +1,19 @@
+> [!NOTE]
+> ## We have moved!
+> MonkeFrames development is not hosted on GitHub anymore. See below for where you should go.
+> | Link                                                       | Description                                                                                      |
+> | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+> | https://git.sirkingbinx.dev/monkeframes                    | MonkeFrames repositories, downloads, and README                                                  |
+> | https://git.sirkingbinx.dev/monkeframes/editor             | MonkeFrames.Editor source code & releases                                                        |
+> | https://git.sirkingbinx.dev/monkeframes/compiler           | MonkeFrames.Compiler source code & releases                                                      |
+> | https://www.nuget.org/packages/MonkeFrames.Compiler        | MonkeFrames.Compiler packaged releases                                                           |
+>
+> There are also mirrors avaliable on GitHub:
+> | Link                                                       | Mirror of                                                                                        |
+> | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+> | https://github.com/sirkingbinx/monkeframes-editor          | MonkeFrames.Editor                                                                               |
+> | https://github.com/sirkingbinx/monkeframes-compiler        | MonkeFrames.Compiler                                                                             
+
 <h1 id="readme">
   <img src="/MonkeFrames.Editor/Resources/MFtitleWhite.png" height=200><br>
   <img src="https://img.shields.io/github/downloads/sirkingbinx/MonkeFrames/total"/>
