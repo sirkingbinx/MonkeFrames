@@ -31,6 +31,13 @@ public class ProjectMenu : IEditorMenu
         SaveUtilities.Save();
     }
 
+    [EditorMenuItem("Export to MP4")]
+    public void ExportProject()
+    {
+        KeyframeManager.Instance.Project.Build().Wait();
+        CameraManager.Instance.StartRecording();
+    }
+
     [EditorMenuItem("Compile")]
     public void CompileProject()
     {

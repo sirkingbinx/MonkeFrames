@@ -13,12 +13,8 @@
 	</Target>
 
 	<Target Name="InstallToPlugins" AfterTargets="Build">
-		<ItemGroup>
-			<MonkeFramesAssemblies Include="$(SolutionDir)Build\latest\*" />
-		</ItemGroup>
-		
 		<Copy
-			  SourceFiles="@(MonkeFramesAssemblies)"
+			  SourceFiles="@(AssembliesToCopy)"
 			  DestinationFolder="$(GamePath)\BepInEx\plugins\MonkeFrames\"/>
 		
 		<Message Text="MonkeFrames installed to plugins" Importance="high"/>

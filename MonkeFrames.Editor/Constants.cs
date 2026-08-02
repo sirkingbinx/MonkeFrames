@@ -13,7 +13,6 @@ public static class Constants
     public const string Guid = "bingus.monkeframes";
     public const string Version = "1.2";
     public static readonly string VersionID = $"{Version} Beta 1";
-    public const string Author = "bingus";
 
     public static string DataFolder = "";
     public static string MonkeFramesAssemblyFolder = "";
@@ -77,6 +76,4 @@ public static class Constants
         {"rusty", "Tester" },
         {"Hexann", "Tester" },
     };
-
-    public static string Loader = "";
 }
