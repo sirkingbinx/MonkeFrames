@@ -1,6 +1,7 @@
 using System.IO;
 using MonkeFrames.Editor.Classes.NewtonsoftConverters;
 using MonkeFrames.Editor.Components;
+using MonkeFrames.Editor.Utilities;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -20,13 +21,13 @@ public class Settings
             Converters = { new ColorConverter() }
         };
 
-        if (!File.Exists(Path.Combine(Constants.DataFolder, "settings.json")))
+        if (!File.Exists(SystemUtilities.Combine(Constants.DataFolder, "config.json")))
         {
             current = new Settings();
             return;
         }
 
-        string prefs = File.ReadAllText(Path.Combine(Constants.DataFolder, "settings.json"));
+        string prefs = File.ReadAllText(SystemUtilities.Combine(Constants.DataFolder, "config.json"));
         current = JsonConvert.DeserializeObject<Settings>(prefs, settings);
     }
 
@@ -41,7 +42,7 @@ public class Settings
         string json = JsonConvert.SerializeObject(current, settings);
 
         Directory.CreateDirectory(Constants.DataFolder);
-        File.WriteAllText(Path.Combine(Constants.DataFolder, "settings.json"), json);
+        File.WriteAllText(SystemUtilities.Combine(Constants.DataFolder, "config.json"), json);
 
         KeyframeManager.Instance.RefreshOrbs();
     }

@@ -1,7 +1,8 @@
+using MonkeFrames.Compiler.Models;
+using MonkeFrames.Editor.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using MonkeFrames.Compiler.Models;
-using UnityEngine;
 
 namespace MonkeFrames.Editor;
 
@@ -9,12 +10,21 @@ public static class Constants
 {
     public const string Name = "MonkeFrames";
     public const string Guid = "bingus.monkeframes";
-    public const string Version = "1.1";
-    public static readonly string VersionID = $"{Version} Stable 1";
+    public const string Version = "1.2";
+    public static readonly string VersionID = $"{Version} Beta 1";
     public const string Author = "bingus";
 
-    public static string DataFolder => Path.Combine(Application.persistentDataPath, "MonkeFrames");
+    public static string DataFolder = "";
     public static readonly Exporter Exporter = new Exporter(Guid, "MonkeFrames");
+
+    public static void Init()
+    {
+        DataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MonkeFrames");
+
+        string[] folders = ["projects", "exports", "tmp"];
+        foreach (string folder in folders)
+            Directory.CreateDirectory(SystemUtilities.Combine(DataFolder, folder));
+    }
 
     public static readonly Dictionary<string, string> Contributors = new()
     {

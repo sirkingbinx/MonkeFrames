@@ -1,4 +1,4 @@
-# MonkeFrames.Compiler
+# MonkeFrames.Compiler ![NuGet Version](https://img.shields.io/nuget/v/MonkeFrames.Compiler)
 
 ![Diagram explaining how the Compiler works](.github/Compiler.svg)
 
@@ -7,7 +7,12 @@ MonkeFrames.Compiler is the backbone to MonkeFrames, responsible for the keyfram
 MonkeFrames.Compiler can be embedded into any program for free, which makes it a pretty good backbone for other camera mods looking to add keyframe-based camera movement without a large amount of hassle.
 
 ## Installation
-You can pick up a copy of the compiler library (`MonkeFrames.Compile.dll`) from the [releases](https://github.com/sirkingbinx/MonkeFrames/releases/latest) page.
+For most people, MonkeFrames.Compiler can be referenced via the NuGet package manager. Run this command in your terminal:
+```
+dotnet package add MonkeFrames.Compiler
+```
+
+You can pick up a copy of the compiler library (`MonkeFrames.Compiler.dll`) from MonkeFrames's [releases page](https://github.com/sirkingbinx/MonkeFrames/releases/latest).
 
 To start using it with your project, go to the Solution Explorer, right click on `References`, click Add Reference, then move to the `Browse` tab, click `Add`, select `MonkeFrames.Compiler.dll`, then press Ok.
 

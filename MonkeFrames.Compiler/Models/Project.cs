@@ -61,14 +61,14 @@ public class Project
     public async Task Build(Action<string> onStatusUpdate = null) => await Compiler.Build(this);
 
     /// <summary>
-    /// Convert the project into savable JSON data. Shorthand for Compiler.ConvertToJSON(p)
+    /// Convert the project into savable JSON data. Shorthand for Compiler.ConvertToJson(p)
     /// </summary>
-    public string ToJson() => Compiler.ConvertToJSON(this);
+    public string ToJson() => Compiler.ConvertToJson(this);
 
     /// <summary>
-    /// Loads a project from JSON data. Shorthand for Compiler.ConvertFromJSON(p)
+    /// Loads a project from JSON data. Shorthand for Compiler.ConvertFromJson(p)
     /// </summary>
-    public static Project FromJson(string json) => Compiler.ConvertFromJSON(json);
+    public static Project FromJson(string json) => Compiler.ConvertFromJson(json);
 
     /// <summary>
     /// Create a new project.

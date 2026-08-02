@@ -78,7 +78,7 @@ public class UIManager : MonoBehaviour
 
         Debug.Log("[MonkeFrames::UIManager] UI manager is running");
 
-        Main.OnMonkeFramesLoaded.Invoke();
+        Plugin.OnMonkeFramesLoaded.Invoke();
     }
 
     public void OpenWindow(string menuName)

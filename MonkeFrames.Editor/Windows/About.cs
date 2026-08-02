@@ -38,7 +38,7 @@ public class About : IEditorWindow
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = "https://github.com/sirkingbinx/MonkeFrames",
+                FileName = "https://git.sirkingbinx.dev/monkeframes",
                 UseShellExecute = true
             });
         }

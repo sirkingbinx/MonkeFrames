@@ -1,11 +1,13 @@
-using System.Collections;
-using GorillaExtensions;
 using GorillaNetworking;
 using MonkeFrames.Editor.Utilities;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 
 namespace MonkeFrames.Editor.Components;
@@ -23,6 +25,7 @@ public class CameraManager : MonoBehaviour
     public GameObject CameraMarker;
 
     public bool InPlayback = false;
+    public bool Manual = false;
 
     public CameraManager()
     {
@@ -34,7 +37,7 @@ public class CameraManager : MonoBehaviour
         Position = gameObject.transform.position;
         Rotation = gameObject.transform.rotation;
 
-        Debug.Log("[MonkeFrames::CameraManager] All camera-based stuff should be set up");
+        UnityEngine.Debug.Log("[MonkeFrames::CameraManager] All camera-based stuff should be set up");
     }
 
     public void SetModEnabled(bool enabled)
@@ -67,13 +70,16 @@ public class CameraManager : MonoBehaviour
             Camera = gameObject.GetComponent<Camera>();
 
         // Update values
-        gameObject.transform.position = Position;
-        gameObject.transform.rotation = Rotation;
+        if (!Manual)
+        {
+            gameObject.transform.position = Position;
+            gameObject.transform.rotation = Rotation;
 
-        CameraMarker.transform.position = Position;
-        CameraMarker.transform.rotation = Rotation;
+            CameraMarker.transform.position = Position;
+            CameraMarker.transform.rotation = Rotation;
 
-        Camera?.fieldOfView = FieldOfView;
+            Camera?.fieldOfView = FieldOfView;
+        }
 
         if (!InPlayback)
         {
@@ -145,11 +151,8 @@ public class CameraManager : MonoBehaviour
         brain.enabled = enabled;
 
         CinemachineState = enabled;
-        Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
+        UnityEngine.Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
     }
-
-    // Playback shit
-    // Don't touch this its weird
 
     int playbackPosition = 0;
     int playbackEnding;

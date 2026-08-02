@@ -17,7 +17,7 @@ namespace MonkeFrames.Compiler;
 public static class Compiler
 {
     /// <summary>
-    /// Asyncronously build a project.
+    /// Asynchronously build a project.
     /// </summary>
     /// <param name="project">The project to build.</param>
     public static async Task Build(Project project)
@@ -74,7 +74,7 @@ public static class Compiler
     /// <summary>
     /// Convert the project into savable JSON data.
     /// </summary>
-    public static string ConvertToJSON(Project project)
+    public static string ConvertToJson(Project project)
     {
         var settings = new JsonSerializerSettings {
             Converters = new[] { new Vector3Converter() }
@@ -90,7 +90,7 @@ public static class Compiler
     /// </summary>
     /// <param name="json">The JSON to turn into a project.</param>
     /// <returns>The project embedded in the JSON.</returns>
-    public static Project ConvertFromJSON(string json)
+    public static Project ConvertFromJson(string json)
     {
         var settings = new JsonSerializerSettings {
             Converters = new[] { new Vector3Converter() }

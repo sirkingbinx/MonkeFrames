@@ -34,8 +34,6 @@ public class KeyframeManager : MonoBehaviour
         line.startWidth = 0.05f;
         line.endWidth = 0.15f;
 
-        line.material.shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-
         line.SetPosition(0, mainOrb.transform.position);
         line.SetPosition(1, mainOrb.transform.position + (mainOrb.transform.forward * 0.25f));
 

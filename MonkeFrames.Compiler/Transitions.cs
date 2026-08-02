@@ -61,8 +61,6 @@ internal static class Transitions
     public static float Sine(float start, float end, int currentPosition, int incrementTimes) =>
         SineFloat(start, end, currentPosition, incrementTimes);
 
-    private const float sineFrequency = 0.159f;
-
     private static Vector3 SineVector3(Vector3 start, Vector3 end, int currentPosition, int incrementTimes)
     {
         float point = Mathf.SmoothStep(0f, 1f, (float)currentPosition / incrementTimes * (Mathf.PI / 2));

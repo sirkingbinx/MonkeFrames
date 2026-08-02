@@ -1,12 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-		<PlatformTarget>x64</PlatformTarget>
+        <PlatformTarget>x64</PlatformTarget>
         <LangVersion>latest</LangVersion>
-		<DebugType Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">embedded</DebugType>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<DocumentationFile></DocumentationFile>
-	</PropertyGroup>
+        <DebugType Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">embedded</DebugType>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <DocumentationFile></DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <PackageId>MonkeFrames.Compiler</PackageId>
+      <Version>1.1.0</Version>
+      <Authors>sirkingbinx</Authors>
+      <Description>Create, edit, and export keyframe based camera movement in Gorilla Tag</Description>
+      
+      <PackageReadmeFile>README.md</PackageReadmeFile>
+      <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 	
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
       <Optimize>True</Optimize>

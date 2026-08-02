@@ -1,25 +1,6 @@
-> [!NOTE]
-> ## We have moved!
-> MonkeFrames development is not hosted on GitHub anymore. See below for where you should go.
-> | Link                                                       | Description                                                                                      |
-> | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-> | https://git.sirkingbinx.dev/monkeframes                    | MonkeFrames repositories, downloads, and README                                                  |
-> | https://git.sirkingbinx.dev/monkeframes/editor             | MonkeFrames.Editor source code & releases                                                        |
-> | https://git.sirkingbinx.dev/monkeframes/compiler           | MonkeFrames.Compiler source code & releases                                                      |
-> | https://www.nuget.org/packages/MonkeFrames.Compiler        | MonkeFrames.Compiler packaged releases                                                           |
->
-> There are also mirrors avaliable on GitHub:
-> | Link                                                       | Mirror of                                                                                        |
-> | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-> | https://github.com/sirkingbinx/monkeframes-editor          | MonkeFrames.Editor                                                                               |
-> | https://github.com/sirkingbinx/monkeframes-compiler        | MonkeFrames.Compiler                                                                             
-
 <h1 id="readme">
-  <img src="/MonkeFrames.Editor/Resources/MFtitleWhite.png" height=200><br>
+  <img src="MonkeFrames.Editor/Resources/MFtitleWhite.png" height=200><br>
   <img src="https://img.shields.io/github/downloads/sirkingbinx/MonkeFrames/total"/>
-  <a href="https://sirkingbinx.dev/mmm_install?mods=MonkeFrames~https%3A%2F%2Fgithub.com%2Fsirkingbinx%2FMonkeFrames%2Freleases%2Flatest%2Fdownload%2FMonkeFrames%2EBepInEx%2Ezip">
-    <img src="https://img.shields.io/badge/install_with-MonkeModManager-blue"/>
-  </a>
 </h1>
 
 MonkeFrames is a keyframe-based camera animator loosely based on the Orion Drift spectator view that allows you to plan out camera movements with transitions for each property.
@@ -48,7 +29,7 @@ You can save your project with `Project > Save Project`, then reopen it by selec
 
 ## For Developers
 ### Issue Trackers
-All issue tracking (including bug reporting, feature requests, or any other MonkeFrames inquiries) happens on the [Discord](https://discord.gg/monkeframes). Use the `#issues` forum channel and select any tags that apply.
+All issue tracking (including bug reporting, feature requests, or any other MonkeFrames inquiries) happens on the [Discord](https://discord.gg/tDjSs2txsR). Use the `#issues` forum channel and select any tags that apply.
 
 ### Contribution
 - **MonkeFrames.Editor** is freely avaliable for pull requests.

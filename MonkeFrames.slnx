@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MonkeFrames.Compiler/MonkeFrames.Compiler.csproj" />
+  <Project Path="MonkeFrames.Editor/MonkeFrames.Editor.csproj" />
+</Solution>
