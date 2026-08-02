@@ -25,7 +25,7 @@ public class KeyframeManager : MonoBehaviour
 
     public GameObject CreateOrb(string name)
     {
-        GameObject mainOrb = new GameObject($"{name} Visual");
+        GameObject mainOrb = new GameObject(name);
 
         LineRenderer line = mainOrb.AddComponent<LineRenderer>();
 
@@ -37,15 +37,22 @@ public class KeyframeManager : MonoBehaviour
         line.SetPosition(0, mainOrb.transform.position);
         line.SetPosition(1, mainOrb.transform.position + (mainOrb.transform.forward * 0.25f));
 
+        line.material.shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+
         return mainOrb;
     }
 
     public void CreateOrb(Keyframe keyframe)
     {
-        GameObject mainOrb = CreateOrb($"Keyframe Visual {keyframe.GUID}");
+        GameObject mainOrb = CreateOrb($"MonkeFrames keyframe visual");
 
         mainOrb.transform.position = keyframe.Position;
         mainOrb.transform.rotation = keyframe.QuatRotation;
+
+        LineRenderer line = mainOrb.GetComponent<LineRenderer>();
+
+        line.SetPosition(0, mainOrb.transform.position);
+        line.SetPosition(1, mainOrb.transform.position + (mainOrb.transform.forward * 0.25f));
 
         Objects.TryAdd(keyframe, mainOrb);
     }
@@ -68,6 +75,18 @@ public class KeyframeManager : MonoBehaviour
 
         if (Keyboard.current.vKey.wasPressedThisFrame)
             CreateKeyframe();
+
+        if (Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            if (UIManager.Instance.Selection == -1)
+                return;
+
+            Keyframe k = Project.Keyframes[UIManager.Instance.Selection];
+            
+            CameraManager.Instance.Position = k.Position;
+            CameraManager.Instance.Rotation = k.QuatRotation;
+            CameraManager.Instance.FieldOfView = k.FieldOfView;
+        }
 
         if (Keyboard.current.tKey.wasPressedThisFrame)
             CreateKeyframe(lookAtPlayer: true);

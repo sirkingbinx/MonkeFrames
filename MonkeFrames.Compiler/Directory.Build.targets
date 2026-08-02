@@ -8,17 +8,7 @@
 
 	
 	<Target Name="CopyToBuild" AfterTargets="Build">
-		<Copy SourceFiles="$(TargetPath)" DestinationFiles="Build\$(MSBuildProjectName).dll"/>
-		<Message Text="$(MSBuildProjectName).dll -> Build\$(MSBuildProjectName).dll" Importance="high"/>
-	</Target>
-
-	<Target Name="InstallToBepInEx" AfterTargets="Build" Condition="Exists('$(GamePath)\BepInEx\plugins')">
-		<Copy SourceFiles="$(TargetPath)" DestinationFiles="$(GamePath)\BepInEx\plugins\$(MSBuildProjectName)\$(MSBuildProjectName).dll"/>
-		<Message Text="$(MSBuildProjectName).dll -> BepInEx\plugins\$(MSBuildProjectName)\$(MSBuildProjectName).dll" Importance="high"/>
-	</Target>
-
-	<Target Name="InstallToMelonLoader" AfterTargets="Build" Condition="Exists('$(GamePath)\Mods')">
-		<Copy SourceFiles="$(TargetPath)" DestinationFiles="$(GamePath)\Mods\$(MSBuildProjectName).dll"/>
-		<Message Text="$(MSBuildProjectName).dll -> Mods\$(MSBuildProjectName).dll" Importance="high"/>
+		<Copy SourceFiles="$(TargetPath)" DestinationFiles="$(SolutionDir)Build\latest\$(MSBuildProjectName).dll"/>
+		<Message Text="$(MSBuildProjectName).dll -> Build\latest\$(MSBuildProjectName).dll" Importance="high"/>
 	</Target>
 </Project>

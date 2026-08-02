@@ -4,24 +4,17 @@
 		<ItemGroup>
 			<AssembliesToCopy Include="$(OutputPath)\MonkeFrames.Compiler.dll" />
 			<AssembliesToCopy Include="$(OutputPath)\MonkeFrames.Editor.dll" />
-			<AssembliesToCopy Include="Build\Dependencies\ffmpeg.exe" />
-			<AssembliesToCopy Include="Build\Dependencies\README.txt" />
+			<AssembliesToCopy Include="$(DependenciesPath)\ffmpeg\ffmpeg.exe" />
+			<AssembliesToCopy Include="$(DependenciesPath)\README.txt" />
 		</ItemGroup>
 		
-		<Copy SourceFiles="@(AssembliesToCopy)" DestinationFolder="Build\latest"/>
+		<Copy SourceFiles="@(AssembliesToCopy)" DestinationFolder="$(SolutionDir)Build\latest"/>
 		<Message Text="Copied assemblies to build folder -> Build\latest" Importance="high"/>
 	</Target>
 
-	<Target Name="ZipBuildOutput" AfterTargets="Build">
-		<ZipDirectory
-			SourceDirectory="Build\latest\"
-			DestinationFile="Build\MonkeFrames.zip"
-			Overwrite="true" />
-	</Target>
-
-	<Target Name="InstallToPlugins" AfterTargets="Build" Condition="Exists('$(GamePath)\BepInEx\plugins')">
+	<Target Name="InstallToPlugins" AfterTargets="Build">
 		<ItemGroup>
-			<MonkeFramesAssemblies Include="Build\latest\*" />
+			<MonkeFramesAssemblies Include="$(SolutionDir)Build\latest\*" />
 		</ItemGroup>
 		
 		<Copy

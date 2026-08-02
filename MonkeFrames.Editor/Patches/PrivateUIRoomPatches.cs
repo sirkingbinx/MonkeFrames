@@ -1,9 +1,10 @@
 ﻿using MonkeFrames.Editor.Components;
 using Unity.Cinemachine;
+using HarmonyLib;
 
 namespace MonkeFrames.Editor.Patches;
 
-[HarmonyLib.HarmonyPatch(typeof(PrivateUIRoom), nameof(PrivateUIRoom.FindShoulderCamera))]
+[HarmonyPatch(typeof(PrivateUIRoom), nameof(PrivateUIRoom.FindShoulderCamera))]
 public class PrivateUIRoomPatches
 {
     static bool Prefix(PrivateUIRoom __instance, ref bool __result)

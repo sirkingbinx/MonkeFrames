@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using MonkeFrames.Editor.Components;
 using MonkeFrames.Editor.Interfaces;
-using MonkeFrames.Editor.Utilities;
 using UnityEngine;
 
 namespace MonkeFrames.Editor.Windows;
@@ -38,7 +36,7 @@ public class About : IEditorWindow
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = "https://git.sirkingbinx.dev/monkeframes",
+                FileName = "https://github.com/sirkingbinx/MonkeFrames",
                 UseShellExecute = true
             });
         }

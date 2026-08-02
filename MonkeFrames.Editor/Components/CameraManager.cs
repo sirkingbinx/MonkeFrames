@@ -1,10 +1,9 @@
 using GorillaNetworking;
 using MonkeFrames.Editor.Utilities;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
+using System.Threading.Tasks;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -163,10 +162,13 @@ public class CameraManager : MonoBehaviour
 
         while (InPlayback)
         {
-            if (playbackEnding == playbackEnding - 1)
+            if (playbackPosition == playbackEnding - 1)
             {
                 InPlayback = false;
                 UIManager.Instance.Drawing = true;
+                KeyframeManager.Instance.RefreshOrbs();
+                playbackPosition = 0;
+                
                 StopCoroutine("PlaybackCoroutine");
             }
 

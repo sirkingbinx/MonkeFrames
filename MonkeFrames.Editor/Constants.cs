@@ -3,6 +3,7 @@ using MonkeFrames.Editor.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace MonkeFrames.Editor;
 
@@ -10,11 +11,12 @@ public static class Constants
 {
     public const string Name = "MonkeFrames";
     public const string Guid = "bingus.monkeframes";
-    public const string Version = "1.2";
-    public static readonly string VersionID = $"{Version} Beta 1";
+    public const string Version = "1.1";
+    public static readonly string VersionID = $"{Version} Stable 2";
     public const string Author = "bingus";
 
     public static string DataFolder = "";
+    public static string MonkeFramesAssemblyFolder = "";
     public static readonly Exporter Exporter = new Exporter(Guid, "MonkeFrames");
 
     public static void Init()
@@ -24,6 +26,8 @@ public static class Constants
         string[] folders = ["projects", "exports", "tmp"];
         foreach (string folder in folders)
             Directory.CreateDirectory(SystemUtilities.Combine(DataFolder, folder));
+
+            MonkeFramesAssemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
     }
 
     public static readonly Dictionary<string, string> Contributors = new()
