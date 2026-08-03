@@ -108,6 +108,6 @@ public class UIManager : MonoBehaviour
                 window.Draw();
         });
 
-        GUI.Label(new Rect(10, Screen.width - 30, Screen.height - 10, 20), Status);
+        GUI.Label(new Rect(10, Screen.width - 30, Screen.height - 20, 20), Status);
     }
 }

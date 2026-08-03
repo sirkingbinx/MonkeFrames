@@ -11,6 +11,8 @@
 *.sln.docstates
 *.env
 
+Build/Dependencies
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -416,4 +418,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-/Build
+Build/latest/ffmpeg.exe
+Build/latest/MonkeFrames.zip
+Build/latest/README.txt

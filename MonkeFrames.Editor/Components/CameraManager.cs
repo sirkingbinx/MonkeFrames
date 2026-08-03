@@ -1,6 +1,7 @@
 using GorillaNetworking;
 using MonkeFrames.Editor.Utilities;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -157,17 +158,20 @@ public class CameraManager : MonoBehaviour
     int playbackEnding;
 
     public bool doRecording = false;
-    public string recordingOutputFolder;
 
-    public Texture2D tex;
+    public Texture2D tex2d;
+    public List<Keyframe> kCache;
+
+    public BinaryWriter frameStream;
+    public Process ffmpegProcess;
+
+    public string outputMp4 => Path.Combine(Constants.DataFolder, "exports", KeyframeManager.Instance.Project.Name + ".mp4");
 
     IEnumerator PlaybackCoroutine()
     {
-        WaitForSeconds wait = new WaitForSeconds(1f / KeyframeManager.Instance.Project.FPS);
-
         while (InPlayback)
         {
-            if (playbackPosition == playbackEnding - 1)
+            if (playbackPosition >= playbackEnding - 1)
             {
                 InPlayback = false;
                 UIManager.Instance.Drawing = true;
@@ -176,60 +180,63 @@ public class CameraManager : MonoBehaviour
                 
                 StopCoroutine("PlaybackCoroutine");
 
-                if (doRecording)
-                    BuildVideo();
+                UIManager.Instance.Status = "Finishing encoding..";
+
+                frameStream.Flush();
+                frameStream.Close();
+                frameStream = null;
+
+                ffmpegProcess.WaitForExit();
+                ffmpegProcess.Dispose();
+                ffmpegProcess = null;
+
+                Process.Start("explorer.exe", $"/select,\"{outputMp4}\"");
             }
 
-            Keyframe currentFrame = KeyframeManager.Instance.Project.CompiledKeyframes[playbackPosition];
+            Keyframe currentFrame = kCache[playbackPosition];
 
             Position = currentFrame.Position;
             Rotation = currentFrame.QuatRotation;
             FieldOfView = currentFrame.FieldOfView;
 
-            if (doRecording)
-            {
-                tex = ScreenCapture.CaptureScreenshotAsTexture();
-                File.WriteAllBytes(Path.Combine(recordingOutputFolder, $"frame_{playbackPosition:D4}.jpg"), tex.EncodeToJPG());
+            if (doRecording) {
+                tex2d = ScreenCapture.CaptureScreenshotAsTexture();
+                var frameData = tex2d.GetRawTextureData<byte>();
+                frameStream.Write(frameData.ToArray());
+                frameStream.Flush();
             }
-
+            
             playbackPosition++;
-            yield return wait;
+            yield return new WaitForSeconds(doRecording ? 0f : (1f / KeyframeManager.Instance.Project.FPS));
         }
     }
 
     public void StartRecording()
     {
-        recordingOutputFolder = Path.Combine(Constants.DataFolder, "tmp", $"{KeyframeManager.Instance.Project.Name}.exdat");
-        Directory.CreateDirectory(recordingOutputFolder);
-
+        StartFfmpegEncoder();
         doRecording = true;
-
         StartPlayback();
     }
 
-    public void BuildVideo()
+    public void StartFfmpegEncoder()
     {
-        var outputMp4 = Path.Combine(Constants.DataFolder, "exports", KeyframeManager.Instance.Project.Name + ".mp4");
-        var ffmpegBuildProcess = Process.Start(new ProcessStartInfo
+        var project = KeyframeManager.Instance.Project;
+        ffmpegProcess = Process.Start(new ProcessStartInfo
         {
             FileName = Path.Combine(Constants.MonkeFramesAssemblyFolder, "ffmpeg.exe"),
-            Arguments = $"-framerate {KeyframeManager.Instance.Project.FPS} -y -i frame_%04d.jpg -c:v libx264 -pix_fmt yuv420p \"{outputMp4}\"",
-            WorkingDirectory = recordingOutputFolder,
+            Arguments = $"-f rawvideo -pix_fmt rgba -s {Screen.width}x{Screen.height} -r {project.FPS} -i - " +
+                        $"-c:v libx264 -pix_fmt yuv420p -vf vflip -y \"{outputMp4}\"",
             UseShellExecute = false,
-            CreateNoWindow = false
+            CreateNoWindow = false,
+            RedirectStandardInput = true
         });
 
-        ffmpegBuildProcess.WaitForExit();
-
-        Process.Start(new ProcessStartInfo()
-        {
-            FileName = Path.Combine(Constants.DataFolder, "exports", KeyframeManager.Instance.Project.Name + ".mp4"),
-            UseShellExecute = true
-        });
+        frameStream = new BinaryWriter(ffmpegProcess.StandardInput.BaseStream);
     }
 
     public void StartPlayback()
     {
+        kCache = KeyframeManager.Instance.Project.CompiledKeyframes;
         InPlayback = true;
         UIManager.Instance.Drawing = false;
         KeyframeManager.Instance.DeleteOrbs();
