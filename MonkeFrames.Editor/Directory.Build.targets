@@ -4,8 +4,6 @@
 		<ItemGroup>
 			<AssembliesToCopy Include="$(OutputPath)\MonkeFrames.Compiler.dll" />
 			<AssembliesToCopy Include="$(OutputPath)\MonkeFrames.Editor.dll" />
-			<AssembliesToCopy Include="$(DependenciesPath)\ffmpeg\ffmpeg.exe" />
-			<AssembliesToCopy Include="$(DependenciesPath)\README.txt" />
 		</ItemGroup>
 		
 		<Copy SourceFiles="@(AssembliesToCopy)" DestinationFolder="$(SolutionDir)Build\latest"/>
