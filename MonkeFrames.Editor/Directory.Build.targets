@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project>
+	<!-- Invoke as: msbuild MonkeFrames.Editor.csproj /t:FfmpegUpgrade -->
 	<Target Name="CopyFilesToBuild" AfterTargets="Build">
 		<ItemGroup>
 			<AssembliesToCopy Include="$(OutputPath)\MonkeFrames.Compiler.dll" />

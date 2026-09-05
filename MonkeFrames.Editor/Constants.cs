@@ -12,7 +12,7 @@ public static class Constants
     public const string Name = "MonkeFrames";
     public const string Guid = "bingus.monkeframes";
     public const string Version = "1.2";
-    public static readonly string VersionID = $"{Version} Beta 3";
+    public static readonly string VersionID = $"{Version}";
 
     public static string DataFolder = "";
     public static string MonkeFramesAssemblyFolder = "";
