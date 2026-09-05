@@ -20,6 +20,13 @@
       <None Remove="Build\**" />
     </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BuildTime</_Parameter1>
+      <_Parameter2>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd HH:mm:ss"))</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
     <ItemGroup>
         <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3">
             <PrivateAssets>all</PrivateAssets>
@@ -39,6 +46,12 @@
     </ItemGroup>
 
     <ItemGroup>
+		<Reference Include="BepInEx">
+			<HintPath>$(BepInExAssemblyPath)\BepInEx.dll</HintPath>
+		</Reference>
+		<Reference Include="0Harmony">
+			<HintPath>$(BepInExAssemblyPath)\0Harmony.dll</HintPath>
+		</Reference>
         <Reference Include="AA.Mothership">
           <HintPath>$(GameAssemblyPath)\AA.Mothership.dll</HintPath>
         </Reference>
@@ -104,12 +117,6 @@
         </Reference>
         <Reference Include="GT_CustomMapSupportRuntime">
           <HintPath>$(GameAssemblyPath)\GT_CustomMapSupportRuntime.dll</HintPath>
-        </Reference>
-        <Reference Include="0Harmony">
-            <HintPath>$(DependenciesPath)\BepInEx\0Harmony.dll</HintPath>
-        </Reference>
-        <Reference Include="BepInEx">
-            <HintPath>$(DependenciesPath)\BepInEx\BepInEx.dll</HintPath>
         </Reference>
         <Reference Include="Fusion.Runtime">
             <HintPath>$(GameAssemblyPath)\Fusion.Runtime.dll</HintPath>
