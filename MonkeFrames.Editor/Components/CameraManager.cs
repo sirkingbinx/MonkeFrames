@@ -279,16 +279,9 @@ public class CameraManager : MonoBehaviour
         frameStream = new BinaryWriter(ffmpegProcess.StandardInput.BaseStream);
 
         Task.Run(() => {
-            IntPtr hwnd = GetActiveWindow();
-            MessageBox(hwnd, "Your video is currently being processed. Please wait for the UI to appear before continuing.", "MonkeFrames Editor", 0x00000000 | 0x00000060);
+            Win32Utilities.ShowMessageDialog("MonkeFrames Editor", "Your video is currently being processed. Please wait for the UI to appear before continuing.");
         });
     }
-
-    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    public static extern int MessageBox(IntPtr hWnd, string lpText, string lpCaption, uint uType);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetActiveWindow();
 
     public void StartPlayback()
     {

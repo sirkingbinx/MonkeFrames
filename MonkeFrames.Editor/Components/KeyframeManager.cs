@@ -100,14 +100,9 @@ public class KeyframeManager : MonoBehaviour
 
     public void LoadProject(Project p)
     {
-        if (Project.Keyframes.Any())
-            SaveUtilities.Save();
-
         UIManager.Instance.Selection = -1;
-            
         Project = p;
         RefreshOrbs();
-        UIManager.Instance.Status = $"Loaded project {p.Name} ({Compiler.Compiler.ProjectNameToFilename(p.Name)})";
     }
 
     public bool IsCompiling;
