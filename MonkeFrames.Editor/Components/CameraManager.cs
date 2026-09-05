@@ -1,13 +1,16 @@
 using GorillaNetworking;
 using MonkeFrames.Editor.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 
 namespace MonkeFrames.Editor.Components;
@@ -162,6 +165,9 @@ public class CameraManager : MonoBehaviour
     public Texture2D tex2d;
     public List<Keyframe> kCache;
 
+    public RenderTexture renderTexture;
+    public byte[] rBuffer;
+
     public BinaryWriter frameStream;
     public Process ffmpegProcess;
 
@@ -169,15 +175,20 @@ public class CameraManager : MonoBehaviour
 
     IEnumerator PlaybackCoroutine()
     {
+        var waitFrame = new WaitForEndOfFrame();
+
         while (InPlayback)
         {
+            yield return waitFrame;
+
             if (playbackPosition >= playbackEnding - 1)
             {
                 InPlayback = false;
                 UIManager.Instance.Drawing = true;
                 KeyframeManager.Instance.RefreshOrbs();
                 playbackPosition = 0;
-                
+                doRecording = false;
+
                 StopCoroutine("PlaybackCoroutine");
 
                 UIManager.Instance.Status = "Finishing encoding..";
@@ -190,6 +201,9 @@ public class CameraManager : MonoBehaviour
                 ffmpegProcess.Dispose();
                 ffmpegProcess = null;
 
+                renderTexture.Release();
+                Destroy(renderTexture);
+
                 Process.Start("explorer.exe", $"/select,\"{outputMp4}\"");
             }
 
@@ -200,9 +214,20 @@ public class CameraManager : MonoBehaviour
             FieldOfView = currentFrame.FieldOfView;
 
             if (doRecording) {
-                tex2d = ScreenCapture.CaptureScreenshotAsTexture();
-                var frameData = tex2d.GetRawTextureData<byte>();
-                frameStream.Write(frameData.ToArray());
+                ScreenCapture.CaptureScreenshotIntoRenderTexture(renderTexture);
+
+                var request = AsyncGPUReadback.Request(renderTexture, 0, TextureFormat.RGBA32);
+
+                while (!request.done)
+                    yield return null;
+
+                if (request.hasError)
+                    continue;
+
+                var nativeArray = request.GetData<byte>();
+                nativeArray.CopyTo(rBuffer);
+
+                frameStream.Write(rBuffer, 0, rBuffer.Length);
                 frameStream.Flush();
             }
             
@@ -213,6 +238,9 @@ public class CameraManager : MonoBehaviour
 
     public void StartRecording()
     {
+        renderTexture = new RenderTexture(Screen.width, Screen.height, 24);
+        rBuffer = new byte[Screen.width * Screen.height * 4];
+
         StartFfmpegEncoder();
         doRecording = true;
         StartPlayback();
@@ -221,18 +249,36 @@ public class CameraManager : MonoBehaviour
     public void StartFfmpegEncoder()
     {
         var project = KeyframeManager.Instance.Project;
+
+        string encoder = HEncodeUtilities.GetGoodEncoder();
+        UnityEngine.Debug.Log($"EC: {encoder}");
+        UnityEngine.Debug.Log($"HW: {SystemInfo.graphicsDeviceName}");
+
         ffmpegProcess = Process.Start(new ProcessStartInfo
         {
             FileName = Path.Combine(Constants.MonkeFramesAssemblyFolder, "ffmpeg.exe"),
             Arguments = $"-f rawvideo -pix_fmt rgba -s {Screen.width}x{Screen.height} -r {project.FPS} -i - " +
-                        $"-c:v libx264 -pix_fmt yuv420p -vf vflip -y \"{outputMp4}\"",
+                        $"-c:v libx264 -pix_fmt yuv420p -y \"{outputMp4}\" " +
+                        $"-loglevel quiet -preset ultrafast -c:v {encoder} -threads 0 " +
+                        $"-crf 28",
             UseShellExecute = false,
-            CreateNoWindow = false,
+            CreateNoWindow = true,
             RedirectStandardInput = true
         });
 
         frameStream = new BinaryWriter(ffmpegProcess.StandardInput.BaseStream);
+
+        Task.Run(() => {
+            IntPtr hwnd = GetActiveWindow();
+            MessageBox(hwnd, "Your video is currently being processed. Please wait for the UI to appear before continuing.", "MonkeFrames Editor", 0x00000000 | 0x00000060);
+        });
     }
+
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    public static extern int MessageBox(IntPtr hWnd, string lpText, string lpCaption, uint uType);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetActiveWindow();
 
     public void StartPlayback()
     {
