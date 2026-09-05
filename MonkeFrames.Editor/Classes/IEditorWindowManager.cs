@@ -54,7 +54,7 @@ public class IEditorWindowManager
             Window.OnDraw();
         } catch (Exception ex)
         {
-            Debug.LogError($"Error drawing window \"{Window.Name}\" ({WindowID}): {ex.Message}");
+            Console.WriteLine($"Error drawing window \"{Window.Name}\" ({WindowID}): {ex.Message}");
         }
 
         GUI.DragWindow(new Rect(0, 0, WindowPosition.width, 30));

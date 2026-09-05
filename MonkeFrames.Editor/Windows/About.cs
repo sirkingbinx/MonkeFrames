@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
 using MonkeFrames.Editor.Components;
 using MonkeFrames.Editor.Interfaces;
 using UnityEngine;
@@ -14,19 +12,10 @@ public class About : IEditorWindow
 
     private Vector2 ScrollPosition;
 
-    private string buildDate;
-
-    public void OnOpen()
-    {
-        buildDate = Assembly.GetExecutingAssembly()
-            .GetCustomAttributes<AssemblyMetadataAttribute>()
-            .FirstOrDefault(attr => attr.Key == "BuildTime")?.Value;
-    }
-
     public void OnDraw()
     {
         GUI.Label(new Rect(10, 30, Rect.width - 20, 20), $"MonkeFrames");
-        GUI.Label(new Rect(10, 50, Rect.width - 20, 20), $"Version {Constants.VersionID} (Build {buildDate})");
+        GUI.Label(new Rect(10, 50, Rect.width - 20, 20), $"Version {Constants.VersionID} (Build {Constants.BuildDate})");
 
         GUI.Label(new Rect(10, 80, Rect.width - 20, 20), $"(C) Copyright 2026 SirKingBinx");
 

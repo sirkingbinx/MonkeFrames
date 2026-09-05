@@ -23,11 +23,25 @@ public class Player : IEditorWindow
         
         HeadPosition = Mathf.RoundToInt(GUI.HorizontalSlider(new Rect(10, 30, Rect.width - 20, 20), HeadPosition, 0, Project.CompiledKeyframes.Count));
 
+        var e = Event.current;
+
+        if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Space)
+        {
+            IsPlaying = !IsPlaying;
+            e.Use();
+        }
+
         if (GUI.Button(new Rect(10, 55, 100, 20), IsPlaying ? "Pause" : "Play"))
             IsPlaying = !IsPlaying;
 
-        GUI.Label(new Rect(120, 55, 250, 20), $"Frame {HeadPosition + 1}/{Project.CompiledKeyframes.Count} ({Project.FPS} FPS)");
+        if (GUI.Button(new Rect(120, 55, 100, 20), "Refresh"))
+            Project.Build();
         
+        if (Project.Keyframes.Count != 0)
+            GUI.Label(new Rect(230, 55, 250, 20), $"Frame {HeadPosition + 1}/{Project.CompiledKeyframes.Count} ({Project.FPS} FPS)");
+        else
+            GUI.Label(new Rect(230, 55, 250, 20), $"Frame 0 ({Project.FPS} FPS)");
+
         if (HeadPosition != _LastHeadPosition)
         {
             IsPlaying = false;

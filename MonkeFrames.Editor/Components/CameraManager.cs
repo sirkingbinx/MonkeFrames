@@ -40,7 +40,7 @@ public class CameraManager : MonoBehaviour
         Position = gameObject.transform.position;
         Rotation = gameObject.transform.rotation;
 
-        UnityEngine.Debug.Log("[MonkeFrames::CameraManager] All camera-based stuff should be set up");
+        Console.WriteLine("[MonkeFrames::CameraManager] All camera-based stuff should be set up");
     }
 
     public void SetModEnabled(bool enabled)
@@ -154,7 +154,7 @@ public class CameraManager : MonoBehaviour
         brain.enabled = enabled;
 
         CinemachineState = enabled;
-        UnityEngine.Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
+        Console.WriteLine($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
     }
 
     int playbackPosition = 0;
@@ -229,6 +229,8 @@ public class CameraManager : MonoBehaviour
 
                 frameStream.Write(rBuffer, 0, rBuffer.Length);
                 frameStream.Flush();
+
+                Console.WriteLine($"Ffmpeg encode ... Flush frame {playbackPosition + 1}");
             }
             
             playbackPosition++;
@@ -250,17 +252,25 @@ public class CameraManager : MonoBehaviour
     {
         var project = KeyframeManager.Instance.Project;
 
+        Console.WriteLine("==== FFMPEG ENCODE STATS ====");
+
         string encoder = HEncodeUtilities.GetGoodEncoder();
-        UnityEngine.Debug.Log($"EC: {encoder}");
-        UnityEngine.Debug.Log($"HW: {SystemInfo.graphicsDeviceName}");
+        Console.WriteLine($"Encoding:     {encoder}");
+        Console.WriteLine($"GPU dev name: {SystemInfo.graphicsDeviceName}");
+
+        string arguments = $"-f rawvideo -pix_fmt rgba -s {Screen.width}x{Screen.height} -r {project.FPS} -i - " +
+                           $"-c:v libx264 -pix_fmt yuv420p -y \"{outputMp4}\" " +
+                           $"-loglevel quiet -preset ultrafast -c:v {encoder} -threads 0 " +
+                           $"-crf 28";
+
+        Console.WriteLine($"Arguments: {arguments}");
+
+        Console.WriteLine("==== OK I'M DONE ====");
 
         ffmpegProcess = Process.Start(new ProcessStartInfo
         {
             FileName = Path.Combine(Constants.MonkeFramesAssemblyFolder, "ffmpeg.exe"),
-            Arguments = $"-f rawvideo -pix_fmt rgba -s {Screen.width}x{Screen.height} -r {project.FPS} -i - " +
-                        $"-c:v libx264 -pix_fmt yuv420p -y \"{outputMp4}\" " +
-                        $"-loglevel quiet -preset ultrafast -c:v {encoder} -threads 0 " +
-                        $"-crf 28",
+            Arguments = arguments,
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardInput = true
