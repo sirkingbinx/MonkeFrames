@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour
 
     public void Start()
     {
-        Debug.Log("[MonkeFrames::UIManager] Loading titlebar icon");
+        Console.WriteLine("[MonkeFrames::UIManager] Loading titlebar icon");
         
         using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("icon");
         using MemoryStream data = new MemoryStream();
@@ -53,7 +53,7 @@ public class UIManager : MonoBehaviour
         stream.CopyTo(data);
         Icon = UnityUtilities.CreateTexture(data.ToArray());
 
-        Debug.Log("[MonkeFrames::UIManager] Initializing managers...");
+        Console.WriteLine("[MonkeFrames::UIManager] Initializing managers...");
 
         List<Type> windowTypes = Assembly.GetExecutingAssembly().GetLoadableTypes()
             .Where(t => typeof(IEditorWindow).IsAssignableFrom(t) && t.IsClass).ToList();
@@ -76,7 +76,7 @@ public class UIManager : MonoBehaviour
             Menus.Add(new IEditorMenuManager(menu));
         }
 
-        Debug.Log("[MonkeFrames::UIManager] UI manager is running");
+        Console.WriteLine("[MonkeFrames::UIManager] UI manager is running");
 
         Plugin.OnMonkeFramesLoaded.Invoke();
     }
@@ -84,17 +84,20 @@ public class UIManager : MonoBehaviour
     public void OpenWindow(string menuName)
     {
         Windows.First(w => w.Window.Name == menuName).Visible = true;
+        Console.WriteLine($"[MonkeFrames::UIManager] {menuName}.Visible = true;");
     }
 
     public void CloseWindow(string menuName)
     {
         Windows.First(w => w.Window.Name == menuName).Visible = false;
+        Console.WriteLine($"[MonkeFrames::UIManager] {menuName}.Visible = false;");
     }
 
     public void ToggleWindow(string menuName)
     {
         var w = Windows.First(w => w.Window.Name == menuName);
         w?.Visible = !w.Visible;
+        Console.WriteLine($"[MonkeFrames::UIManager] {menuName}.Visible = {w?.Visible ?? false};");
     }
 
     public void OnGUI()
@@ -108,6 +111,6 @@ public class UIManager : MonoBehaviour
                 window.Draw();
         });
 
-        GUI.Label(new Rect(10, Screen.width - 30, Screen.height - 10, 20), Status);
+        GUI.Label(new Rect(10, Screen.width - 30, Screen.height - 20, 20), Status);
     }
 }

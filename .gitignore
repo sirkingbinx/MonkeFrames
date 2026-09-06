@@ -416,4 +416,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-/Build
+Build/latest/ffmpeg.exe
+Build/latest/MonkeFrames.zip
+Build/latest/README.txt

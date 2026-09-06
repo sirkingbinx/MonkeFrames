@@ -1,12 +1,16 @@
 using GorillaNetworking;
 using MonkeFrames.Editor.Utilities;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using Keyframe = MonkeFrames.Compiler.Models.Keyframe;
 
 namespace MonkeFrames.Editor.Components;
@@ -36,7 +40,7 @@ public class CameraManager : MonoBehaviour
         Position = gameObject.transform.position;
         Rotation = gameObject.transform.rotation;
 
-        UnityEngine.Debug.Log("[MonkeFrames::CameraManager] All camera-based stuff should be set up");
+        Console.WriteLine("[MonkeFrames::CameraManager] All camera-based stuff should be set up");
     }
 
     public void SetModEnabled(bool enabled)
@@ -150,41 +154,138 @@ public class CameraManager : MonoBehaviour
         brain.enabled = enabled;
 
         CinemachineState = enabled;
-        UnityEngine.Debug.Log($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
+        Console.WriteLine($"[MonkeFrames::CameraManager] Cinemachine on TPC is now {(enabled ? "activated" : "deactivated")}");
     }
 
     int playbackPosition = 0;
     int playbackEnding;
 
+    public bool doRecording = false;
+
+    public Texture2D tex2d;
+    public List<Keyframe> kCache;
+
+    public RenderTexture renderTexture;
+    public byte[] rBuffer;
+
+    public BinaryWriter frameStream;
+    public Process ffmpegProcess;
+
+    public string outputMp4 => Path.Combine(Constants.DataFolder, "exports", KeyframeManager.Instance.Project.Name + ".mp4");
+
     IEnumerator PlaybackCoroutine()
     {
-        WaitForSeconds wait = new WaitForSeconds(1f / KeyframeManager.Instance.Project.FPS);
+        var waitFrame = new WaitForEndOfFrame();
 
         while (InPlayback)
         {
-            if (playbackPosition == playbackEnding - 1)
+            yield return waitFrame;
+
+            if (playbackPosition >= playbackEnding - 1)
             {
                 InPlayback = false;
                 UIManager.Instance.Drawing = true;
                 KeyframeManager.Instance.RefreshOrbs();
                 playbackPosition = 0;
-                
+                doRecording = false;
+
                 StopCoroutine("PlaybackCoroutine");
+
+                UIManager.Instance.Status = "Finishing encoding..";
+
+                frameStream.Flush();
+                frameStream.Close();
+                frameStream = null;
+
+                ffmpegProcess.WaitForExit();
+                ffmpegProcess.Dispose();
+                ffmpegProcess = null;
+
+                renderTexture.Release();
+                Destroy(renderTexture);
+
+                Process.Start("explorer.exe", $"/select,\"{outputMp4}\"");
             }
 
-            Keyframe currentFrame = KeyframeManager.Instance.Project.CompiledKeyframes[playbackPosition];
+            Keyframe currentFrame = kCache[playbackPosition];
 
             Position = currentFrame.Position;
             Rotation = currentFrame.QuatRotation;
             FieldOfView = currentFrame.FieldOfView;
 
+            if (doRecording) {
+                ScreenCapture.CaptureScreenshotIntoRenderTexture(renderTexture);
+
+                var request = AsyncGPUReadback.Request(renderTexture, 0, TextureFormat.RGBA32);
+
+                while (!request.done)
+                    yield return null;
+
+                if (request.hasError)
+                    continue;
+
+                var nativeArray = request.GetData<byte>();
+                nativeArray.CopyTo(rBuffer);
+
+                frameStream.Write(rBuffer, 0, rBuffer.Length);
+                frameStream.Flush();
+
+                Console.WriteLine($"Ffmpeg encode ... Flush frame {playbackPosition + 1}");
+            }
+            
             playbackPosition++;
-            yield return wait;
+            yield return new WaitForSeconds(doRecording ? 0f : (1f / KeyframeManager.Instance.Project.FPS));
         }
+    }
+
+    public void StartRecording()
+    {
+        renderTexture = new RenderTexture(Screen.width, Screen.height, 24);
+        rBuffer = new byte[Screen.width * Screen.height * 4];
+
+        StartFfmpegEncoder();
+        doRecording = true;
+        StartPlayback();
+    }
+
+    public void StartFfmpegEncoder()
+    {
+        var project = KeyframeManager.Instance.Project;
+
+        Console.WriteLine("==== FFMPEG ENCODE STATS ====");
+
+        string encoder = HEncodeUtilities.GetGoodEncoder();
+        Console.WriteLine($"Encoding:     {encoder}");
+        Console.WriteLine($"GPU dev name: {SystemInfo.graphicsDeviceName}");
+
+        string arguments = $"-f rawvideo -pix_fmt rgba -s {Screen.width}x{Screen.height} -r {project.FPS} -i - " +
+                           $"-c:v libx264 -pix_fmt yuv420p -y \"{outputMp4}\" " +
+                           $"-loglevel quiet -preset ultrafast -c:v {encoder} -threads 0 " +
+                           $"-crf 28";
+
+        Console.WriteLine($"Arguments: {arguments}");
+
+        Console.WriteLine("==== OK I'M DONE ====");
+
+        ffmpegProcess = Process.Start(new ProcessStartInfo
+        {
+            FileName = Path.Combine(Constants.MonkeFramesAssemblyFolder, "ffmpeg.exe"),
+            Arguments = arguments,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardInput = true
+        });
+
+        frameStream = new BinaryWriter(ffmpegProcess.StandardInput.BaseStream);
+
+        Task.Run(() => {
+            Win32Utilities.ShowMessageDialog("MonkeFrames Editor", "Your video is currently being processed. Please wait for the UI to appear before continuing.");
+        });
     }
 
     public void StartPlayback()
     {
+        kCache = KeyframeManager.Instance.Project.CompiledKeyframes;
         InPlayback = true;
         UIManager.Instance.Drawing = false;
         KeyframeManager.Instance.DeleteOrbs();

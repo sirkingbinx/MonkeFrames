@@ -13,6 +13,19 @@
         <!-- copy DLLs to output directory for copying -->
 	    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
+	
+    <ItemGroup>
+      <Compile Remove="Build\**" />
+      <EmbeddedResource Remove="Build\**" />
+      <None Remove="Build\**" />
+    </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BuildTime</_Parameter1>
+      <_Parameter2>$([System.DateTime]::UtcNow.ToString("yyyy-MM-dd HH:mm:ss"))</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3">

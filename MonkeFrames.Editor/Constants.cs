@@ -3,6 +3,7 @@ using MonkeFrames.Editor.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace MonkeFrames.Editor;
@@ -11,9 +12,20 @@ public static class Constants
 {
     public const string Name = "MonkeFrames";
     public const string Guid = "bingus.monkeframes";
-    public const string Version = "1.1";
-    public static readonly string VersionID = $"{Version} Stable 3";
-    public const string Author = "bingus";
+    public const string Version = "1.2";
+    public static readonly string VersionID = $"{Version}";
+
+    public static string BuildDate
+    {
+        get
+        {
+            field ??= Assembly.GetExecutingAssembly()
+                .GetCustomAttributes<AssemblyMetadataAttribute>()
+                .FirstOrDefault(attr => attr.Key == "BuildTime")?.Value;
+
+            return field;
+        }
+    }
 
     public static string DataFolder = "";
     public static string MonkeFramesAssemblyFolder = "";
@@ -23,7 +35,7 @@ public static class Constants
     {
         DataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MonkeFrames");
 
-        string[] folders = ["projects", "exports", "tmp"];
+        string[] folders = ["projects", "exports"];
         foreach (string folder in folders)
             Directory.CreateDirectory(SystemUtilities.Combine(DataFolder, folder));
 
@@ -77,6 +89,4 @@ public static class Constants
         {"rusty", "Tester" },
         {"Hexann", "Tester" },
     };
-
-    public static string Loader = "";
 }

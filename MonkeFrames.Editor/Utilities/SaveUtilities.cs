@@ -12,20 +12,8 @@ namespace MonkeFrames.Editor.Utilities;
 public static class SaveUtilities
 {
     public static string ProjectDirectory => SystemUtilities.Combine(Constants.DataFolder, "projects");
-    
-    public static Dictionary<string, Project> LoadableProjects
-    {
-        get {
-            if (field == null)
-                field = GetProjects();
 
-            return field;
-        }
-        
-        set => field = value;
-    }
-
-    private static bool IsValidJson(string json) {
+    public static bool IsValidJson(string json) {
         try
         {
             JToken.Parse(json);
@@ -39,30 +27,6 @@ public static class SaveUtilities
 
     public static void Save()
     {
-        Project project = KeyframeManager.Instance.Project;
-        string projectJson = project.ToJson();
-
-        string projectPath = Path.Combine(ProjectDirectory, Compiler.Compiler.ProjectNameToFilename(project.Name));
-        File.WriteAllText(projectPath, projectJson);
-    }
-
-    public static Dictionary<string, Project> GetProjects()
-    {
-        string[] projectFiles = Directory.GetFiles(ProjectDirectory, "*.frames");
-        Dictionary<string, Project> projects = new();
-
-        foreach (string filename in projectFiles) {
-            string projectJson = File.ReadAllText(filename);
-            
-            if (!IsValidJson(projectJson))
-                continue;
-            
-            try {
-                Project p = Project.FromJson(projectJson);
-                projects.Add(p.Name, p);
-            } catch { }
-        }
-
-        return projects;
+        Win32Utilities.SaveFile("Save project", KeyframeManager.Instance.Project.ToJson(), "frames", "MonkeFrames project\0*.frames", ProjectDirectory);
     }
 }
