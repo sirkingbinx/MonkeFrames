@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project>
-	<!-- Invoke as: msbuild MonkeFrames.Editor.csproj /t:FfmpegUpgrade -->
 	<Target Name="CopyFilesToBuild" AfterTargets="Build">
 		<ItemGroup>
 			<AssembliesToCopy Include="$(OutputPath)\MonkeFrames.Compiler.dll" />
 			<AssembliesToCopy Include="$(OutputPath)\MonkeFrames.Editor.dll" />
 			<AssembliesToCopy Include="$(SolutionDir)Build\Dependencies\ffmpeg\ffmpeg.exe" />
+			<AssembliesToCopy Include="$(SolutionDir)Build\Dependencies\misc\README.txt" />
 		</ItemGroup>
 
 		<Copy SourceFiles="@(AssembliesToCopy)" DestinationFolder="$(SolutionDir)Build\latest\tmp\BepInEx\plugins\MonkeFrames"/>
